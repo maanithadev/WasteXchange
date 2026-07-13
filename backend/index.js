@@ -4,6 +4,7 @@ const cors = require('cors');
 const connectDB = require("./config/database");
 const path = require("path");
 const app = express()
+const userRoutes = require("./routes/user.routes.js");
 const sellerRoutes = require('./routes/sellers.routes.js');
 const buyerRoutes = require('./routes/buyers.routes.js');
 
@@ -13,6 +14,7 @@ app.use(express.json())
 app.use(cors())
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+app.use("/api/users", userRoutes)
 app.use("/api/sellers", sellerRoutes)
 app.use("/api/buyers", buyerRoutes)
 

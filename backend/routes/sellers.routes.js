@@ -5,12 +5,13 @@ const fs = require("fs")
 const {GoogleGenAI} = require("@google/genai")
 require("dotenv").config()
 const path = require("path")
+const sellerMiddleware = require("../middleware/sellerMiddle.middleware.js")
 const WasteListings = require("../models/wasteListings.model.js")
 
 // get
-router.get("/get-all-waste-listings", async (req, res) => {
+router.get("/get-all-waste-listings", sellerMiddleware, async (req, res) => {
     try {
-        const wasteListings = await WasteListings.find()
+        const wasteListings = await WasteListings.find({seller_id: req.token.user_id})
         res.status(200).json(wasteListings)
     } catch (err) {
         res.status(500).send({message: err.message})
@@ -39,7 +40,7 @@ const localUpload = multer({
     limits: {fileSize: 10 * 1024 * 1024},
 })
 
-router.post("/seller-upload-waste", geminiUpload.single("image"), async (req, res) => {
+router.post("/seller-upload-waste", geminiUpload.single("image"), sellerMiddleware, async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({message: "No image uploaded"});
@@ -51,8 +52,8 @@ router.post("/seller-upload-waste", geminiUpload.single("image"), async (req, re
         You are a waste classification assistant. Your task is to analyze an image of waste material and provide a detailed classification and description based on the visual information.
 Respond with ONLY a raw JSON object (no markdown, no code fences, no extra text) in exactly this shape:
 {
-  "waste_title": "string - A concise and descriptive title for the waste shown in the image.",
-  "waste_category": "string - Choose ONLY one option from the following list: Construction, Metals, Wood.",
+  "title": "string - A concise and descriptive title for the waste shown in the image.",
+  "category": "string - Choose ONLY one option from the following list: Construction, Metals, Wood.",
   "quantity": "number - Provide an estimated numerical value for the quantity of the waste.",
   "unit": "string - Choose ONLY one unit from the following list that corresponds to the 'quantity': kg, tons, lbs, units, m3.",
   "colour": "string - The predominant color of the waste material visible in the image.",
@@ -101,11 +102,12 @@ If you are unsure about a field, make your best visual estimate rather than leav
     }
 })
 
-router.post("/seller-upload-waste-save", localUpload.single("waste_image"), async (req, res) => {
+router.post("/seller-upload-waste-save", localUpload.single("image"), sellerMiddleware, async (req, res) => {
     try {
         const formData = new WasteListings({
-            waste_title: req.body.waste_title,
-            waste_category: req.body.waste_category,
+            seller_id: req.token.user_id,
+            title: req.body.title,
+            category: req.body.category,
             quantity: req.body.quantity,
             unit: req.body.unit,
             colour: req.body.colour,
@@ -119,8 +121,10 @@ router.post("/seller-upload-waste-save", localUpload.single("waste_image"), asyn
                 postal_code: req.body.postal_code
             },
             status: req.body.status,
+            created_at: new Date(),
+            updated_at: new Date(),
         })
-        formData.waste_image = req.file.filename
+        formData.image = req.file.filename
         await formData.save();
 
         res.status(200).json({message: "data was saved", formData})

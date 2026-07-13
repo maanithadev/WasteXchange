@@ -1,13 +1,16 @@
 const mongoose = require("mongoose");
 
 const wasteListingsSchema = mongoose.Schema({
-    waste_image: {
+    seller_id: {
         type: String,
     },
-    waste_title: {
+    image: {
+        type: String,
+    },
+    title: {
         type: String
     },
-    waste_category: {
+    category: {
         type: String
     },
     quantity: {
@@ -45,6 +48,12 @@ const wasteListingsSchema = mongoose.Schema({
     status: {
         type: String
     },
+    created_at: {
+        type: String
+    },
+    updated_at: {
+        type: String
+    }
 })
 
 module.exports = mongoose.model("wasteListings", wasteListingsSchema)

@@ -1,84 +1,97 @@
+import {lazy, Suspense} from "react"
 import {Route, Routes} from "react-router-dom";
-import GuestsHome from "./pages/guests/GuestsHome.jsx";
-import GuestsNavbar from "./components/guests/GuestsNavbar.jsx";
-import GuestsFooter from "./components/guests/GuestsFooter.jsx";
-import GuestsAbout from "./pages/guests/GuestsAbout.jsx";
-import GuestsBrowseMarketplace from "./pages/guests/GuestsBrowseMarketplace.jsx";
-import GuestsListingDetail from "./pages/guests/GuestsListingDetail.jsx";
-import GuestsLogin from "./pages/guests/GuestsLogin.jsx";
-import GuestsSignup from "./pages/guests/GuestsSignup.jsx";
-import GuestsContact from "./pages/guests/GuestsContact.jsx";
-import SellerSidebar from "./components/sellers/SellerSidebar.jsx";
-import SellerNavbar from "./components/sellers/SellerNavbar.jsx";
-import SellerDashboard from "./pages/sellers/SellerDashboard.jsx";
-import SellerUploadWaste from "./pages/sellers/SellerUploadWaste.jsx";
-import SellerMyListings from "./pages/sellers/SellerMyListings.jsx";
-import SellerListingStatus from "./pages/sellers/SellerListingStatus.jsx";
-import SellerOrdersReceived from "./pages/sellers/SellerOrdersReceived.jsx";
-import SellerMessages from "./pages/sellers/SellerMessages.jsx";
-import SellerCarbonFootprintDashboard from "./pages/sellers/SellerCarbonFootprintDashboard.jsx";
-import SellerEarnings from "./pages/sellers/SellerEarnings.jsx";
-import SellerSettings from "./pages/sellers/SellerSettings.jsx";
-import BuyerSidebar from "./components/buyers/BuyerSidebar.jsx";
-import BuyerNavbar from "./components/buyers/BuyerNavbar.jsx";
-import BuyerDashboard from "./pages/buyers/BuyerDashboard.jsx";
-import BuyerBrowseMarketplace from "./pages/buyers/BuyerBrowseMarketplace.jsx";
-import BuyerListingDetail from "./pages/buyers/BuyerListingDetail.jsx";
-import BuyerMatchedRecommendations from "./pages/buyers/BuyerMatchedRecommendations.jsx";
-import BuyerMyOrders from "./pages/buyers/BuyerMyOrders.jsx";
-import BuyerMessages from "./pages/buyers/BuyerMessages.jsx";
-import BuyerCarbonFootprintDashboard from "./pages/buyers/BuyerCarbonFootprintDashboard.jsx";
-import BuyerPayment from "./pages/buyers/BuyerPayment.jsx";
-import BuyerSettings from "./pages/buyers/BuyerSettings.jsx";
+
+const GuestsHome = lazy(() => import("./pages/guests/GuestsHome.jsx"));
+const GuestsNavbar = lazy(() => import("./components/guests/GuestsNavbar.jsx"));
+const GuestsFooter = lazy(() => import("./components/guests/GuestsFooter.jsx"));
+const GuestsAbout = lazy(() => import("./pages/guests/GuestsAbout.jsx"));
+const GuestsBrowseMarketplace = lazy(() => import("./pages/guests/GuestsBrowseMarketplace.jsx"));
+const GuestsListingDetail = lazy(() => import("./pages/guests/GuestsListingDetail.jsx"));
+const GuestsLogin = lazy(() => import("./pages/guests/GuestsLogin.jsx"));
+const GuestsSignup = lazy(() => import("./pages/guests/GuestsSignup.jsx"));
+const GuestsContact = lazy(() => import("./pages/guests/GuestsContact.jsx"));
+const SellerSidebar = lazy(() => import("./components/sellers/SellerSidebar.jsx"));
+const SellerNavbar = lazy(() => import("./components/sellers/SellerNavbar.jsx"));
+const SellerDashboard = lazy(() => import("./pages/sellers/SellerDashboard.jsx"));
+const SellerUploadWaste = lazy(() => import("./pages/sellers/SellerUploadWaste.jsx"));
+const SellerMyListings = lazy(() => import("./pages/sellers/SellerMyListings.jsx"));
+const SellerListingStatus = lazy(() => import("./pages/sellers/SellerListingStatus.jsx"));
+const SellerOrdersReceived = lazy(() => import("./pages/sellers/SellerOrdersReceived.jsx"));
+const SellerMessages = lazy(() => import("./pages/sellers/SellerMessages.jsx"));
+const SellerCarbonFootprintDashboard = lazy(() => import("./pages/sellers/SellerCarbonFootprintDashboard.jsx"));
+const SellerEarnings = lazy(() => import("./pages/sellers/SellerEarnings.jsx"));
+const SellerSettings = lazy(() => import("./pages/sellers/SellerSettings.jsx"));
+const BuyerSidebar = lazy(() => import("./components/buyers/BuyerSidebar.jsx"));
+const BuyerNavbar = lazy(() => import("./components/buyers/BuyerNavbar.jsx"));
+const BuyerDashboard = lazy(() => import("./pages/buyers/BuyerDashboard.jsx"));
+const BuyerBrowseMarketplace = lazy(() => import("./pages/buyers/BuyerBrowseMarketplace.jsx"));
+const BuyerListingDetail = lazy(() => import("./pages/buyers/BuyerListingDetail.jsx"));
+const BuyerMatchedRecommendations = lazy(() => import("./pages/buyers/BuyerMatchedRecommendations.jsx"));
+const BuyerMyOrders = lazy(() => import("./pages/buyers/BuyerMyOrders.jsx"));
+const BuyerMessages = lazy(() => import("./pages/buyers/BuyerMessages.jsx"));
+const BuyerCarbonFootprintDashboard = lazy(() => import("./pages/buyers/BuyerCarbonFootprintDashboard.jsx"));
+const BuyerPayment = lazy(() => import("./pages/buyers/BuyerPayment.jsx"));
+const BuyerSettings = lazy(() => import("./pages/buyers/BuyerSettings.jsx"));
+import ProtectedSellerRoutes from "./auth/ProtectedSellerRoutes.jsx";
+import ProtectedBuyerRoutes from "./auth/ProtectedBuyerRoutes.jsx";
+import NotFoundPage from "./pages/NotFoundPage.jsx";
+import Loading from "./components/Loading.jsx";
 
 const App = () => {
     return (
-        <Routes>
+        <Suspense fallback={<Loading/>}>
+            <Routes>
 
-            {/*guests*/}
-            <Route element={<GuestsNavbar/>}>
-                <Route element={<GuestsFooter/>}>
-                    <Route path="/" element={<GuestsHome/>}/>
-                    <Route path="/browse-marketplace" element={<GuestsBrowseMarketplace/>}/>
-                    <Route path="/listing-detail" element={<GuestsListingDetail/>}/>
-                    <Route path="/about" element={<GuestsAbout/>}/>
-                    <Route path="/login" element={<GuestsLogin/>}/>
-                    <Route path="/signup" element={<GuestsSignup/>}/>
-                    <Route path="/contact" element={<GuestsContact/>}/>
+                {/*guests*/}
+                <Route element={<GuestsNavbar/>}>
+                    <Route element={<GuestsFooter/>}>
+                        <Route path="/" element={<GuestsHome/>}/>
+                        <Route path="/browse-marketplace" element={<GuestsBrowseMarketplace/>}/>
+                        <Route path="/listing-detail" element={<GuestsListingDetail/>}/>
+                        <Route path="/about" element={<GuestsAbout/>}/>
+                        <Route path="/login" element={<GuestsLogin/>}/>
+                        <Route path="/signup" element={<GuestsSignup/>}/>
+                        <Route path="/contact" element={<GuestsContact/>}/>
+                        <Route path="*" element={<NotFoundPage/>}/>
+                    </Route>
                 </Route>
-            </Route>
 
-            {/*sellers*/}
-            <Route element={<SellerSidebar/>}>
-                <Route element={<SellerNavbar/>}>
-                    <Route path="/seller-dashboard" element={<SellerDashboard/>}/>
-                    <Route path="/seller-upload-waste" element={<SellerUploadWaste/>}/>
-                    <Route path="/seller-my-listings" element={<SellerMyListings/>}/>
-                    <Route path="/seller-listing-matches" element={<SellerListingStatus/>}/>
-                    <Route path="/seller-orders-received" element={<SellerOrdersReceived/>}/>
-                    <Route path="/seller-messages" element={<SellerMessages/>}/>
-                    <Route path="/seller-carbon-footprint" element={<SellerCarbonFootprintDashboard/>}/>
-                    <Route path="/seller-payments" element={<SellerEarnings/>}/>
-                    <Route path="/seller-settings" element={<SellerSettings/>}/>
+                {/*sellers*/}
+                <Route element={<ProtectedSellerRoutes/>}>
+                    <Route element={<SellerSidebar/>}>
+                        <Route element={<SellerNavbar/>}>
+                            <Route path="/seller/dashboard" element={<SellerDashboard/>}/>
+                            <Route path="/seller/upload-waste" element={<SellerUploadWaste/>}/>
+                            <Route path="/seller/my-listings" element={<SellerMyListings/>}/>
+                            <Route path="/seller/listing-matches" element={<SellerListingStatus/>}/>
+                            <Route path="/seller/orders-received" element={<SellerOrdersReceived/>}/>
+                            <Route path="/seller/messages" element={<SellerMessages/>}/>
+                            <Route path="/seller/carbon-footprint" element={<SellerCarbonFootprintDashboard/>}/>
+                            <Route path="/seller/payments" element={<SellerEarnings/>}/>
+                            <Route path="/seller/settings" element={<SellerSettings/>}/>
+                        </Route>
+                    </Route>
                 </Route>
-            </Route>
 
-            {/*buyers*/}
-            <Route element={<BuyerSidebar/>}>
-                <Route element={<BuyerNavbar/>}>
-                    <Route path="/buyer-dashboard" element={<BuyerDashboard/>}/>
-                    <Route path="/buyer-browse-marketplace" element={<BuyerBrowseMarketplace/>}/>
-                    <Route path="/buyer-matched-recommendations" element={<BuyerMatchedRecommendations/>}/>
-                    <Route path="/buyer-listing-detail" element={<BuyerListingDetail/>}/>
-                    <Route path="/buyer-my-orders" element={<BuyerMyOrders/>}/>
-                    <Route path="/buyer-messages" element={<BuyerMessages/>}/>
-                    <Route path="/buyer-carbon-footprint" element={<BuyerCarbonFootprintDashboard/>}/>
-                    <Route path="/buyer-checkout" element={<BuyerPayment/>}/>
-                    <Route path="/buyer-settings" element={<BuyerSettings/>}/>
+                {/*buyers*/}
+                <Route element={<ProtectedBuyerRoutes/>}>
+                    <Route element={<BuyerSidebar/>}>
+                        <Route element={<BuyerNavbar/>}>
+                            <Route path="/buyer/dashboard" element={<BuyerDashboard/>}/>
+                            <Route path="/buyer/browse-marketplace" element={<BuyerBrowseMarketplace/>}/>
+                            <Route path="/buyer/matched-recommendations" element={<BuyerMatchedRecommendations/>}/>
+                            <Route path="/buyer/listing-detail/:id" element={<BuyerListingDetail/>}/>
+                            <Route path="/buyer/my-orders" element={<BuyerMyOrders/>}/>
+                            <Route path="/buyer/messages" element={<BuyerMessages/>}/>
+                            <Route path="/buyer/carbon-footprint" element={<BuyerCarbonFootprintDashboard/>}/>
+                            <Route path="/buyer/checkout" element={<BuyerPayment/>}/>
+                            <Route path="/buyer/settings" element={<BuyerSettings/>}/>
+                        </Route>
+                    </Route>
                 </Route>
-            </Route>
 
-        </Routes>
+            </Routes>
+        </Suspense>
     )
 }
 

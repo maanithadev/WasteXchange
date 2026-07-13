@@ -6,7 +6,11 @@ const SellerMyListings = () => {
 
     useEffect(() => {
         async function fetchData() {
-            const res = await axios.get("http://localhost:3000/api/sellers/get-all-waste-listings")
+            const res = await axios.get(`http://localhost:3000/api/sellers/get-all-waste-listings`, {
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                }
+            })
             setData(res.data)
         }
 
@@ -35,15 +39,16 @@ const SellerMyListings = () => {
                     {/* <!-- Card 1 --> */}
                     {data.map((item, index) => (
                         <div key={index} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-                            <img src={`http://localhost:3000/uploads/${item.waste_image}`} className="w-full h-40 object-cover"
-                                 alt={item.waste_title}/>
+                            <img src={`http://localhost:3000/uploads/${item.image}`}
+                                 className="w-full h-40 object-cover"
+                                 alt={item.title}/>
                             <div className="p-4">
                                 <div className="flex items-center justify-between mb-2">
-                                    <h3 className="font-semibold text-slate-900 text-sm">{item.waste_title}</h3>
+                                    <h3 className="font-semibold text-slate-900 text-sm">{item.title}</h3>
                                     <span
                                         className="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">{item.status}</span>
                                 </div>
-                                <p className="text-xs text-slate-500 mb-4">{item.quantity} {item.unit} &middot; {item.waste_category}</p>
+                                <p className="text-xs text-slate-500 mb-4">{item.quantity} {item.unit} &middot; {item.category}</p>
                                 <div className="flex gap-2">
                                     <button
                                         className="flex-1 text-xs font-medium border border-slate-300 text-slate-700 rounded-lg py-2 hover:bg-slate-50">Edit

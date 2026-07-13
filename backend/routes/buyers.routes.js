@@ -12,4 +12,13 @@ router.get("/get-all-waste-listings", async (req, res) => {
     }
 })
 
+router.get("/get-single-waste-listing/:id", async (req, res) => {
+    try {
+        const wasteListing = await WasteListings.find({_id:req.params.id})
+        res.status(200).json(wasteListing)
+    } catch (err) {
+        res.status(500).send({message: err.message})
+    }
+})
+
 module.exports = router

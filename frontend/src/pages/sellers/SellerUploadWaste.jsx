@@ -1,11 +1,13 @@
 import {useState} from "react"
 import {useForm} from "react-hook-form"
+import {useNavigate} from "react-router-dom";
 
 const SellerUploadWaste = () => {
 
     const wasteCategories = ["Construction", "Metals", "Wood"]
     const units = ["kg", "tons", "lbs", "units", "m3"]
     const currency = ["LKR", "$"]
+    const navigate = useNavigate()
 
     const [data, setData] = useState({})
     const [image, setImage] = useState(null)
@@ -14,9 +16,9 @@ const SellerUploadWaste = () => {
 
     const {register, handleSubmit} = useForm({
         values: {
-            waste_image: image || "",
-            waste_title: data.waste_title,
-            waste_category: data.waste_category,
+            image: image || "",
+            title: data.title,
+            category: data.category,
             quantity: data.quantity,
             unit: data.unit,
             colour: data.colour,
@@ -49,6 +51,9 @@ const SellerUploadWaste = () => {
             const response = await fetch("http://localhost:3000/api/sellers/seller-upload-waste", {
                 method: "POST",
                 body: imageData,
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                }
             });
 
             const result = await response.json();
@@ -63,31 +68,34 @@ const SellerUploadWaste = () => {
         }
     }
 
-    async function onSubmit(data){
+    async function onSubmit(data) {
         const saveFormData = new FormData()
-        saveFormData.append("waste_image",image)
-        saveFormData.append("waste_title",data.waste_title)
-        saveFormData.append("waste_category",data.waste_category)
-        saveFormData.append("quantity",data.quantity)
-        saveFormData.append("unit",data.unit)
-        saveFormData.append("colour",data.colour)
-        saveFormData.append("description",data.description)
-        saveFormData.append("price",data.price)
-        saveFormData.append("currency",data.currency)
-        saveFormData.append("street",data.location?.street)
-        saveFormData.append("city",data.location?.city)
-        saveFormData.append("state",data.location?.state)
-        saveFormData.append("postal_code",data.location?.postal_code)
-        saveFormData.append("status",data.status)
+        saveFormData.append("image", image)
+        saveFormData.append("title", data.title)
+        saveFormData.append("category", data.category)
+        saveFormData.append("quantity", data.quantity)
+        saveFormData.append("unit", data.unit)
+        saveFormData.append("colour", data.colour)
+        saveFormData.append("description", data.description)
+        saveFormData.append("price", data.price)
+        saveFormData.append("currency", data.currency)
+        saveFormData.append("street", data.location?.street)
+        saveFormData.append("city", data.location?.city)
+        saveFormData.append("state", data.location?.state)
+        saveFormData.append("postal_code", data.location?.postal_code)
+        saveFormData.append("status", data.status)
 
         try {
             const response = await fetch("http://localhost:3000/api/sellers/seller-upload-waste-save", {
                 method: "POST",
                 body: saveFormData,
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                }
             });
 
-            const result = await response.json();
-            console.log(result)
+            await response.json();
+            navigate("/seller/my-listings")
         } catch (err) {
             console.error("Error:", err);
         }
@@ -107,8 +115,8 @@ const SellerUploadWaste = () => {
                     <form className="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-6 space-y-6">
                         {/* <!-- Image upload --> */}
                         <div>
-                            <label htmlFor="waste_image">
-                                <label htmlFor="waste_image" className="block text-sm font-medium text-slate-700 mb-2">Waste
+                            <label htmlFor="image">
+                                <label htmlFor="image" className="block text-sm font-medium text-slate-700 mb-2">Waste
                                     Image</label>
                                 <div
                                     className="min-h-80 border-2 border-dashed border-slate-300 hover:border-emerald-600 rounded-xl bg-slate-50 flex flex-col items-center justify-center text-center overflow-hidden cursor-pointer">
@@ -127,7 +135,7 @@ const SellerUploadWaste = () => {
                                         : <img src={imagePreview} alt="" className="w-full "/>}
                                 </div>
                             </label>
-                            <input type="file" id="waste_image" hidden onChange={handleChange}/>
+                            <input type="file" id="image" hidden onChange={handleChange}/>
                         </div>
                         <button type="button"
                                 className="px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700"
@@ -140,7 +148,7 @@ const SellerUploadWaste = () => {
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">Waste Title</label>
                                 <input type="text" placeholder="e.g. Shredded HDPE Plastic Pellets"
-                                       className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("waste_title")} />
+                                       className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("title")} />
                             </div>
 
                             {/* <!-- Category + Quantity/Unit --> */}
@@ -149,7 +157,7 @@ const SellerUploadWaste = () => {
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Waste
                                         Category</label>
                                     <select
-                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("waste_category")}>
+                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("category")}>
                                         {wasteCategories.map((item, index) => (
                                             <option key={index} value={item}>{item}</option>
                                         ))}
@@ -266,7 +274,7 @@ const SellerUploadWaste = () => {
                                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path
                                         strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
                                         d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                                    {data.waste_category}
+                                    {data.category}
                                 </span>
                                 </div>
                                 <p className="text-xs text-slate-500 mb-1">Confidence Score</p>
