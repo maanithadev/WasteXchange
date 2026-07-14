@@ -1,26 +1,11 @@
 import {Link, Outlet} from "react-router-dom";
-import {useEffect, useState} from "react";
-import axios from "axios";
+import {useVerifyUser} from "../../hooks/useVerifyUser.jsx";
 
 const GuestsNavbar = () => {
-    const token = localStorage.getItem("token");
-    const [userRole, setUserRole] = useState("")
-
-    useEffect(() => {
-        async function findUser() {
-            const res = await axios.get("http://localhost:3000/api/users/verifyUser", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                }
-            });
-            setUserRole(res.data.role);
-        }
-
-        findUser()
-    }, [])
+    const {user} = useVerifyUser()
 
     function displayBtns() {
-        switch (userRole) {
+        switch (user?.role) {
             case "seller":
                 return (
                     <Link to="/seller/dashboard"

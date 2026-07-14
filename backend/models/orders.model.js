@@ -1,11 +1,9 @@
 const mongoose = require("mongoose");
 
-const paymentsSchema = mongoose.Schema({
-    order_id: {
-        type: String
-    },
-    transaction_id: {
-        type: String
+const ordersSchema = mongoose.Schema({
+    wasteListings_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "wasteListings"
     },
     seller_id: {
         type: mongoose.Schema.Types.ObjectId,
@@ -15,24 +13,33 @@ const paymentsSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "users"
     },
+    quantity: {
+        type: Number
+    },
+    unit: {
+        type: String
+    },
     total_price: {
         type: Number
     },
     currency: {
         type: String
     },
-    payment_method: {
+    status: {       // "pending" | "confirmed" | "collected" | "cancelled"
         type: String
     },
-    payment_status: {       // "completed" | "pending" | "failed" | "refunded" | "disputed"
+    ordered_date: {
         type: String
     },
-    cyberSource_ref: {
+    collected_date: {
         type: String
     },
     created_at: {
         type: String
     },
+    updated_at: {
+        type: String
+    },
 })
 
-module.exports = mongoose.model("payments", paymentsSchema)
+module.exports = mongoose.model("orders", ordersSchema)

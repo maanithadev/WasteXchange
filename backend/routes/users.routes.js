@@ -3,7 +3,7 @@ const router = express.Router()
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 require("dotenv").config()
-const User = require("../models/user.model.js")
+const Users = require("../models/users.model.js")
 
 // get
 router.get("/verifyUser", async (req, res) => {
@@ -12,6 +12,8 @@ router.get("/verifyUser", async (req, res) => {
         if (typeof bearerHeader != 'undefined') {
             const token = bearerHeader.split(' ')[1]
             const user = jwt.verify(token, process.env.JWT_SECRET)
+            const foundUser = await Users.findById(user.user_id)
+            if (!foundUser) return res.json({ message: 'No user found' })
             res.json(user)
         } else {
             res.status(401).json({message: 'No token provided'})
@@ -23,22 +25,23 @@ router.get("/verifyUser", async (req, res) => {
 
 router.get("find-user/:id", async (req, res) => {
     try {
-        const user = await User.findById(req.user._id)
+        const user = await Users.findById(req.user._id)
         res.json(user)
     } catch (err) {
         res.status(500).json({message: err.message})
     }
 })
 
+
 // post
 router.post("/signup", async (req, res) => {
     try {
         const {email} = req.body
-        const existingUser = await User.findOne({email})
+        const existingUser = await Users.findOne({email})
         if (existingUser) return res.json({message: "User already exist"})
 
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
-        const userData = new User({
+        const userData = new Users({
             role: req.body.role,
             email: req.body.email,
             password: hashedPassword,
@@ -60,7 +63,7 @@ router.post("/signup", async (req, res) => {
         const token = jwt.sign({
             user_id: savedUser._id,
             role: savedUser.role
-        }, process.env.JWT_SECRET, {expiresIn: "1h"})
+        }, process.env.JWT_SECRET, {expiresIn: "7d"})
         res.status(200).json({message: 'User saved successfully.', token, role: savedUser.role})
     } catch (err) {
         res.status(400).send({message: "server error"})
@@ -70,7 +73,7 @@ router.post("/signup", async (req, res) => {
 router.post("/login", async (req, res) => {
     try {
         const {email, password} = req.body
-        const userExists = await User.findOne({email})
+        const userExists = await Users.findOne({email})
         if (!userExists) return res.json({message: "User not found"})
 
         if (password === "") return res.json({message: "Passwords is empty"})
@@ -81,7 +84,7 @@ router.post("/login", async (req, res) => {
         const token = jwt.sign({
             user_id: userExists._id,
             role: userExists.role
-        }, process.env.JWT_SECRET, {expiresIn: "1h"})
+        }, process.env.JWT_SECRET, {expiresIn: "7d"})
         res.status(200).json({message: 'User logged in successfully.', token, role: userExists.role})
     } catch (err) {
         res.send({message: "server error"})

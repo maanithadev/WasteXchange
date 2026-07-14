@@ -2,19 +2,29 @@ const express = require('express')
 const router = express.Router()
 const multer = require("multer")
 const fs = require("fs")
-const {GoogleGenAI} = require("@google/genai")
+const { GoogleGenAI } = require("@google/genai")
 require("dotenv").config()
 const path = require("path")
-const sellerMiddleware = require("../middleware/sellerMiddle.middleware.js")
+const verifyUser = require("../middleware/verifyUser.middleware.js")
 const WasteListings = require("../models/wasteListings.model.js")
+const User = require("../models/users.model.js")
 
 // get
-router.get("/get-all-waste-listings", sellerMiddleware, async (req, res) => {
+router.get("/get-seller-details", verifyUser, async (req, res) => {
     try {
-        const wasteListings = await WasteListings.find({seller_id: req.token.user_id})
+        const user = await User.findOne({ _id: req.token.user_id })
+        res.json(user)
+    } catch (err) {
+        res.json({ message: err.message })
+    }
+})
+
+router.get("/get-all-waste-listings", verifyUser, async (req, res) => {
+    try {
+        const wasteListings = await WasteListings.find({ seller_id: req.token.user_id })
         res.status(200).json(wasteListings)
     } catch (err) {
-        res.status(500).send({message: err.message})
+        res.status(500).send({ message: err.message })
     }
 })
 
@@ -22,7 +32,7 @@ router.get("/get-all-waste-listings", sellerMiddleware, async (req, res) => {
 // post
 const geminiUpload = multer({
     storage: multer.memoryStorage(),
-    limits: {fileSize: 10 * 1024 * 1024}, // 10MB max
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max
 });
 
 const storage = multer.diskStorage({
@@ -37,16 +47,16 @@ const storage = multer.diskStorage({
 
 const localUpload = multer({
     storage: storage,
-    limits: {fileSize: 10 * 1024 * 1024},
+    limits: { fileSize: 10 * 1024 * 1024 },
 })
 
-router.post("/seller-upload-waste", geminiUpload.single("image"), sellerMiddleware, async (req, res) => {
+router.post("/seller-upload-waste", geminiUpload.single("image"), verifyUser, async (req, res) => {
     try {
         if (!req.file) {
-            return res.status(400).json({message: "No image uploaded"});
+            return res.status(400).json({ message: "No image uploaded" });
         }
 
-        const ai = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY});
+        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
         const PROMPT = `
         You are a waste classification assistant. Your task is to analyze an image of waste material and provide a detailed classification and description based on the visual information.
@@ -74,8 +84,8 @@ If you are unsure about a field, make your best visual estimate rather than leav
                 {
                     role: "user",
                     parts: [
-                        {text: PROMPT},
-                        {inlineData: {mimeType, data: imageBase64}},
+                        { text: PROMPT },
+                        { inlineData: { mimeType, data: imageBase64 } },
                     ],
                 },
             ],
@@ -98,11 +108,11 @@ If you are unsure about a field, make your best visual estimate rather than leav
 
     } catch (err) {
         console.error(err);
-        res.status(500).json({message: "server error", error: err.message});
+        res.status(500).json({ message: "server error", error: err.message });
     }
 })
 
-router.post("/seller-upload-waste-save", localUpload.single("image"), sellerMiddleware, async (req, res) => {
+router.post("/seller-upload-waste-save", localUpload.single("image"), verifyUser, async (req, res) => {
     try {
         const formData = new WasteListings({
             seller_id: req.token.user_id,
@@ -127,10 +137,10 @@ router.post("/seller-upload-waste-save", localUpload.single("image"), sellerMidd
         formData.image = req.file.filename
         await formData.save();
 
-        res.status(200).json({message: "data was saved", formData})
+        res.status(200).json({ message: "data was saved", formData })
 
     } catch (err) {
-        res.status(500).json({message: "server error", error: err.message});
+        res.status(500).json({ message: "server error", error: err.message });
     }
 })
 

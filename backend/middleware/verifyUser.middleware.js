@@ -1,11 +1,14 @@
 const jwt = require("jsonwebtoken");
+const Users = require("../models/users.model.js")
 
-const sellerMiddleware = (req, res, next) => {
+const verifyUser = async (req, res, next) => {
     try {
         const bearerHeader = req.headers['authorization']
         if (typeof bearerHeader != 'undefined') {
             const token = bearerHeader.split(' ')[1]
             const user = jwt.verify(token, process.env.JWT_SECRET)
+            const foundUser = await Users.findById(user.user_id)
+            if (!foundUser) return res.json({ message: 'No user found' })
             req.token = user
             next()
         } else {
@@ -16,4 +19,4 @@ const sellerMiddleware = (req, res, next) => {
     }
 }
 
-module.exports = sellerMiddleware
+module.exports = verifyUser

@@ -3,7 +3,7 @@ import {Link, Outlet, useNavigate} from "react-router-dom";
 const SellerSidebar = () => {
     const navigate = useNavigate();
 
-    function logOut(){
+    function logOut() {
         localStorage.clear()
         navigate("/login")
     }

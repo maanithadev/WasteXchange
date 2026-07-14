@@ -32,10 +32,14 @@ const BuyerMessages = lazy(() => import("./pages/buyers/BuyerMessages.jsx"));
 const BuyerCarbonFootprintDashboard = lazy(() => import("./pages/buyers/BuyerCarbonFootprintDashboard.jsx"));
 const BuyerPayment = lazy(() => import("./pages/buyers/BuyerPayment.jsx"));
 const BuyerSettings = lazy(() => import("./pages/buyers/BuyerSettings.jsx"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage.jsx"));
+const BuyerPaymentSuccess = lazy(() => import("./pages/buyers/BuyerPaymentSuccess.jsx"));
+const BuyerPaymentFailed = lazy(() => import("./pages/buyers/BuyerPaymentFailed.jsx"));
+
 import ProtectedSellerRoutes from "./auth/ProtectedSellerRoutes.jsx";
 import ProtectedBuyerRoutes from "./auth/ProtectedBuyerRoutes.jsx";
-import NotFoundPage from "./pages/NotFoundPage.jsx";
 import Loading from "./components/Loading.jsx";
+import InitiateCheckout from "./pages/buyers/InitiateCheckout.jsx";
 
 const App = () => {
     return (
@@ -81,6 +85,8 @@ const App = () => {
                             <Route path="/buyer/browse-marketplace" element={<BuyerBrowseMarketplace/>}/>
                             <Route path="/buyer/matched-recommendations" element={<BuyerMatchedRecommendations/>}/>
                             <Route path="/buyer/listing-detail/:id" element={<BuyerListingDetail/>}/>
+                            <Route path="/buyer/payment-success" element={<BuyerPaymentSuccess/>}/>
+                            <Route path="/buyer/payment-failed" element={<BuyerPaymentFailed/>}/>
                             <Route path="/buyer/my-orders" element={<BuyerMyOrders/>}/>
                             <Route path="/buyer/messages" element={<BuyerMessages/>}/>
                             <Route path="/buyer/carbon-footprint" element={<BuyerCarbonFootprintDashboard/>}/>
@@ -88,6 +94,7 @@ const App = () => {
                             <Route path="/buyer/settings" element={<BuyerSettings/>}/>
                         </Route>
                     </Route>
+                    <Route path="/initiate-checkout" element={<InitiateCheckout/>}/>
                 </Route>
 
             </Routes>

@@ -2,7 +2,8 @@ const mongoose = require("mongoose");
 
 const wasteListingsSchema = mongoose.Schema({
     seller_id: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users"
     },
     image: {
         type: String,
@@ -16,7 +17,7 @@ const wasteListingsSchema = mongoose.Schema({
     quantity: {
         type: Number
     },
-    unit: {
+    unit: {     // "kg" | "tons" | "liters" etc.
         type: String
     },
     colour: {
@@ -45,7 +46,7 @@ const wasteListingsSchema = mongoose.Schema({
             type: String
         },
     },
-    status: {
+    status: {       // "active" | "pending" | "sold" | "removed" | "flagged"
         type: String
     },
     created_at: {

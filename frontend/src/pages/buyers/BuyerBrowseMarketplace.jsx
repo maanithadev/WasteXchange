@@ -84,7 +84,7 @@ const BuyerBrowseMarketplace = () => {
                     <div className="flex items-center justify-between mb-6">
                         <div>
                             <h1 className="text-2xl font-bold text-slate-900">Browse Marketplace</h1>
-                            <p className="text-sm text-slate-500 mt-1">42 listings found</p>
+                            <p className="text-sm text-slate-500 mt-1">{data.length} listings found</p>
                         </div>
                         <select
                             className="rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">

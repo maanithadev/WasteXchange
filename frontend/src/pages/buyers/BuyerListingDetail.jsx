@@ -1,19 +1,34 @@
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
+import {useCheckoutContext} from "../../contexts/CheckoutContext.jsx";
+import {useVerifyUser} from "../../hooks/useVerifyUser";
 
 const BuyerListingDetail = () => {
     const {id} = useParams()
     const [data, setData] = useState({})
 
+    const {checkoutParams, setCheckoutParams} = useCheckoutContext()
+    const {user} = useVerifyUser();
+    const navigate = useNavigate();
+
     useEffect(() => {
-        async function fetchData() {
+        async function fetchWasteListingData() {
             const res = await axios.get(`http://localhost:3000/api/buyers/get-single-waste-listing/${id}`)
-            setData(res.data[0])
+            setData(res.data)
         }
 
-        fetchData()
+        fetchWasteListingData()
     }, []);
+
+    async function handlePlaceOrder() {
+        const completeDataToSend = {...data, buyer_id: user.user_id}
+        const res = await axios.post(`http://localhost:3000/api/payments/checkout`, {
+            data: completeDataToSend,
+        })
+        setCheckoutParams(res.data)
+        navigate("/initiate-checkout")
+    }
 
     return (
         <>
@@ -55,8 +70,8 @@ const BuyerListingDetail = () => {
                                 <p className="text-xs font-semibold text-blue-700">91% match for your profile</p>
                             </div>
 
-                            <button
-                                className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2.5 rounded-lg mb-2">Place
+                            <button onClick={handlePlaceOrder}
+                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2.5 rounded-lg mb-2 cursor-pointer">Place
                                 Order
                             </button>
                             <button
@@ -71,19 +86,11 @@ const BuyerListingDetail = () => {
                                 <img src="https://placehold.co/48x48" className="w-12 h-12 rounded-full object-cover"
                                      alt="Green Metals Co."/>
                                 <div>
-                                    <p className="text-sm font-semibold text-slate-900">Green Metals Co.</p>
+                                    <p className="text-sm font-semibold text-slate-900">{data.seller_id?.company_name}</p>
                                     <p className="text-xs text-slate-500">Verified Seller</p>
                                 </div>
                             </div>
                             <ul className="text-sm text-slate-600 space-y-2">
-                                <li className="flex items-center gap-2">
-                                    <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
-                                         viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                    </svg>
-                                    1200 Industrial Way, Newark, NJ
-                                </li>
                                 <li className="flex items-center gap-2">
                                     <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
                                          viewBox="0 0 24 24">

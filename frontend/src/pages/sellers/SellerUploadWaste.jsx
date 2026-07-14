@@ -7,6 +7,7 @@ const SellerUploadWaste = () => {
     const wasteCategories = ["Construction", "Metals", "Wood"]
     const units = ["kg", "tons", "lbs", "units", "m3"]
     const currency = ["LKR", "$"]
+    const status = ["Active", "Pending", "Draft"]
     const navigate = useNavigate()
 
     const [data, setData] = useState({})
@@ -62,7 +63,6 @@ const SellerUploadWaste = () => {
             }).join("")
             setData({...result, description: updatedDescription})
             setCurrentStep("step2")
-            console.log(result)
         } catch (err) {
             console.error("Error:", err);
         }
@@ -247,9 +247,9 @@ const SellerUploadWaste = () => {
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Status</label>
                                     <select
                                         className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("status")}>
-                                        <option value="Active">Active</option>
-                                        <option value="Draft">Draft</option>
-                                        <option value="Pending">Pending</option>
+                                        {status.map((item, index) => (
+                                            <option key={index} value={item}>{item}</option>
+                                        ))}
                                     </select>
                                 </div>
                             </div>

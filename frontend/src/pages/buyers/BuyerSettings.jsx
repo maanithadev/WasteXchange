@@ -1,5 +1,51 @@
+import {useEffect, useState} from "react";
+import axios from "axios";
+import {useForm} from "react-hook-form";
 
 const BuyerSettings = () => {
+    const [data, setData] = useState([]);
+
+    const {register, handleSubmit} = useForm({
+        values: {
+            company_name: data.company_name,
+            phone_number: data.phone_number,
+            address: {
+                street: data.address?.street,
+                city: data.address?.city,
+                state: data.address?.state,
+                postal_code: data.address?.postal_code,
+                country: data.address?.country,
+            },
+        }
+    });
+
+    useEffect(() => {
+        async function loadbuyer() {
+            const res = await axios.get("http://localhost:3000/api/buyers/get-buyer-details", {
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                }
+            });
+            setData(res.data);
+        }
+
+        loadbuyer()
+    }, []);
+
+    async function onSubmit(data) {
+        try {
+            const res = await axios.put("http://localhost:3000/api/buyers/update-buyer-details",
+                {data},
+                {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                    }
+                })
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
+
     return (
         <>
             {/* <!-- PROFILE / ACCOUNT SETTINGS PAGE (BUYER) --> */}
@@ -10,36 +56,60 @@ const BuyerSettings = () => {
                 </div>
 
                 <div class="max-w-2xl space-y-6">
-                    <form class="bg-white rounded-xl border border-slate-200 p-6 space-y-5">
-                        <h2 class="text-lg font-semibold text-slate-900">Company Information</h2>
-
-                        <div class="flex items-center gap-4">
-                            <img src="https://placehold.co/64x64" class="w-16 h-16 rounded-full object-cover" alt="Company avatar" />
-                            <button type="button" class="text-xs font-medium border border-slate-300 text-slate-700 rounded-lg px-3 py-2 hover:bg-slate-50">Change Logo</button>
+                    <form className="bg-white rounded-xl border border-slate-200 p-6 space-y-5"
+                          onSubmit={handleSubmit(onSubmit)}>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-2">Company Name</label>
+                            <input type="text" placeholder="Your company name"
+                                   className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("company_name")}/>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Company Name</label>
-                            <input type="text" value="EcoPlast Industries" class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            <label className="block text-sm font-medium text-slate-700 mb-2">Phone Number</label>
+                            <input type="tel" placeholder="+1 (555) 000-0000"
+                                   className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("phone_number")}/>
                         </div>
 
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Contact Email</label>
-                            <input type="email" value="contact@ecoplastind.com" class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        <hr/>
+
+                        <div className="flex flex-col gap-2">
+                            <label className="block text-sm font-medium text-slate-700">Address,</label>
+                            {/* <input type="text" placeholder="e.g. 1200 Industrial Way, Newark, NJ" className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" /> */}
+                            <div className="flex justify-start items-center gap-3">
+                                <label className="block text-sm font-medium text-slate-700">Street</label>
+                                <input type="text"
+                                       className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("address.street")} />
+                            </div>
+                            <div className="flex justify-start items-center gap-3">
+                                <label className="block text-sm font-medium text-slate-700">City</label>
+                                <input type="text"
+                                       className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("address.city")} />
+                            </div>
+                            <div className="flex justify-start items-center gap-3">
+                                <label className="block text-sm font-medium text-slate-700">State</label>
+                                <input type="text"
+                                       className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("address.state")} />
+                            </div>
+                            <div className="flex justify-start items-center gap-3 w-full">
+                                <label className="block min-w-19 text-sm font-medium text-slate-700">Postal
+                                    Code</label>
+                                <input type="text"
+                                       className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("address.postal_code")} />
+                            </div>
+                            <div className="flex justify-start items-center gap-3 w-full">
+                                <label className="block text-sm font-medium text-slate-700 mb-2">Country</label>
+                                <select
+                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("address.country")}>
+                                    <option>Sri Lanka</option>
+                                </select>
+                            </div>
                         </div>
 
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Phone</label>
-                            <input type="tel" value="+1 (555) 987-6543" class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Address</label>
-                            <input type="text" value="88 Recycling Blvd, Camden, NJ 08102" class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                        </div>
-
-                        <div class="flex justify-end pt-2">
-                            <button type="submit" class="px-5 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700">Save Changes</button>
+                        <div className="flex justify-end pt-2">
+                            <button type="submit"
+                                    className="px-5 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700">Update
+                                Details
+                            </button>
                         </div>
                     </form>
 
@@ -48,21 +118,27 @@ const BuyerSettings = () => {
 
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-2">Current Password</label>
-                            <input type="password" placeholder="••••••••" class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            <input type="password" placeholder="••••••••"
+                                   class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-2">New Password</label>
-                            <input type="password" placeholder="••••••••" class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            <input type="password" placeholder="••••••••"
+                                   class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-2">Confirm New Password</label>
-                            <input type="password" placeholder="••••••••" class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            <input type="password" placeholder="••••••••"
+                                   class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
                         </div>
 
                         <div class="flex justify-end pt-2">
-                            <button type="submit" class="px-5 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700">Update Password</button>
+                            <button type="submit"
+                                    class="px-5 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700">Update
+                                Password
+                            </button>
                         </div>
                     </form>
                 </div>
