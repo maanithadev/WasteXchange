@@ -13,6 +13,12 @@ const ordersSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "users"
     },
+    cyberSourceTransaction_id: {
+        // Traces this order back to the accepted CyberSource response it was
+        // created from, without needing to join through "payments" first.
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "cybersourceTransactions"
+    },
     quantity: {
         type: Number
     },

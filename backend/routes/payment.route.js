@@ -34,11 +34,13 @@ router.get("/seller-simple-info", verifyUser, async (req, res) => {
 // post
 // global variable
 let transaction_Data = null
+let saved_payment_id = null
 
 // Checkout page: builds the CyberSource payment form and redirects the user
 router.post('/checkout', (req, res) => {
     try {
         transaction_Data = req.body.data
+        // console.log(transaction_Data)
         const { price, currency } = req.body.data
 
         // // Build the payment parameters to send to CyberSource
@@ -72,29 +74,31 @@ router.post('/payment/response', async (req, res) => {
             return res.status(400).send('Invalid signature — possible tampering detected.');
         }
 
-        const Cybersource_Transaction_saveData = new Cybersource_Transactions(data);
-        await Cybersource_Transaction_saveData.save();
-
-        const Payment_saveData = new Payments({
-            order_id: data.req_reference_number,
-            transaction_id: data.transaction_id || "",
-            seller_id: transaction_Data?.seller_id?._id,
-            buyer_id: transaction_Data.buyer_id,
-            total_price: transaction_Data.price,
-            currency: transaction_Data.currency,
-            payment_method: data.req_payment_method,
-            payment_status: data.decision === "ACCEPT" ? "completed" : "failed",
-            cyberSource_ref: data.request_token || "",
-            created_at: data.signed_date_time,
-        })
-        await Payment_saveData.save();
-        createNotifications({
-            user_id: transaction_Data.buyer_id,
-            type: "payment",
-            title: "payment success",
-            message: "your payment has been successfull",
+        const cybersource_Transaction_saveData = new Cybersource_Transactions({
+            decision: data.decision,
+            processed: true,
+            raw_response: data,
             created_at: data.signed_date_time
-        })
+        });
+        const saved_Cybersource_Transaction = await cybersource_Transaction_saveData.save();
+
+        const payment_Status_Save = async (orderId) => {
+            const Payment_saveData = new Payments({
+                order_id: orderId || "",
+                seller_id: transaction_Data.seller_id?._id,
+                buyer_id: transaction_Data.buyer_id,
+                cyberSourceTransaction_id: saved_Cybersource_Transaction._id,
+                transaction_id: data.transaction_id || "",
+                total_price: transaction_Data.price,
+                currency: transaction_Data.currency,
+                payment_method: data.req_payment_method,
+                payment_status: data.decision === "ACCEPT" ? "completed" : "failed",
+                created_at: data.signed_date_time,
+            })
+            const saved_payment = await Payment_saveData.save();
+            saved_payment_id = saved_payment._id
+            return saved_payment
+        }
 
         // Redirect the user's browser to the React success page
         const decision = data.decision;
@@ -104,6 +108,7 @@ router.post('/payment/response', async (req, res) => {
                     wasteListings_id: transaction_Data._id,
                     seller_id: transaction_Data?.seller_id?._id,
                     buyer_id: transaction_Data.buyer_id,
+                    cyberSourceTransaction_id: saved_Cybersource_Transaction._id,
                     quantity: transaction_Data.quantity,
                     unit: transaction_Data.unit,
                     total_price: transaction_Data.price,
@@ -114,18 +119,45 @@ router.post('/payment/response', async (req, res) => {
                     created_at: data.signed_date_time,
                     updated_at: data.signed_date_time,
                 })
-                await Order_saveData.save();
+                const saved_Order = await Order_saveData.save();
+                payment_Status_Save(saved_Order._id)
+
+                // buyer notification
                 createNotifications({
                     user_id: transaction_Data.buyer_id,
+                    reference_id: saved_Order._id,
                     type: "order",
                     title: "order pending",
                     message: "your order has been placed successfully",
                     created_at: data.signed_date_time
                 })
-                return res.redirect(`http://localhost:5173/buyer/payment-success`);
-            case "CANCEL":
                 createNotifications({
                     user_id: transaction_Data.buyer_id,
+                    reference_id: saved_payment_id,
+                    type: "payment",
+                    title: "payment success",
+                    message: "your payment has been successfull",
+                    created_at: data.signed_date_time
+                })
+
+                // seller notification
+                createNotifications({
+                    user_id: transaction_Data?.seller_id?._id,
+                    reference_id: saved_Order._id,
+                    type: "order",
+                    title: "order pending",
+                    message: "you have a new order",
+                    created_at: data.signed_date_time
+                })
+
+                return res.redirect(`http://localhost:5173/buyer/payment-success`);
+            case "CANCEL":
+                const payment_data = payment_Status_Save()
+
+                // buyer notification
+                createNotifications({
+                    user_id: transaction_Data.buyer_id,
+                    reference_id: payment_data._id,
                     type: "payment",
                     title: "payment cancelled",
                     message: "your payment has been cancelled",
