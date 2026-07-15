@@ -34,7 +34,7 @@ const BuyerSettings = () => {
 
     async function onSubmit(data) {
         try {
-            const res = await axios.put("http://localhost:3000/api/buyers/update-buyer-details",
+            await axios.put("http://localhost:3000/api/buyers/update-buyer-details",
                 {data},
                 {
                     headers: {
