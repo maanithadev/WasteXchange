@@ -1,5 +1,6 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const BuyerMyOrders = () => {
     const [data, setData] = useState([]);
@@ -29,37 +30,39 @@ const BuyerMyOrders = () => {
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <thead>
-                            <tr class="bg-slate-50 border-b border-slate-200">
-                                <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Seller</th>
-                                <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Waste
-                                    Item
-                                </th>
-                                <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Quantity</th>
-                                <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Order
-                                    Date
-                                </th>
-                                <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Status</th>
-                                <th class="text-right font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Actions</th>
-                            </tr>
+                                <tr class="bg-slate-50 border-b border-slate-200">
+                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Seller</th>
+                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Waste
+                                        Item
+                                    </th>
+                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Quantity</th>
+                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Order
+                                        Date
+                                    </th>
+                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Status</th>
+                                    <th class="text-right font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Actions</th>
+                                </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
-                            {data.map((item, index) => (
-                                <tr key={index}>
-                                    <td className="px-6 py-4 font-medium text-slate-800">{item.seller_id?.company_name}</td>
-                                    <td className="px-6 py-4 text-slate-600">{item.wasteListings_id?.title}</td>
-                                    <td className="px-6 py-4 text-slate-600">{item.quantity} {item.unit}</td>
-                                    <td className="px-6 py-4 text-slate-600">{item.ordered_date}</td>
-                                    <td className="px-6 py-4"><span
-                                        className="text-xs font-semibold bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full">{item.status.toUpperCase()}</span>
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <button
-                                            className="text-xs font-medium border border-slate-300 text-slate-700 rounded-lg px-3 py-1.5 hover:bg-slate-50">Track
-                                            Order
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
+                                {data.map((item, index) => (
+                                    <tr key={index}>
+                                        <td className="px-6 py-4 font-medium text-slate-800">{item.seller_id?.company_name}</td>
+                                        <td className="px-6 py-4 text-slate-600">{item.wasteListings_id?.title}</td>
+                                        <td className="px-6 py-4 text-slate-600">{item.quantity} {item.unit}</td>
+                                        <td className="px-6 py-4 text-slate-600">{item.ordered_date}</td>
+                                        <td className="px-6 py-4"><span
+                                            className="text-xs font-semibold bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full">{item.status.toUpperCase()}</span>
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            <Link to={`/buyer/track-order/${1}`}>
+                                                <button
+                                                    className="text-xs font-medium border border-slate-300 text-slate-700 rounded-lg px-3 py-1.5 hover:bg-slate-50">Track
+                                                    Order
+                                                </button>
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>

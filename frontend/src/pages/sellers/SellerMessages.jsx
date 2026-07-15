@@ -3,9 +3,9 @@ const SellerMessages = () => {
     return (
         <>
             {/* <!-- MESSAGES / CHAT PAGE (SELLER VIEW) --> */}
-            <main class="flex-1 bg-slate-50 min-h-screen flex">
+            <main className="flex-1 bg-slate-50 h-[calc(100vh-4rem)] flex overflow-hidden">
                 {/* <!-- Conversation list --> */}
-                <div class="w-80 bg-white border-r border-slate-200 flex flex-col shrink-0">
+                <div className="w-80 bg-white border-r border-slate-200 flex flex-col shrink-0">
                     <div class="p-4 border-b border-slate-200">
                         <h2 class="text-lg font-bold text-slate-900">Messages</h2>
                         <input type="text" placeholder="Search conversations..." class="mt-3 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
@@ -34,14 +34,6 @@ const SellerMessages = () => {
                                 <p class="text-xs text-slate-500 truncate">Thanks for the quick delivery!</p>
                             </div>
                             <span class="text-xs text-slate-400 shrink-0">1d</span>
-                        </li>
-                        <li class="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 cursor-pointer">
-                            <img src="https://placehold.co/40x40" class="w-10 h-10 rounded-full object-cover" alt="Renew Plastics Co." />
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm font-semibold text-slate-900 truncate">Renew Plastics Co.</p>
-                                <p class="text-xs text-slate-500 truncate">Is the 150kg batch still available?</p>
-                            </div>
-                            <span class="text-xs text-slate-400 shrink-0">3d</span>
                         </li>
                     </ul>
                 </div>
@@ -79,8 +71,26 @@ const SellerMessages = () => {
                         </div>
                         <div class="flex justify-end">
                             <div class="max-w-xs bg-emerald-600 rounded-2xl rounded-br-sm px-4 py-2.5">
-                                <p class="text-sm text-white">Around 98% purity, minimal contamination. I can send photos.</p>
-                                <p class="text-[10px] text-emerald-100 mt-1">10:09 AM</p>
+                                <p class="text-sm text-white">Yes, we have 500kg ready for pickup this week.</p>
+                                <p class="text-[10px] text-emerald-100 mt-1">10:05 AM</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-start">
+                            <div class="max-w-xs bg-white border border-slate-200 rounded-2xl rounded-bl-sm px-4 py-2.5">
+                                <p class="text-sm text-slate-800">Perfect. What's the purity level on the pellets?</p>
+                                <p class="text-[10px] text-slate-400 mt-1">10:07 AM</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-end">
+                            <div class="max-w-xs bg-emerald-600 rounded-2xl rounded-br-sm px-4 py-2.5">
+                                <p class="text-sm text-white">Yes, we have 500kg ready for pickup this week.</p>
+                                <p class="text-[10px] text-emerald-100 mt-1">10:05 AM</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-start">
+                            <div class="max-w-xs bg-white border border-slate-200 rounded-2xl rounded-bl-sm px-4 py-2.5">
+                                <p class="text-sm text-slate-800">Perfect. What's the purity level on the pellets?</p>
+                                <p class="text-[10px] text-slate-400 mt-1">10:07 AM</p>
                             </div>
                         </div>
                         <div class="flex justify-start">

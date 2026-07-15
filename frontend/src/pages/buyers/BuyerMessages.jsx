@@ -3,7 +3,7 @@ const BuyerMessages = () => {
     return (
         <>
             {/* <!-- MESSAGES / CHAT PAGE (BUYER VIEW) --> */}
-            <main class="flex-1 bg-slate-50 flex">
+            <main className="flex-1 bg-slate-50 h-[calc(100vh-4rem)] flex overflow-hidden">
                 {/* <!-- Conversation list --> */}
                 <div class="w-80 bg-white border-r border-slate-200 flex flex-col shrink-0">
                     <div class="p-4 border-b border-slate-200">
@@ -35,28 +35,22 @@ const BuyerMessages = () => {
                             </div>
                             <span class="text-xs text-slate-400 shrink-0">1d</span>
                         </li>
-                        <li class="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 cursor-pointer">
-                            <img src="https://placehold.co/40x40" class="w-10 h-10 rounded-full object-cover" alt="CircuitCycle Ltd." />
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm font-semibold text-slate-900 truncate">CircuitCycle Ltd.</p>
-                                <p class="text-xs text-slate-500 truncate">Can you send the pickup address?</p>
-                            </div>
-                            <span class="text-xs text-slate-400 shrink-0">3d</span>
-                        </li>
                     </ul>
                 </div>
 
                 {/* <!-- Chat window --> */}
                 <div className="flex-1 flex flex-col">
+                    {/* <!-- Chat header --> */}
                     <div className="h-16 flex items-center gap-3 px-6 border-b border-slate-200 bg-white">
                         <img src="https://placehold.co/36x36" class="w-9 h-9 rounded-full object-cover"
-                             alt="Green Metals Co."/>
+                            alt="Green Metals Co." />
                         <div>
                             <p class="text-sm font-semibold text-slate-900">Green Metals Co.</p>
                             <p class="text-xs text-emerald-600">Online</p>
                         </div>
                     </div>
 
+                    {/* <!-- Messages --> */}
                     <div className="flex-1 overflow-y-auto p-6 space-y-4 overflow-y-auto">
                         <div className="flex justify-start">
                             <div
@@ -86,6 +80,19 @@ const BuyerMessages = () => {
                                 <p class="text-[10px] text-blue-100 mt-1">10:09 AM</p>
                             </div>
                         </div>
+                        <div className="flex justify-end">
+                            <div className="max-w-xs bg-blue-600 rounded-2xl rounded-br-sm px-4 py-2.5">
+                                <p class="text-sm text-white">Yes, we have 500kg ready for pickup this week.</p>
+                                <p class="text-[10px] text-blue-100 mt-1">10:05 AM</p>
+                            </div>
+                        </div>
+                        <div className="flex justify-start">
+                            <div
+                                className="max-w-xs bg-white border border-slate-200 rounded-2xl rounded-bl-sm px-4 py-2.5">
+                                <p class="text-sm text-slate-800">Perfect. What's the purity level on the pellets?</p>
+                                <p class="text-[10px] text-slate-400 mt-1">10:07 AM</p>
+                            </div>
+                        </div>
                         <div className="flex justify-start">
                             <div
                                 className="max-w-xs bg-white border border-slate-200 rounded-2xl rounded-bl-sm px-4 py-2.5">
@@ -95,20 +102,21 @@ const BuyerMessages = () => {
                         </div>
                     </div>
 
+                    {/* <!-- Message input bar --> */}
                     <div className="border-t border-slate-200 bg-white p-4 flex items-center gap-3">
                         <button className="text-slate-400 hover:text-slate-600">
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
                             </svg>
                         </button>
                         <input type="text" placeholder="Type a message..."
-                               className="flex-1 rounded-full border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+                            className="flex-1 rounded-full border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                         <button
                             className="bg-blue-600 hover:bg-blue-700 text-white rounded-full w-10 h-10 flex items-center justify-center shrink-0">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                             </svg>
                         </button>
                     </div>

@@ -1,5 +1,5 @@
-import {lazy, Suspense} from "react"
-import {Route, Routes} from "react-router-dom";
+import { lazy, Suspense } from "react"
+import { Route, Routes } from "react-router-dom";
 
 const GuestsHome = lazy(() => import("./pages/guests/GuestsHome.jsx"));
 const GuestsNavbar = lazy(() => import("./components/guests/GuestsNavbar.jsx"));
@@ -28,6 +28,7 @@ const BuyerBrowseMarketplace = lazy(() => import("./pages/buyers/BuyerBrowseMark
 const BuyerListingDetail = lazy(() => import("./pages/buyers/BuyerListingDetail.jsx"));
 const BuyerMatchedRecommendations = lazy(() => import("./pages/buyers/BuyerMatchedRecommendations.jsx"));
 const BuyerMyOrders = lazy(() => import("./pages/buyers/BuyerMyOrders.jsx"));
+const BuyerTrackOrder = lazy(() => import("./pages/buyers/BuyerTrackOrder.jsx"));
 const BuyerMessages = lazy(() => import("./pages/buyers/BuyerMessages.jsx"));
 const BuyerCarbonFootprintDashboard = lazy(() => import("./pages/buyers/BuyerCarbonFootprintDashboard.jsx"));
 const BuyerPayment = lazy(() => import("./pages/buyers/BuyerPayment.jsx"));
@@ -43,58 +44,59 @@ import InitiateCheckout from "./pages/buyers/InitiateCheckout.jsx";
 
 const App = () => {
     return (
-        <Suspense fallback={<Loading/>}>
+        <Suspense fallback={<Loading />}>
             <Routes>
 
                 {/*guests*/}
-                <Route element={<GuestsNavbar/>}>
-                    <Route element={<GuestsFooter/>}>
-                        <Route path="/" element={<GuestsHome/>}/>
-                        <Route path="/browse-marketplace" element={<GuestsBrowseMarketplace/>}/>
-                        <Route path="/listing-detail" element={<GuestsListingDetail/>}/>
-                        <Route path="/about" element={<GuestsAbout/>}/>
-                        <Route path="/login" element={<GuestsLogin/>}/>
-                        <Route path="/signup" element={<GuestsSignup/>}/>
-                        <Route path="/contact" element={<GuestsContact/>}/>
-                        <Route path="*" element={<NotFoundPage/>}/>
+                <Route element={<GuestsNavbar />}>
+                    <Route element={<GuestsFooter />}>
+                        <Route path="/" element={<GuestsHome />} />
+                        <Route path="/browse-marketplace" element={<GuestsBrowseMarketplace />} />
+                        <Route path="/listing-detail" element={<GuestsListingDetail />} />
+                        <Route path="/about" element={<GuestsAbout />} />
+                        <Route path="/login" element={<GuestsLogin />} />
+                        <Route path="/signup" element={<GuestsSignup />} />
+                        <Route path="/contact" element={<GuestsContact />} />
+                        <Route path="*" element={<NotFoundPage />} />
                     </Route>
                 </Route>
 
                 {/*sellers*/}
-                <Route element={<ProtectedSellerRoutes/>}>
-                    <Route element={<SellerSidebar/>}>
-                        <Route element={<SellerNavbar/>}>
-                            <Route path="/seller/dashboard" element={<SellerDashboard/>}/>
-                            <Route path="/seller/upload-waste" element={<SellerUploadWaste/>}/>
-                            <Route path="/seller/my-listings" element={<SellerMyListings/>}/>
-                            <Route path="/seller/listing-matches" element={<SellerListingStatus/>}/>
-                            <Route path="/seller/orders-received" element={<SellerOrdersReceived/>}/>
-                            <Route path="/seller/messages" element={<SellerMessages/>}/>
-                            <Route path="/seller/carbon-footprint" element={<SellerCarbonFootprintDashboard/>}/>
-                            <Route path="/seller/payments" element={<SellerEarnings/>}/>
-                            <Route path="/seller/settings" element={<SellerSettings/>}/>
+                <Route element={<ProtectedSellerRoutes />}>
+                    <Route element={<SellerSidebar />}>
+                        <Route element={<SellerNavbar />}>
+                            <Route path="/seller/dashboard" element={<SellerDashboard />} />
+                            <Route path="/seller/upload-waste" element={<SellerUploadWaste />} />
+                            <Route path="/seller/my-listings" element={<SellerMyListings />} />
+                            <Route path="/seller/listing-matches" element={<SellerListingStatus />} />
+                            <Route path="/seller/orders-received" element={<SellerOrdersReceived />} />
+                            <Route path="/seller/messages" element={<SellerMessages />} />
+                            <Route path="/seller/carbon-footprint" element={<SellerCarbonFootprintDashboard />} />
+                            <Route path="/seller/payments" element={<SellerEarnings />} />
+                            <Route path="/seller/settings" element={<SellerSettings />} />
                         </Route>
                     </Route>
                 </Route>
 
                 {/*buyers*/}
-                <Route element={<ProtectedBuyerRoutes/>}>
-                    <Route element={<BuyerSidebar/>}>
-                        <Route element={<BuyerNavbar/>}>
-                            <Route path="/buyer/dashboard" element={<BuyerDashboard/>}/>
-                            <Route path="/buyer/browse-marketplace" element={<BuyerBrowseMarketplace/>}/>
-                            <Route path="/buyer/matched-recommendations" element={<BuyerMatchedRecommendations/>}/>
-                            <Route path="/buyer/listing-detail/:id" element={<BuyerListingDetail/>}/>
-                            <Route path="/buyer/payment-success" element={<BuyerPaymentSuccess/>}/>
-                            <Route path="/buyer/payment-failed" element={<BuyerPaymentFailed/>}/>
-                            <Route path="/buyer/my-orders" element={<BuyerMyOrders/>}/>
-                            <Route path="/buyer/messages" element={<BuyerMessages/>}/>
-                            <Route path="/buyer/carbon-footprint" element={<BuyerCarbonFootprintDashboard/>}/>
-                            <Route path="/buyer/checkout" element={<BuyerPayment/>}/>
-                            <Route path="/buyer/settings" element={<BuyerSettings/>}/>
+                <Route element={<ProtectedBuyerRoutes />}>
+                    <Route element={<BuyerSidebar />}>
+                        <Route element={<BuyerNavbar />}>
+                            <Route path="/buyer/dashboard" element={<BuyerDashboard />} />
+                            <Route path="/buyer/browse-marketplace" element={<BuyerBrowseMarketplace />} />
+                            <Route path="/buyer/matched-recommendations" element={<BuyerMatchedRecommendations />} />
+                            <Route path="/buyer/listing-detail/:id" element={<BuyerListingDetail />} />
+                            <Route path="/buyer/payment-success" element={<BuyerPaymentSuccess />} />
+                            <Route path="/buyer/payment-failed" element={<BuyerPaymentFailed />} />
+                            <Route path="/buyer/my-orders" element={<BuyerMyOrders />} />
+                            <Route path="/buyer/track-order/:id" element={<BuyerTrackOrder />} />
+                            <Route path="/buyer/messages" element={<BuyerMessages />} />
+                            <Route path="/buyer/carbon-footprint" element={<BuyerCarbonFootprintDashboard />} />
+                            <Route path="/buyer/payments" element={<BuyerPayment />} />
+                            <Route path="/buyer/settings" element={<BuyerSettings />} />
                         </Route>
                     </Route>
-                    <Route path="/initiate-checkout" element={<InitiateCheckout/>}/>
+                    <Route path="/initiate-checkout" element={<InitiateCheckout />} />
                 </Route>
 
             </Routes>
