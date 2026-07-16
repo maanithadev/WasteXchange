@@ -1,28 +1,33 @@
-import {Link, Outlet} from "react-router-dom";
-import {useVerifyUser} from "../../hooks/useVerifyUser.jsx";
+import { Link, Navigate, Outlet } from "react-router-dom";
+import { useVerifyUser } from "../../hooks/useVerifyUser.jsx";
 
 const GuestsNavbar = () => {
-    const {user} = useVerifyUser()
+    const { user } = useVerifyUser()
 
     function displayBtns() {
         switch (user?.role) {
             case "seller":
                 return (
                     <Link to="/seller/dashboard"
-                          class="text-sm font-medium text-slate-700 border border-slate-300 rounded-lg px-4 py-2 hover:bg-slate-50">Dashboard</Link>
+                        class="text-sm font-medium text-slate-700 border border-slate-300 rounded-lg px-4 py-2 hover:bg-slate-50">Dashboard</Link>
                 )
             case "buyer":
                 return (
                     <Link to="/buyer/dashboard"
-                          class="text-sm font-medium text-slate-700 border border-slate-300 rounded-lg px-4 py-2 hover:bg-slate-50">Dashboard</Link>
+                        class="text-sm font-medium text-slate-700 border border-slate-300 rounded-lg px-4 py-2 hover:bg-slate-50">Dashboard</Link>
+                )
+            case "admin":
+                return (
+                    <button onClick={() => window.location.href = "http://localhost:5174/admin/dashboard"}
+                        class="text-sm font-medium text-slate-700 border border-slate-300 rounded-lg px-4 py-2 hover:bg-slate-50">Dashboard</button>
                 )
             default:
                 return (
                     <>
                         <Link to="/login"
-                              class="text-sm font-medium text-slate-700 border border-slate-300 rounded-lg px-4 py-2 hover:bg-slate-50">Login</Link>
+                            class="text-sm font-medium text-slate-700 border border-slate-300 rounded-lg px-4 py-2 hover:bg-slate-50">Login</Link>
                         <Link to="/signup"
-                              class="text-sm font-medium text-white bg-emerald-600 rounded-lg px-4 py-2 hover:bg-emerald-700">Sign
+                            class="text-sm font-medium text-white bg-emerald-600 rounded-lg px-4 py-2 hover:bg-emerald-700">Sign
                             Up</Link>
                     </>
                 )
@@ -44,7 +49,7 @@ const GuestsNavbar = () => {
                         <Link to="#" class="text-sm font-medium text-slate-600 hover:text-slate-900">How It Works</Link>
                         <Link to="/about" class="text-sm font-medium text-slate-600 hover:text-slate-900">About</Link>
                         <Link to="/contact"
-                              class="text-sm font-medium text-slate-600 hover:text-slate-900">Contact</Link>
+                            class="text-sm font-medium text-slate-600 hover:text-slate-900">Contact</Link>
                     </nav>
                 </div>
 
@@ -53,7 +58,7 @@ const GuestsNavbar = () => {
                 </div>
             </header>
 
-            <Outlet/>
+            <Outlet />
         </>
     )
 }

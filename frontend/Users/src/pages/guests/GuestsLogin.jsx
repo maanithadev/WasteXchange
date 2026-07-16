@@ -1,9 +1,19 @@
-import {useForm} from "react-hook-form";
+import { useForm } from "react-hook-form";
 import axios from "axios";
-import {Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const GuestsLogin = () => {
-    const {register, handleSubmit} = useForm({
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get("logout") === "true") {
+            localStorage.clear();
+            window.history.replaceState({}, document.title, window.location.pathname);
+            window.location.reload();
+        }
+    }, []);
+
+    const { register, handleSubmit } = useForm({
         defaultValues: {
             email: "",
             password: "",
@@ -29,12 +39,15 @@ const GuestsLogin = () => {
                 case "buyer":
                     navigate("/buyer/dashboard");
                     break
+                case "admin":
+                    window.location.href = `http://localhost:5174/admin/dashboard?token=${res.data.token}`;
+                    break
                 default:
                     navigate("/login");
                     break
             }
         } catch
-            (err) {
+        (err) {
             console.log(err.message);
         }
     }
@@ -55,7 +68,7 @@ const GuestsLogin = () => {
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
                                 <input type="email" placeholder="you@company.com"
-                                       class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register('email')} />
+                                    class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register('email')} />
                             </div>
 
                             <div>
@@ -65,11 +78,11 @@ const GuestsLogin = () => {
                                         Password?</a>
                                 </div>
                                 <input type="password" placeholder="••••••••"
-                                       class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register('password')}/>
+                                    class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register('password')} />
                             </div>
 
                             <button type="submit"
-                                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold py-2.5 rounded-lg">Log
+                                class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold py-2.5 rounded-lg">Log
                                 In
                             </button>
                         </form>
