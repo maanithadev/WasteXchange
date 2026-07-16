@@ -7,7 +7,7 @@ export function useVerifyUser() {
 
     const urlParams = new URLSearchParams(window.location.search);
     const urlToken = urlParams.get('token');
-    
+
     if (urlToken) {
         localStorage.setItem("token", urlToken);
         window.history.replaceState({}, document.title, window.location.pathname);
@@ -24,7 +24,6 @@ export function useVerifyUser() {
                             Authorization: `Bearer ${token}`
                         }
                     })
-                    console.log(res.data)
                     setUser(res.data)
                     setLoading(false)
                 } else {

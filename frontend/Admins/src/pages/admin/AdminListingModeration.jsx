@@ -1,5 +1,21 @@
+import { useEffect, useState } from "react"
+import axios from "axios"
 
 const AdminListingModeration = () => {
+    const [data, setData] = useState([])
+    useEffect(() => {
+        async function fetchData() {
+            const res = await axios.get("http://localhost:3000/api/wastelistings/get-all-wastelistings", {
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                }
+            })
+            setData(res.data)
+        }
+        fetchData()
+    }, [])
+    console.log(data)
+
     return (
         <>
             {/* <!-- LISTING MODERATION PAGE --> */}
@@ -16,88 +32,33 @@ const AdminListingModeration = () => {
                                 <tr class="bg-slate-50 border-b border-slate-200">
                                     <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Listing</th>
                                     <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Seller</th>
-                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Flag Reason</th>
+                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Price</th>
                                     <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Submitted</th>
                                     <th class="text-right font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
-                                <tr>
-                                    <td class="px-6 py-3.5">
-                                        <div class="flex items-center gap-3">
-                                            <img src="https://placehold.co/48x48" class="w-10 h-10 rounded-lg object-cover" alt="Industrial Solvent Drums" />
-                                            <div>
-                                                <p class="font-medium text-slate-800">Industrial Solvent Drums</p>
-                                                <p class="text-xs text-slate-400">Chemicals</p>
+                                {data.map((item, index) => (
+                                    <tr key={index}>
+                                        <td class="px-6 py-3.5">
+                                            <div class="flex items-center gap-3">
+                                                <img src={`http://localhost:3000/images/${item.image}`} class="w-10 h-10 rounded-lg object-cover" alt="Industrial Solvent Drums" />
+                                                <div>
+                                                    <p class="font-medium text-slate-800">{item.title}</p>
+                                                    <p class="text-xs text-slate-400">{item.category}</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-3.5 text-slate-600">Site Clear Corp.</td>
-                                    <td class="px-6 py-3.5"><span class="text-xs font-semibold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">Hazardous Material Concern</span></td>
-                                    <td class="px-6 py-3.5 text-slate-500">Jul 8, 2026</td>
-                                    <td class="px-6 py-3.5 text-right space-x-1 whitespace-nowrap">
-                                        <button class="text-xs font-medium bg-emerald-600 text-white rounded-md px-2.5 py-1 hover:bg-emerald-700">Approve</button>
-                                        <button class="text-xs font-medium bg-red-600 text-white rounded-md px-2.5 py-1 hover:bg-red-700">Reject</button>
-                                        <button class="text-xs font-medium border border-slate-300 text-slate-600 rounded-md px-2.5 py-1 hover:bg-slate-50">View</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3.5">
-                                        <div class="flex items-center gap-3">
-                                            <img src="https://placehold.co/48x48" class="w-10 h-10 rounded-lg object-cover" alt="Mixed Plastic Bales" />
-                                            <div>
-                                                <p class="font-medium text-slate-800">Mixed Plastic Bales</p>
-                                                <p class="text-xs text-slate-400">Plastics</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-3.5 text-slate-600">PolyRecover Inc.</td>
-                                    <td class="px-6 py-3.5"><span class="text-xs font-semibold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">Misleading Photos</span></td>
-                                    <td class="px-6 py-3.5 text-slate-500">Jul 8, 2026</td>
-                                    <td class="px-6 py-3.5 text-right space-x-1 whitespace-nowrap">
-                                        <button class="text-xs font-medium bg-emerald-600 text-white rounded-md px-2.5 py-1 hover:bg-emerald-700">Approve</button>
-                                        <button class="text-xs font-medium bg-red-600 text-white rounded-md px-2.5 py-1 hover:bg-red-700">Reject</button>
-                                        <button class="text-xs font-medium border border-slate-300 text-slate-600 rounded-md px-2.5 py-1 hover:bg-slate-50">View</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3.5">
-                                        <div class="flex items-center gap-3">
-                                            <img src="https://placehold.co/48x48" class="w-10 h-10 rounded-lg object-cover" alt="Scrap Copper Wiring" />
-                                            <div>
-                                                <p class="font-medium text-slate-800">Scrap Copper Wiring</p>
-                                                <p class="text-xs text-slate-400">Metals</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-3.5 text-slate-600">MetalWorks Recycling</td>
-                                    <td class="px-6 py-3.5"><span class="text-xs font-medium text-slate-400">— Pending first review —</span></td>
-                                    <td class="px-6 py-3.5 text-slate-500">Jul 9, 2026</td>
-                                    <td class="px-6 py-3.5 text-right space-x-1 whitespace-nowrap">
-                                        <button class="text-xs font-medium bg-emerald-600 text-white rounded-md px-2.5 py-1 hover:bg-emerald-700">Approve</button>
-                                        <button class="text-xs font-medium bg-red-600 text-white rounded-md px-2.5 py-1 hover:bg-red-700">Reject</button>
-                                        <button class="text-xs font-medium border border-amber-200 text-amber-600 rounded-md px-2.5 py-1 hover:bg-amber-50">Flag</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3.5">
-                                        <div class="flex items-center gap-3">
-                                            <img src="https://placehold.co/48x48" class="w-10 h-10 rounded-lg object-cover" alt="Used Motor Oil Containers" />
-                                            <div>
-                                                <p class="font-medium text-slate-800">Used Motor Oil Containers</p>
-                                                <p class="text-xs text-slate-400">Chemicals</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-3.5 text-slate-600">AutoParts Salvage Co.</td>
-                                    <td class="px-6 py-3.5"><span class="text-xs font-semibold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">Requires Special Permit</span></td>
-                                    <td class="px-6 py-3.5 text-slate-500">Jul 7, 2026</td>
-                                    <td class="px-6 py-3.5 text-right space-x-1 whitespace-nowrap">
-                                        <button class="text-xs font-medium bg-emerald-600 text-white rounded-md px-2.5 py-1 hover:bg-emerald-700">Approve</button>
-                                        <button class="text-xs font-medium bg-red-600 text-white rounded-md px-2.5 py-1 hover:bg-red-700">Reject</button>
-                                        <button class="text-xs font-medium border border-slate-300 text-slate-600 rounded-md px-2.5 py-1 hover:bg-slate-50">View</button>
-                                    </td>
-                                </tr>
+                                        </td>
+                                        <td class="px-6 py-3.5 text-slate-600">{item.seller_id?.company_name}</td>
+                                        <td class="px-6 py-3.5"><span class="text-xs font-semibold bg-green-200 text-red-700 px-2 py-0.5 rounded-full">{item.currency === "LKR" ? "RS." : "$"}{item.price}</span></td>
+                                        <td class="px-6 py-3.5 text-slate-500">{item.created_at}</td>
+                                        <td class="px-6 py-3.5 text-right space-x-1 whitespace-nowrap">
+                                            {/* <button class="text-xs font-medium bg-emerald-600 text-white rounded-md px-2.5 py-1 hover:bg-emerald-700">Approve</button> */}
+                                            <button class="text-xs font-medium bg-red-600 text-white rounded-md px-2.5 py-1 hover:bg-red-700">Reject</button>
+                                            <button class="text-xs font-medium border border-slate-300 text-slate-600 rounded-md px-2.5 py-1 hover:bg-slate-50">View</button>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>
