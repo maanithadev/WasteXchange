@@ -8,7 +8,7 @@ const AdminListingModeration = () => {
 
     useEffect(() => {
         async function fetchData() {
-            const res = await axios.get("http://localhost:3000/api/wastelistings/get-all-wastelistings", {
+            const res = await axios.get(import.meta.env.VITE_GET_ALL_WASTE_LISTINGS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`
                 }
@@ -30,11 +30,11 @@ const AdminListingModeration = () => {
 
     const renderDynamicFields = (obj, parentKey = '') => {
         if (!obj) return null;
-        
+
         return Object.entries(obj).map(([key, value]) => {
             // Ignore specified fields
             if (key === '_id' || key === '__v') return null;
-            
+
             // Format the label
             let label = key;
             if (parentKey === 'location') label = `Location ${key}`;

@@ -6,7 +6,7 @@ const BuyerMyOrders = () => {
     const [data, setData] = useState([]);
     useEffect(() => {
         async function loadOrders() {
-            const res = await axios.get("http://localhost:3000/api/orders/buyer-simple-info", {
+            const res = await axios.get(import.meta.env.VITE_GET_BUYER_ORDER_INFO_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }

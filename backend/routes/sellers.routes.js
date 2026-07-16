@@ -144,4 +144,30 @@ router.post("/seller-upload-waste-save", localUpload.single("image"), verifyUser
     }
 })
 
+
+// put
+router.put("/update-seller-details", verifyUser, async (req, res) => {
+    try {
+        const user = await User.updateOne(
+            { _id: req.token.user_id },
+            {
+                $set: {
+                    company_name: req.body.data.company_name,
+                    phone_number: req.body.data.phone_number,
+                    address: {
+                        street: req.body.data.address?.street,
+                        city: req.body.data.address?.city,
+                        state: req.body.data.address?.state,
+                        postal_code: req.body.data.address?.postal_code,
+                        country: req.body.data.address?.country,
+                    }
+                }
+            }
+        )
+        res.json({ message: "update Success" })
+    } catch (err) {
+        res.json({ message: err.message })
+    }
+})
+
 module.exports = router

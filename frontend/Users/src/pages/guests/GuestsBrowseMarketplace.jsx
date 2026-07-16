@@ -1,13 +1,13 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const GuestsBrowseMarketplace = () => {
     const [data, setData] = useState([])
 
     useEffect(() => {
         async function fetchData() {
-            const res = await axios.get("http://localhost:3000/api/buyers/get-all-waste-listings")
+            const res = await axios.get(import.meta.env.VITE_BUYERS_GET_ALL_WASTE_LISTINGS_URL)
             setData(res.data)
         }
 
@@ -22,7 +22,7 @@ const GuestsBrowseMarketplace = () => {
                 <div class="bg-emerald-600 px-6 py-3 flex items-center justify-center gap-3 text-center">
                     <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
                     <p class="text-sm text-white font-medium">Sign up to view full details and contact sellers.</p>
                     <Link to="/signup" class="text-xs font-semibold bg-white text-emerald-700 px-3 py-1 rounded-full hover:bg-emerald-50">Sign Up Free</Link>
@@ -38,8 +38,8 @@ const GuestsBrowseMarketplace = () => {
                         {data.map((item, index) => (
                             <div key={index} className="bg-white rounded-xl border border-slate-200 overflow-hidden relative">
                                 <img src={`http://localhost:3000/uploads/${item.image}`}
-                                     className="w-full h-40 object-cover"
-                                     alt="Shredded HDPE Pellets"/>
+                                    className="w-full h-40 object-cover"
+                                    alt="Shredded HDPE Pellets" />
                                 <div className="p-4">
                                     <h3 className="font-semibold text-slate-900 text-sm mb-1">{item.title}</h3>
                                     <p className="text-xs text-slate-500 mb-1">{item.quantity} {item.unit} &middot; {item.category}</p>

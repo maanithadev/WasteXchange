@@ -3,7 +3,7 @@ import { Link, Outlet } from "react-router-dom"
 const AdminSidebar = () => {
     function logOut() {
         localStorage.clear()
-        window.location.href = "http://localhost:5173/login?logout=true"
+        window.location.href = import.meta.env.VITE_LOGIN_REDIRECT_URL + "?logout=true"
     }
 
     return (

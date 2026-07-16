@@ -9,7 +9,7 @@ const ProtectedAdminRoutes = () => {
     useEffect(() => {
         if (!loading) {
             if (!token || user?.role !== "admin") {
-                window.location.href = "http://localhost:5173/login";
+                window.location.href = import.meta.env.VITE_LOGIN_REDIRECT_URL;
             }
         }
     }, [loading, token, user]);

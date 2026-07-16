@@ -1,6 +1,6 @@
-import {useState} from "react"
-import {useForm} from "react-hook-form"
-import {useNavigate} from "react-router-dom";
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { useNavigate } from "react-router-dom";
 
 const SellerUploadWaste = () => {
 
@@ -15,7 +15,7 @@ const SellerUploadWaste = () => {
     const [imagePreview, setImagePreview] = useState("")
     const [currentStep, setCurrentStep] = useState("step1")
 
-    const {register, handleSubmit} = useForm({
+    const { register, handleSubmit } = useForm({
         values: {
             image: image || "",
             title: data.title,
@@ -49,7 +49,7 @@ const SellerUploadWaste = () => {
         imageData.append("image", image)
 
         try {
-            const response = await fetch("http://localhost:3000/api/sellers/seller-upload-waste", {
+            const response = await fetch(import.meta.env.VITE_SELLER_UPLOAD_WASTE_URL, {
                 method: "POST",
                 body: imageData,
                 headers: {
@@ -61,7 +61,7 @@ const SellerUploadWaste = () => {
             const updatedDescription = result?.description.map(item => {
                 return `- ${item}\n`
             }).join("")
-            setData({...result, description: updatedDescription})
+            setData({ ...result, description: updatedDescription })
             setCurrentStep("step2")
         } catch (err) {
             console.error("Error:", err);
@@ -86,7 +86,7 @@ const SellerUploadWaste = () => {
         saveFormData.append("status", data.status)
 
         try {
-            const response = await fetch("http://localhost:3000/api/sellers/seller-upload-waste-save", {
+            const response = await fetch(import.meta.env.VITE_SELLER_UPLOAD_WASTE_SAVE_URL, {
                 method: "POST",
                 body: saveFormData,
                 headers: {
@@ -123,23 +123,23 @@ const SellerUploadWaste = () => {
                                     {!imagePreview
                                         ? <div className="flex flex-col justify-center items-center py-12 px-6">
                                             <svg className="w-10 h-10 text-slate-400 mb-3" fill="none"
-                                                 stroke="currentColor" viewBox="0 0 24 24">
+                                                stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                                             </svg>
                                             <p className="text-sm font-medium text-slate-600">Drag and drop images
                                                 here</p>
                                             <p className="text-xs text-slate-400 mt-1">or click to browse (PNG, JPG up
                                                 to 10MB)</p>
                                         </div>
-                                        : <img src={imagePreview} alt="" className="w-full "/>}
+                                        : <img src={imagePreview} alt="" className="w-full " />}
                                 </div>
                             </label>
-                            <input type="file" id="image" hidden onChange={handleChange}/>
+                            <input type="file" id="image" hidden onChange={handleChange} />
                         </div>
                         <button type="button"
-                                className="px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700"
-                                onClick={handleClick}>Submit
+                            className="px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700"
+                            onClick={handleClick}>Submit
                         </button>
 
                         {currentStep === "step2" && <>
@@ -148,7 +148,7 @@ const SellerUploadWaste = () => {
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">Waste Title</label>
                                 <input type="text" placeholder="e.g. Shredded HDPE Plastic Pellets"
-                                       className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("title")} />
+                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("title")} />
                             </div>
 
                             {/* <!-- Category + Quantity/Unit --> */}
@@ -166,7 +166,7 @@ const SellerUploadWaste = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Quantity</label>
                                     <input type="number" placeholder="e.g. 500"
-                                           className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("quantity")} />
+                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("quantity")} />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Unit</label>
@@ -183,7 +183,7 @@ const SellerUploadWaste = () => {
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">Waste Colour</label>
                                 <input type="text" placeholder="e.g. Shredded HDPE Plastic Pellets"
-                                       className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("colour")} />
+                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("colour")} />
                             </div>
 
                             {/* <!-- Description --> */}
@@ -199,7 +199,7 @@ const SellerUploadWaste = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Price</label>
                                     <input type="number" placeholder="e.g. 500"
-                                           className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("price")} />
+                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("price")} />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Currency</label>
@@ -212,7 +212,7 @@ const SellerUploadWaste = () => {
                                 </div>
                             </div>
 
-                            <hr/>
+                            <hr />
 
                             {/* <!-- Location --> */}
                             <div className="flex flex-col gap-2">
@@ -221,23 +221,23 @@ const SellerUploadWaste = () => {
                                 <div className="flex justify-start items-center gap-3">
                                     <label className="block text-sm font-medium text-slate-700">Street</label>
                                     <input type="text"
-                                           className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("location.street")} />
+                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("location.street")} />
                                 </div>
                                 <div className="flex justify-start items-center gap-3">
                                     <label className="block text-sm font-medium text-slate-700">City</label>
                                     <input type="text"
-                                           className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("location.city")} />
+                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("location.city")} />
                                 </div>
                                 <div className="flex justify-start items-center gap-3">
                                     <label className="block text-sm font-medium text-slate-700">State</label>
                                     <input type="text"
-                                           className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("location.state")} />
+                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("location.state")} />
                                 </div>
                                 <div className="flex justify-start items-center gap-3 w-full">
                                     <label className="block min-w-19 text-sm font-medium text-slate-700">Postal
                                         Code</label>
                                     <input type="text"
-                                           className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("location.postal_code")} />
+                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("location.postal_code")} />
                                 </div>
                             </div>
 
@@ -256,8 +256,8 @@ const SellerUploadWaste = () => {
 
                             <div className="flex justify-end gap-3 pt-2">
                                 <button type="button"
-                                        className="px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700"
-                                        onClick={handleSubmit(onSubmit)}>Submit Listing
+                                    className="px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700"
+                                    onClick={handleSubmit(onSubmit)}>Submit Listing
                                 </button>
                             </div>
                         </>}
@@ -269,18 +269,18 @@ const SellerUploadWaste = () => {
                         {data.confidence_score &&
                             <div className="rounded-lg bg-emerald-50 border border-emerald-100 p-4">
                                 <div className="flex items-center gap-2 mb-3">
-                                <span
-                                    className="inline-flex items-center gap-1.5 bg-emerald-600 text-white text-xs font-semibold px-2.5 py-1 rounded-full">
-                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path
-                                        strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                        d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                                    {data.category}
-                                </span>
+                                    <span
+                                        className="inline-flex items-center gap-1.5 bg-emerald-600 text-white text-xs font-semibold px-2.5 py-1 rounded-full">
+                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path
+                                            strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                            d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                                        {data.category}
+                                    </span>
                                 </div>
                                 <p className="text-xs text-slate-500 mb-1">Confidence Score</p>
                                 <div className="w-full bg-white rounded-full h-2 mb-1 border border-emerald-100">
                                     <div className="bg-emerald-500 h-2 rounded-full"
-                                         style={{width: data.confidence_score}}></div>
+                                        style={{ width: data.confidence_score }}></div>
                                 </div>
                                 <p className="text-xs font-semibold text-emerald-700">{data.confidence_score} confidence</p>
                             </div>}

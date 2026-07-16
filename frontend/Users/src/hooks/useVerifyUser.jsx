@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 export function useVerifyUser() {
@@ -10,7 +10,7 @@ export function useVerifyUser() {
         async function verifyUser() {
             try {
                 if (token !== null) {
-                    const res = await axios.get("http://localhost:3000/api/users/verifyUser", {
+                    const res = await axios.get(import.meta.env.VITE_VERIFY_USER_HOOK_URL, {
                         headers: {
                             Authorization: `Bearer ${token}`
                         }
@@ -27,5 +27,5 @@ export function useVerifyUser() {
         verifyUser()
     }, []);
 
-    return {user, loading, token}
+    return { user, loading, token }
 }

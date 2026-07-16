@@ -8,7 +8,7 @@ const AdminUserManagement = () => {
 
     useEffect(() => {
         async function fetchData() {
-            const res = await axios.get("http://localhost:3000/api/users/get-all-users", {
+            const res = await axios.get(import.meta.env.VITE_GET_ALL_USERS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`
                 }
@@ -41,7 +41,7 @@ const AdminUserManagement = () => {
 
     async function handleSuspend(id) {
         try {
-            const res = await axios.put(`http://localhost:3000/api/users/update-user-status`,
+            const res = await axios.put(import.meta.env.VITE_UPDATE_USER_STATUS_URL,
                 { user_id: id },
                 {
                     headers: {

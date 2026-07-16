@@ -12,7 +12,7 @@ const BuyerMessages = () => {
 
     useEffect(() => {
         async function getConversations() {
-            const res = await axios.get("http://localhost:3000/api/messages/get-all-buyer-conversations", {
+            const res = await axios.get(import.meta.env.VITE_GET_ALL_BUYER_CONVERSATIONS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }
@@ -21,7 +21,7 @@ const BuyerMessages = () => {
         }
 
         async function findMessages() {
-            const res = await axios.get(`http://localhost:3000/api/messages/get-messages/${conversationId}`, {
+            const res = await axios.get(import.meta.env.VITE_GET_MESSAGES_URL + conversationId, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }
@@ -34,7 +34,7 @@ const BuyerMessages = () => {
     }, [conversationId])
 
     async function sendMessage() {
-        const res = await axios.post(`http://localhost:3000/api/messages/send-message/${conversationId}`,
+        const res = await axios.post(import.meta.env.VITE_SEND_MESSAGE_URL + conversationId,
             { message: typedMessage },
             {
                 headers: {

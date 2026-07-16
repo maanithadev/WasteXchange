@@ -1,11 +1,11 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 const BuyerPayment = () => {
     const [data, setData] = useState([]);
     useEffect(() => {
         async function loadPayments() {
-            const res = await axios.get("http://localhost:3000/api/payments/buyer-simple-info", {
+            const res = await axios.get(import.meta.env.VITE_GET_BUYER_PAYMENTS_INFO_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }
@@ -94,24 +94,24 @@ const BuyerPayment = () => {
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <thead>
-                            <tr class="bg-slate-50 border-b border-slate-200">
-                                <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Date</th>
-                                <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Seller</th>
-                                <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Amount</th>
-                                <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Status</th>
-                            </tr>
+                                <tr class="bg-slate-50 border-b border-slate-200">
+                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Date</th>
+                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Seller</th>
+                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Amount</th>
+                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Status</th>
+                                </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
-                            {data.map((item, index) => (
-                                <tr key={index}>
-                                    <td className="px-6 py-4 text-slate-600">{item.created_at}</td>
-                                    <td className="px-6 py-4 font-medium text-slate-800">{item.seller_id?.company_name}</td>
-                                    <td className="px-6 py-4 text-slate-600">{item.currency === "LKR" ? "RS." : "$"}{item.total_price}</td>
-                                    <td className="px-6 py-4"><span
-                                        className="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full">{item.payment_status}</span>
-                                    </td>
-                                </tr>
-                            ))}
+                                {data.map((item, index) => (
+                                    <tr key={index}>
+                                        <td className="px-6 py-4 text-slate-600">{item.created_at}</td>
+                                        <td className="px-6 py-4 font-medium text-slate-800">{item.seller_id?.company_name}</td>
+                                        <td className="px-6 py-4 text-slate-600">{item.currency === "LKR" ? "RS." : "$"}{item.total_price}</td>
+                                        <td className="px-6 py-4"><span
+                                            className="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full">{item.payment_status}</span>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>

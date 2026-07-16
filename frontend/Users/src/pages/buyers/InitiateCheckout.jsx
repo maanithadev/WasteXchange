@@ -1,9 +1,9 @@
-import {useCheckoutContext} from "../../contexts/CheckoutContext.jsx";
-import {useEffect} from "react";
+import { useCheckoutContext } from "../../contexts/CheckoutContext.jsx";
+import { useEffect } from "react";
 
 const InitiateCheckout = () => {
-    const endPoint = "https://testsecureacceptance.cybersource.com/pay"
-    const {checkoutParams} = useCheckoutContext()
+    const endPoint = import.meta.env.VITE_CYBERSOURCE_ENDPOINT
+    const { checkoutParams } = useCheckoutContext()
 
     useEffect(() => {
         document.getElementById('paymentForm').submit();

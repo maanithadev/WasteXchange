@@ -1,11 +1,11 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 const BuyerDashboard = () => {
     const [data, setData] = useState([]);
     useEffect(() => {
         async function loadNotifications() {
-            const res = await axios.get("http://localhost:3000/api/notifications/specific-user-notifications", {
+            const res = await axios.get(import.meta.env.VITE_GET_SPECIFIC_USER_NOTIFICATIONS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }
@@ -29,7 +29,7 @@ const BuyerDashboard = () => {
                         class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"/>
+                                d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />
                         </svg>
                         Browse Marketplace
                     </button>
@@ -42,9 +42,9 @@ const BuyerDashboard = () => {
                             <span class="text-sm font-medium text-slate-500">Matched Listings</span>
                             <div class="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center">
                                 <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
-                                     viewBox="0 0 24 24">
+                                    viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                        d="M13 10V3L4 14h7v7l9-11h-7z" />
                                 </svg>
                             </div>
                         </div>
@@ -57,9 +57,9 @@ const BuyerDashboard = () => {
                             <span class="text-sm font-medium text-slate-500">Active Orders</span>
                             <div class="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center">
                                 <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor"
-                                     viewBox="0 0 24 24">
+                                    viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
                         </div>
@@ -73,7 +73,7 @@ const BuyerDashboard = () => {
                             <div class="w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center">
                                 <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                                 </svg>
                             </div>
                         </div>
@@ -86,9 +86,9 @@ const BuyerDashboard = () => {
                             <span class="text-sm font-medium text-slate-500">Total Carbon Offset</span>
                             <div class="w-9 h-9 rounded-lg bg-teal-50 flex items-center justify-center">
                                 <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor"
-                                     viewBox="0 0 24 24">
+                                    viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M13 7h6l2 2v11a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h6l2 2z"/>
+                                        d="M13 7h6l2 2v11a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h6l2 2z" />
                                 </svg>
                             </div>
                         </div>
@@ -106,9 +106,9 @@ const BuyerDashboard = () => {
                                 <div
                                     className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
                                     <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
-                                         viewBox="0 0 24 24">
+                                        viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M5 13l4 4L19 7"/>
+                                            d="M5 13l4 4L19 7" />
                                     </svg>
                                 </div>
                                 <div className="flex-1">

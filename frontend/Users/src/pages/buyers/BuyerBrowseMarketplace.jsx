@@ -1,13 +1,13 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const BuyerBrowseMarketplace = () => {
     const [data, setData] = useState([])
 
     useEffect(() => {
         async function fetchData() {
-            const res = await axios.get("http://localhost:3000/api/buyers/get-all-waste-listings")
+            const res = await axios.get(import.meta.env.VITE_BUYERS_GET_ALL_WASTE_LISTINGS_URL)
             setData(res.data)
         }
 
@@ -23,7 +23,7 @@ const BuyerBrowseMarketplace = () => {
                     <div>
                         <h2 className="text-lg font-bold text-slate-900 mb-4">Filters</h2>
                         <input type="text" placeholder="Search listings..."
-                               className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+                            className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                     </div>
 
                     <div>
@@ -44,17 +44,17 @@ const BuyerBrowseMarketplace = () => {
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-2">Location</label>
                         <input type="text" placeholder="City, State or ZIP"
-                               className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+                            className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                     </div>
 
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-2">Quantity Range (kg)</label>
                         <div className="flex items-center gap-2">
                             <input type="number" placeholder="Min"
-                                   className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+                                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                             <span className="text-slate-400 text-sm">–</span>
                             <input type="number" placeholder="Max"
-                                   className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+                                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                         </div>
                     </div>
 
@@ -62,10 +62,10 @@ const BuyerBrowseMarketplace = () => {
                         <label className="block text-sm font-medium text-slate-700 mb-2">Price Range ($)</label>
                         <div className="flex items-center gap-2">
                             <input type="number" placeholder="Min"
-                                   className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+                                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                             <span className="text-slate-400 text-sm">–</span>
                             <input type="number" placeholder="Max"
-                                   className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+                                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                         </div>
                     </div>
 
@@ -99,8 +99,8 @@ const BuyerBrowseMarketplace = () => {
                         {data.map((item, index) => (
                             <div key={index} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
                                 <img src={`http://localhost:3000/uploads/${item.image}`}
-                                     className="w-full h-40 object-cover"
-                                     alt="Shredded HDPE Pellets"/>
+                                    className="w-full h-40 object-cover"
+                                    alt="Shredded HDPE Pellets" />
                                 <div className="p-4">
                                     <h3 className="font-semibold text-slate-900 text-sm mb-1">{item.title}</h3>
                                     <p className="text-xs text-slate-500 mb-1">{item.quantity} {item.unit} &middot; {item.category}</p>

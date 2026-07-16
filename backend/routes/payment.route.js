@@ -164,7 +164,7 @@ router.post('/payment/response', async (req, res) => {
                     created_at: data.signed_date_time
                 })
 
-                return res.redirect(`http://localhost:5173/buyer/payment-success`);
+                return res.redirect(process.env.PAYMENT_SUCCESS_REDIRECT_URL);
             case "CANCEL":
                 const payment_data = payment_Status_Save()
 
@@ -177,9 +177,9 @@ router.post('/payment/response', async (req, res) => {
                     message: "your payment has been cancelled",
                     created_at: data.signed_date_time
                 })
-                return res.redirect(`http://localhost:5173/buyer/payment-failed`);
+                return res.redirect(process.env.PAYMENT_FAILED_REDIRECT_URL);
             default:
-                return res.redirect(`http://localhost:5173/buyer/dashboard`);
+                return res.redirect(process.env.BUYER_DASHBOARD_REDIRECT_URL);
         }
     } catch (err) {
         res.status(500).json({ message: err.message || 'Unknown error' });
@@ -229,7 +229,7 @@ function verifySignature(responseData) {
  * then signs them and returns the complete set ready for the form.
  */
 function buildCyberSourceParams({ amount, currency, referenceNumber }) {
-    const responseUrl = 'http://localhost:3000/api/payments/payment/response';
+    const responseUrl = process.env.CYBERSOURCE_CUSTOM_RESPONSE_URL;
 
     // All the fields we're sending to CyberSource
     const params = {

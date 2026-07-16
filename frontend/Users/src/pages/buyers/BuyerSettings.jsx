@@ -1,11 +1,11 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import {useForm} from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 const BuyerSettings = () => {
     const [data, setData] = useState([]);
 
-    const {register, handleSubmit} = useForm({
+    const { register, handleSubmit } = useForm({
         values: {
             company_name: data.company_name,
             phone_number: data.phone_number,
@@ -21,7 +21,7 @@ const BuyerSettings = () => {
 
     useEffect(() => {
         async function loadbuyer() {
-            const res = await axios.get("http://localhost:3000/api/buyers/get-buyer-details", {
+            const res = await axios.get(import.meta.env.VITE_GET_BUYER_DETAILS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }
@@ -34,8 +34,8 @@ const BuyerSettings = () => {
 
     async function onSubmit(data) {
         try {
-            await axios.put("http://localhost:3000/api/buyers/update-buyer-details",
-                {data},
+            await axios.put(import.meta.env.VITE_UPDATE_BUYER_DETAILS_URL,
+                { data },
                 {
                     headers: {
                         "Authorization": `Bearer ${localStorage.getItem("token")}`,
@@ -57,20 +57,20 @@ const BuyerSettings = () => {
 
                 <div class="max-w-2xl space-y-6">
                     <form className="bg-white rounded-xl border border-slate-200 p-6 space-y-5"
-                          onSubmit={handleSubmit(onSubmit)}>
+                        onSubmit={handleSubmit(onSubmit)}>
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-2">Company Name</label>
                             <input type="text" placeholder="Your company name"
-                                   className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("company_name")}/>
+                                className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("company_name")} />
                         </div>
 
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-2">Phone Number</label>
                             <input type="tel" placeholder="+1 (555) 000-0000"
-                                   className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("phone_number")}/>
+                                className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("phone_number")} />
                         </div>
 
-                        <hr/>
+                        <hr />
 
                         <div className="flex flex-col gap-2">
                             <label className="block text-sm font-medium text-slate-700">Address,</label>
@@ -78,23 +78,23 @@ const BuyerSettings = () => {
                             <div className="flex justify-start items-center gap-3">
                                 <label className="block text-sm font-medium text-slate-700">Street</label>
                                 <input type="text"
-                                       className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("address.street")} />
+                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("address.street")} />
                             </div>
                             <div className="flex justify-start items-center gap-3">
                                 <label className="block text-sm font-medium text-slate-700">City</label>
                                 <input type="text"
-                                       className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("address.city")} />
+                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("address.city")} />
                             </div>
                             <div className="flex justify-start items-center gap-3">
                                 <label className="block text-sm font-medium text-slate-700">State</label>
                                 <input type="text"
-                                       className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("address.state")} />
+                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("address.state")} />
                             </div>
                             <div className="flex justify-start items-center gap-3 w-full">
                                 <label className="block min-w-19 text-sm font-medium text-slate-700">Postal
                                     Code</label>
                                 <input type="text"
-                                       className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("address.postal_code")} />
+                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("address.postal_code")} />
                             </div>
                             <div className="flex justify-start items-center gap-3 w-full">
                                 <label className="block text-sm font-medium text-slate-700 mb-2">Country</label>
@@ -107,7 +107,7 @@ const BuyerSettings = () => {
 
                         <div className="flex justify-end pt-2">
                             <button type="submit"
-                                    className="px-5 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700">Update
+                                className="px-5 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700">Update
                                 Details
                             </button>
                         </div>
@@ -119,24 +119,24 @@ const BuyerSettings = () => {
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-2">Current Password</label>
                             <input type="password" placeholder="••••••••"
-                                   class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+                                class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-2">New Password</label>
                             <input type="password" placeholder="••••••••"
-                                   class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+                                class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-2">Confirm New Password</label>
                             <input type="password" placeholder="••••••••"
-                                   class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+                                class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                         </div>
 
                         <div class="flex justify-end pt-2">
                             <button type="submit"
-                                    class="px-5 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700">Update
+                                class="px-5 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700">Update
                                 Password
                             </button>
                         </div>

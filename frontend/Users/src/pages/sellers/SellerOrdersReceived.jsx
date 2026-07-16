@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 const SellerOrdersReceived = () => {
@@ -9,7 +9,7 @@ const SellerOrdersReceived = () => {
 
     useEffect(() => {
         async function loadOrders() {
-            const res = await axios.get("http://localhost:3000/api/orders/seller-simple-info", {
+            const res = await axios.get(import.meta.env.VITE_GET_SELLER_ORDER_INFO_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }
@@ -40,38 +40,38 @@ const SellerOrdersReceived = () => {
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
-                            <tr className="bg-slate-50 border-b border-slate-200">
-                                <th className="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Buyer</th>
-                                <th className="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Waste Item</th>
-                                <th className="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Quantity</th>
-                                <th className="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Order Date</th>
-                                <th className="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Status</th>
-                                <th className="text-right font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Actions</th>
-                            </tr>
+                                <tr className="bg-slate-50 border-b border-slate-200">
+                                    <th className="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Buyer</th>
+                                    <th className="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Waste Item</th>
+                                    <th className="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Quantity</th>
+                                    <th className="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Order Date</th>
+                                    <th className="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Status</th>
+                                    <th className="text-right font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Actions</th>
+                                </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
-                            {data.map((item, index) => (
-                                <tr key={index}>
-                                    <td className="px-6 py-4 font-medium text-slate-800">{item.buyer_id?.company_name}</td>
-                                    <td className="px-6 py-4 text-slate-600">{item.wasteListings_id?.title}</td>
-                                    <td className="px-6 py-4 text-slate-600">{item.quantity} {item.unit}</td>
-                                    <td className="px-6 py-4 text-slate-600">{item.ordered_date}</td>
-                                    <td className="px-6 py-4"><span
-                                        className="text-xs font-semibold bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full capitalize">{item.status}</span>
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <button
-                                            onClick={() => {
-                                                setOrderToUpdate(item);
-                                                setSelectedStatus(item.status?.toLowerCase() || "pending");
-                                                setIsStatusModalOpen(true);
-                                            }}
-                                            className="text-xs font-medium border border-slate-300 text-slate-700 rounded-lg px-3 py-1.5 hover:bg-slate-50">Update
-                                            Status
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
+                                {data.map((item, index) => (
+                                    <tr key={index}>
+                                        <td className="px-6 py-4 font-medium text-slate-800">{item.buyer_id?.company_name}</td>
+                                        <td className="px-6 py-4 text-slate-600">{item.wasteListings_id?.title}</td>
+                                        <td className="px-6 py-4 text-slate-600">{item.quantity} {item.unit}</td>
+                                        <td className="px-6 py-4 text-slate-600">{item.ordered_date}</td>
+                                        <td className="px-6 py-4"><span
+                                            className="text-xs font-semibold bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full capitalize">{item.status}</span>
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            <button
+                                                onClick={() => {
+                                                    setOrderToUpdate(item);
+                                                    setSelectedStatus(item.status?.toLowerCase() || "pending");
+                                                    setIsStatusModalOpen(true);
+                                                }}
+                                                className="text-xs font-medium border border-slate-300 text-slate-700 rounded-lg px-3 py-1.5 hover:bg-slate-50">Update
+                                                Status
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>
@@ -90,11 +90,10 @@ const SellerOrdersReceived = () => {
                                         key={statusOption}
                                         type="button"
                                         onClick={() => setSelectedStatus(statusOption)}
-                                        className={`capitalize px-4 py-3 rounded-lg text-sm font-medium border transition-colors ${
-                                            selectedStatus === statusOption 
-                                                ? "bg-emerald-50 border-emerald-500 text-emerald-700" 
-                                                : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
-                                        }`}
+                                        className={`capitalize px-4 py-3 rounded-lg text-sm font-medium border transition-colors ${selectedStatus === statusOption
+                                            ? "bg-emerald-50 border-emerald-500 text-emerald-700"
+                                            : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                                            }`}
                                     >
                                         {statusOption}
                                     </button>

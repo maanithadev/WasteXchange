@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 const SellerMyListings = () => {
@@ -15,7 +15,7 @@ const SellerMyListings = () => {
 
     useEffect(() => {
         async function fetchData() {
-            const res = await axios.get(`http://localhost:3000/api/sellers/get-all-waste-listings`, {
+            const res = await axios.get(import.meta.env.VITE_SELLERS_GET_ALL_WASTE_LISTINGS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }
@@ -67,7 +67,7 @@ const SellerMyListings = () => {
                     <button
                         className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"/>
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
                         </svg>
                         New Listing
                     </button>
@@ -78,8 +78,8 @@ const SellerMyListings = () => {
                     {data.map((item, index) => (
                         <div key={index} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
                             <img src={`http://localhost:3000/uploads/${item.image}`}
-                                 className="w-full h-40 object-cover"
-                                 alt={item.title}/>
+                                className="w-full h-40 object-cover"
+                                alt={item.title} />
                             <div className="p-4">
                                 <div className="flex items-center justify-between mb-2">
                                     <h3 className="font-semibold text-slate-900 text-sm">{item.title}</h3>
@@ -90,7 +90,7 @@ const SellerMyListings = () => {
                                 <div className="flex gap-2">
                                     <button
                                         onClick={() => {
-                                            setEditData({...item, location: item.location || {street: "", city: "", state: "", postal_code: ""}});
+                                            setEditData({ ...item, location: item.location || { street: "", city: "", state: "", postal_code: "" } });
                                             setIsEditModalOpen(true);
                                         }}
                                         className="flex-1 text-xs font-medium border border-slate-300 text-slate-700 rounded-lg py-2 hover:bg-slate-50">Edit

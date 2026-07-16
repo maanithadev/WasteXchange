@@ -8,7 +8,7 @@ const AdminTransactions = () => {
 
     useEffect(() => {
         async function loadPayments() {
-            const res = await axios.get("http://localhost:3000/api/payments/get-all-payments", {
+            const res = await axios.get(import.meta.env.VITE_GET_ALL_PAYMENTS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }
