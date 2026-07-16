@@ -19,6 +19,9 @@ const ordersSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "cybersourceTransactions"
     },
+    order_reference_number: {
+        type: String
+    },
     quantity: {
         type: Number
     },

@@ -3,6 +3,9 @@ import axios from "axios"
 
 const AdminListingModeration = () => {
     const [data, setData] = useState([])
+    const [selectedItem, setSelectedItem] = useState(null)
+    const [isModalOpen, setIsModalOpen] = useState(false)
+
     useEffect(() => {
         async function fetchData() {
             const res = await axios.get("http://localhost:3000/api/wastelistings/get-all-wastelistings", {
@@ -14,7 +17,48 @@ const AdminListingModeration = () => {
         }
         fetchData()
     }, [])
-    console.log(data)
+
+    const handleView = (item) => {
+        setSelectedItem(item)
+        setIsModalOpen(true)
+    }
+
+    const closeModal = () => {
+        setIsModalOpen(false)
+        setSelectedItem(null)
+    }
+
+    const renderDynamicFields = (obj, parentKey = '') => {
+        if (!obj) return null;
+        
+        return Object.entries(obj).map(([key, value]) => {
+            // Ignore specified fields
+            if (key === '_id' || key === '__v') return null;
+            
+            // Format the label
+            let label = key;
+            if (parentKey === 'location') label = `Location ${key}`;
+            if (parentKey === 'seller_id') {
+                if (key === 'company_name') label = 'Seller Company';
+                else label = `Seller ${key}`;
+            }
+
+            if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                return renderDynamicFields(value, key);
+            }
+
+            return (
+                <div key={`${parentKey}-${key}`} className={key === 'description' ? "col-span-1 md:col-span-2" : ""}>
+                    <label className="block text-sm font-medium text-slate-700 mb-1 capitalize">{label.replace(/_/g, ' ')}</label>
+                    {key === 'description' ? (
+                        <textarea readOnly rows="4" value={value || ""} className="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-600 focus:outline-none"></textarea>
+                    ) : (
+                        <input type="text" readOnly value={value || ""} className="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-600 focus:outline-none" />
+                    )}
+                </div>
+            )
+        });
+    }
 
     return (
         <>
@@ -55,7 +99,7 @@ const AdminListingModeration = () => {
                                         <td class="px-6 py-3.5 text-right space-x-1 whitespace-nowrap">
                                             {/* <button class="text-xs font-medium bg-emerald-600 text-white rounded-md px-2.5 py-1 hover:bg-emerald-700">Approve</button> */}
                                             <button class="text-xs font-medium bg-red-600 text-white rounded-md px-2.5 py-1 hover:bg-red-700">Reject</button>
-                                            <button class="text-xs font-medium border border-slate-300 text-slate-600 rounded-md px-2.5 py-1 hover:bg-slate-50">View</button>
+                                            <button onClick={() => handleView(item)} class="text-xs font-medium border border-slate-300 text-slate-600 rounded-md px-2.5 py-1 hover:bg-slate-50">View</button>
                                         </td>
                                     </tr>
                                 ))}
@@ -63,6 +107,25 @@ const AdminListingModeration = () => {
                         </table>
                     </div>
                 </div>
+
+                {/* <!-- MODAL --> */}
+                {isModalOpen && selectedItem && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+                        <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] flex flex-col">
+                            <div className="flex items-center justify-between p-6 border-b border-slate-200">
+                                <h2 className="text-xl font-bold text-slate-800">Product Details</h2>
+                                <button onClick={closeModal} className="text-slate-400 hover:text-slate-600 focus:outline-none">
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                            </div>
+                            <div className="p-6 overflow-y-auto flex-1">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {renderDynamicFields(selectedItem)}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </main>
         </>
     )

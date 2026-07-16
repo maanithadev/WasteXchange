@@ -40,6 +40,12 @@ const paymentsSchema = mongoose.Schema({
     payment_method: {
         type: String
     },
+    card_number: {
+        type: String
+    },
+    card_type_name: {
+        type: String
+    },
     payment_status: {       // "completed" | "pending" | "failed" | "refunded" | "disputed"
         type: String
     },

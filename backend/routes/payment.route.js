@@ -8,6 +8,17 @@ const Cybersource_Transactions = require("../models/cybersourceTransactions.mode
 const Orders = require("../models/orders.model.js")
 
 // get
+router.get("/get-all-payments", verifyUser, async (req, res) => {
+    try {
+        const payments = await Payments.find()
+            .sort({ created_at: -1 })
+            .populate("order_id").populate("seller_id").populate("buyer_id")
+        res.json(payments)
+    } catch (err) {
+        res.json({ message: err.message })
+    }
+})
+
 router.get("/buyer-simple-info", verifyUser, async (req, res) => {
     try {
         const payments = await Payments.find({ buyer_id: req.token.user_id })
@@ -89,9 +100,11 @@ router.post('/payment/response', async (req, res) => {
                 buyer_id: transaction_Data.buyer_id,
                 cyberSourceTransaction_id: saved_Cybersource_Transaction._id,
                 transaction_id: data.transaction_id || null,
-                total_price: transaction_Data.price,
-                currency: transaction_Data.currency,
-                payment_method: data.req_payment_method,
+                total_price: data.auth_amount,
+                currency: data.req_currency,
+                payment_method: data.req_payment_method || null,
+                card_number: data.req_card_number || null,
+                card_type_name: data.card_type_name || null,
                 payment_status: data.decision === "ACCEPT" ? "completed" : "failed",
                 created_at: data.signed_date_time,
             })
@@ -109,10 +122,11 @@ router.post('/payment/response', async (req, res) => {
                     seller_id: transaction_Data?.seller_id?._id,
                     buyer_id: transaction_Data.buyer_id,
                     cyberSourceTransaction_id: saved_Cybersource_Transaction._id,
+                    order_reference_number: data.req_reference_number,
                     quantity: transaction_Data.quantity,
                     unit: transaction_Data.unit,
-                    total_price: transaction_Data.price,
-                    currency: transaction_Data.currency,
+                    total_price: data.auth_amount,
+                    currency: data.req_currency,
                     status: "pending",
                     ordered_date: data.signed_date_time,
                     collected_date: null,

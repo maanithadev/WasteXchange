@@ -23,7 +23,7 @@ const App = () => {
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/user-management" element={<AdminUserManagement />} />
               <Route path="/admin/listing-moderation" element={<AdminListingModeration />} />
-              <Route path="/admin/ai-classification-review-queue" element={<AIclassNameificationReviewQueue />} />
+              {/* <Route path="/admin/ai-classification-review-queue" element={<AIclassNameificationReviewQueue />} /> */}
               <Route path="/admin/transactions" element={<AdminTransactions />} />
               <Route path="/admin/reports-and-analytics" element={<AdminReportsAndAnalytics />} />
               <Route path="/admin/support-resolution" element={<AdminSupportResolution />} />

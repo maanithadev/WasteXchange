@@ -1,5 +1,75 @@
+import { useEffect, useState } from "react";
+import axios from "axios"
 
 const AdminTransactions = () => {
+    const [data, setData] = useState([]);
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    useEffect(() => {
+        async function loadPayments() {
+            const res = await axios.get("http://localhost:3000/api/payments/get-all-payments", {
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                }
+            });
+            setData(res.data);
+        }
+
+        loadPayments()
+    }, []);
+
+    const handleView = (item) => {
+        setSelectedItem(item);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setSelectedItem(null);
+    };
+
+    const getPaymentDetails = (item) => {
+        if (!item) return null;
+        const details = { ...item };
+        delete details.order_id;
+        delete details.seller_id;
+        delete details.buyer_id;
+        return details;
+    };
+
+    const renderDynamicFields = (obj, parentKey = '') => {
+        if (!obj) return null;
+
+        return Object.entries(obj).map(([key, value]) => {
+            // Ignore specified fields
+            if (key === '_id' || key === '__v' || key === 'cyberSourceTransaction_id') return null;
+
+            // Format the label
+            let label = key;
+            if (parentKey) {
+                let formattedParent = parentKey.replace('_id', '');
+                if (key === 'company_name') label = `${formattedParent} Company`;
+                else label = `${formattedParent} ${key}`;
+            }
+
+            if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                return renderDynamicFields(value, key);
+            }
+
+            if (Array.isArray(value)) {
+                value = value.join(', ');
+            }
+
+            return (
+                <div key={`${parentKey}-${key}`} className="">
+                    <label className="block text-sm font-medium text-slate-700 mb-1 capitalize text-nowrap truncate">{label.replace(/_/g, ' ')}</label>
+                    <input type="text" readOnly value={value || ""} className="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-600 focus:outline-none" />
+                </div>
+            )
+        });
+    }
+
     return (
         <>
             {/* <!-- TRANSACTIONS / PAYMENT OVERSIGHT PAGE --> */}
@@ -31,6 +101,7 @@ const AdminTransactions = () => {
                             <thead>
                                 <tr class="bg-slate-50 border-b border-slate-200">
                                     <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Transaction ID</th>
+                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Order Reference</th>
                                     <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Buyer</th>
                                     <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Seller</th>
                                     <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Amount</th>
@@ -40,55 +111,69 @@ const AdminTransactions = () => {
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
-                                <tr>
-                                    <td class="px-6 py-3.5 font-mono text-xs text-slate-600">TXN-88231</td>
-                                    <td class="px-6 py-3.5 text-slate-700">EcoPlast Industries</td>
-                                    <td class="px-6 py-3.5 text-slate-700">Green Metals Co.</td>
-                                    <td class="px-6 py-3.5 text-slate-700">$360.00</td>
-                                    <td class="px-6 py-3.5"><span class="text-xs font-semibold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">Disputed</span></td>
-                                    <td class="px-6 py-3.5 text-slate-500">Jul 6, 2026</td>
-                                    <td class="px-6 py-3.5 text-right"><button class="text-xs font-medium border border-slate-300 text-slate-600 rounded-md px-2.5 py-1 hover:bg-slate-50">View Details</button></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3.5 font-mono text-xs text-slate-600">TXN-88198</td>
-                                    <td class="px-6 py-3.5 text-slate-700">Circular Metals Ltd.</td>
-                                    <td class="px-6 py-3.5 text-slate-700">MetalWorks Recycling</td>
-                                    <td class="px-6 py-3.5 text-slate-700">$1,470.00</td>
-                                    <td class="px-6 py-3.5"><span class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">Completed</span></td>
-                                    <td class="px-6 py-3.5 text-slate-500">Jul 4, 2026</td>
-                                    <td class="px-6 py-3.5 text-right"><button class="text-xs font-medium border border-slate-300 text-slate-600 rounded-md px-2.5 py-1 hover:bg-slate-50">View Details</button></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3.5 font-mono text-xs text-slate-600">TXN-88104</td>
-                                    <td class="px-6 py-3.5 text-slate-700">Renew Plastics Co.</td>
-                                    <td class="px-6 py-3.5 text-slate-700">Wood Reclaim Co.</td>
-                                    <td class="px-6 py-3.5 text-slate-700">$210.00</td>
-                                    <td class="px-6 py-3.5"><span class="text-xs font-semibold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">Pending</span></td>
-                                    <td class="px-6 py-3.5 text-slate-500">Jul 3, 2026</td>
-                                    <td class="px-6 py-3.5 text-right"><button class="text-xs font-medium border border-slate-300 text-slate-600 rounded-md px-2.5 py-1 hover:bg-slate-50">View Details</button></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3.5 font-mono text-xs text-slate-600">TXN-87950</td>
-                                    <td class="px-6 py-3.5 text-slate-700">Fabric Loop Inc.</td>
-                                    <td class="px-6 py-3.5 text-slate-700">Textile Renew Corp.</td>
-                                    <td class="px-6 py-3.5 text-slate-700">$305.00</td>
-                                    <td class="px-6 py-3.5"><span class="text-xs font-semibold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">Refunded</span></td>
-                                    <td class="px-6 py-3.5 text-slate-500">Jun 29, 2026</td>
-                                    <td class="px-6 py-3.5 text-right"><button class="text-xs font-medium border border-slate-300 text-slate-600 rounded-md px-2.5 py-1 hover:bg-slate-50">View Details</button></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3.5 font-mono text-xs text-slate-600">TXN-87801</td>
-                                    <td class="px-6 py-3.5 text-slate-700">Site Clear Corp.</td>
-                                    <td class="px-6 py-3.5 text-slate-700">Industrial Reuse Corp.</td>
-                                    <td class="px-6 py-3.5 text-slate-700">$960.00</td>
-                                    <td class="px-6 py-3.5"><span class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">Completed</span></td>
-                                    <td class="px-6 py-3.5 text-slate-500">Jun 25, 2026</td>
-                                    <td class="px-6 py-3.5 text-right"><button class="text-xs font-medium border border-slate-300 text-slate-600 rounded-md px-2.5 py-1 hover:bg-slate-50">View Details</button></td>
-                                </tr>
+                                {data.map((item, index) => (
+                                    <tr key={index}>
+                                        <td class="px-6 py-3.5 font-mono text-xs text-slate-600">{item.transaction_id}</td>
+                                        <td class="px-6 py-3.5 font-mono text-xs text-slate-600">{item.order_id?.order_reference_number}</td>
+                                        <td class="px-6 py-3.5 text-slate-700">{item.buyer_id?.company_name}</td>
+                                        <td class="px-6 py-3.5 text-slate-700">{item.seller_id?.company_name}</td>
+                                        <td class="px-6 py-3.5 text-slate-700">{item.order_id?.currency}{item.order_id?.total_price}</td>
+                                        <td class="px-6 py-3.5"><span class="text-xs font-semibold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">{item.payment_status}</span></td>
+                                        <td class="px-6 py-3.5 text-slate-500">{item.created_at}</td>
+                                        <td class="px-6 py-3.5 text-right"><button onClick={() => handleView(item)} class="text-xs font-medium border border-slate-300 text-slate-600 rounded-md px-2.5 py-1 hover:bg-slate-50">View Details</button></td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>
                 </div>
+
+                {/* <!-- MODAL --> */}
+                {isModalOpen && selectedItem && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+                        <div className="bg-white rounded-xl shadow-xl w-full max-w-5xl max-h-[90vh] flex flex-col">
+                            <div className="flex items-center justify-between p-6 border-b border-slate-200">
+                                <h2 className="text-xl font-bold text-slate-800">Payment Details</h2>
+                                <button onClick={closeModal} className="text-slate-400 hover:text-slate-600 focus:outline-none">
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                            </div>
+                            <div className="p-6 overflow-y-auto flex-1">
+                                {selectedItem && (
+                                    <>
+                                        <div className="mb-8">
+                                            <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-200 pb-2">Payment Details</h3>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                                {renderDynamicFields(getPaymentDetails(selectedItem))}
+                                            </div>
+                                        </div>
+
+                                        <div className="mb-8">
+                                            <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-200 pb-2">Order Details</h3>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                                {renderDynamicFields(selectedItem.order_id)}
+                                            </div>
+                                        </div>
+
+                                        <div className="mb-8">
+                                            <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-200 pb-2">Seller Details</h3>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                                {renderDynamicFields(selectedItem.seller_id)}
+                                            </div>
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-200 pb-2">Buyer Details</h3>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                                {renderDynamicFields(selectedItem.buyer_id)}
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                )}
             </main>
         </>
     )
