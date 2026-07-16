@@ -84,11 +84,11 @@ router.post('/payment/response', async (req, res) => {
 
         const payment_Status_Save = async (orderId) => {
             const Payment_saveData = new Payments({
-                order_id: orderId || "",
+                order_id: orderId || null,
                 seller_id: transaction_Data.seller_id?._id,
                 buyer_id: transaction_Data.buyer_id,
                 cyberSourceTransaction_id: saved_Cybersource_Transaction._id,
-                transaction_id: data.transaction_id || "",
+                transaction_id: data.transaction_id || null,
                 total_price: transaction_Data.price,
                 currency: transaction_Data.currency,
                 payment_method: data.req_payment_method,
@@ -115,7 +115,7 @@ router.post('/payment/response', async (req, res) => {
                     currency: transaction_Data.currency,
                     status: "pending",
                     ordered_date: data.signed_date_time,
-                    collected_date: "",
+                    collected_date: null,
                     created_at: data.signed_date_time,
                     updated_at: data.signed_date_time,
                 })

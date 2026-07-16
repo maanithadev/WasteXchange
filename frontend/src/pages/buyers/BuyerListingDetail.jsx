@@ -1,15 +1,17 @@
-import {useNavigate, useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import {useCheckoutContext} from "../../contexts/CheckoutContext.jsx";
-import {useVerifyUser} from "../../hooks/useVerifyUser";
+import { useCheckoutContext } from "../../contexts/CheckoutContext.jsx";
+import { useVerifyUser } from "../../hooks/useVerifyUser";
+import { useConversationsContext } from "../../contexts/ConversationsContext.jsx";
 
 const BuyerListingDetail = () => {
-    const {id} = useParams()
+    const { id } = useParams()
     const [data, setData] = useState({})
 
-    const {checkoutParams, setCheckoutParams} = useCheckoutContext()
-    const {user} = useVerifyUser();
+    const { checkoutParams, setCheckoutParams } = useCheckoutContext()
+    const { user } = useVerifyUser();
+    const { setConversationId } = useConversationsContext()
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -22,12 +24,21 @@ const BuyerListingDetail = () => {
     }, []);
 
     async function handlePlaceOrder() {
-        const completeDataToSend = {...data, buyer_id: user.user_id}
+        const completeDataToSend = { ...data, buyer_id: user.user_id }
         const res = await axios.post(`http://localhost:3000/api/payments/checkout`, {
             data: completeDataToSend,
         })
         setCheckoutParams(res.data)
         navigate("/initiate-checkout")
+    }
+
+    async function startMessaging() {
+        const res = await axios.post("http://localhost:3000/api/messages/start-chat", {
+            buyer_id: user.user_id,
+            seller_id: data.seller_id?._id
+        })
+        setConversationId(res.data.conversation_id)
+        navigate("/buyer/messages")
     }
 
     return (
@@ -41,7 +52,7 @@ const BuyerListingDetail = () => {
                     <div className="lg:col-span-2 space-y-6">
                         <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
                             <img src={`http://localhost:3000/uploads/${data.image}`}
-                                 className="w-full object-cover" alt="Shredded HDPE Pellets"/>
+                                className="w-full object-cover" alt="Shredded HDPE Pellets" />
                         </div>
 
                         <div className="bg-white rounded-xl border border-slate-200 p-6">
@@ -65,16 +76,16 @@ const BuyerListingDetail = () => {
                             <div className="rounded-lg bg-blue-50 border border-blue-100 p-4 mb-5">
                                 <p className="text-xs text-slate-500 mb-1">Match Score</p>
                                 <div className="w-full bg-white rounded-full h-2 mb-1 border border-blue-100">
-                                    <div className="bg-blue-500 h-2 rounded-full" style={{width: "91%"}}></div>
+                                    <div className="bg-blue-500 h-2 rounded-full" style={{ width: "91%" }}></div>
                                 </div>
                                 <p className="text-xs font-semibold text-blue-700">91% match for your profile</p>
                             </div>
 
                             <button onClick={handlePlaceOrder}
-                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2.5 rounded-lg mb-2 cursor-pointer">Place
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2.5 rounded-lg mb-2 cursor-pointer">Place
                                 Order
                             </button>
-                            <button
+                            <button onClick={startMessaging}
                                 className="w-full border border-slate-300 text-slate-700 text-sm font-medium py-2.5 rounded-lg hover:bg-slate-50">Message
                                 Seller
                             </button>
@@ -84,7 +95,7 @@ const BuyerListingDetail = () => {
                             <h2 className="text-sm font-semibold text-slate-900 mb-4">Seller Information</h2>
                             <div className="flex items-center gap-3 mb-4">
                                 <img src="https://placehold.co/48x48" className="w-12 h-12 rounded-full object-cover"
-                                     alt="Green Metals Co."/>
+                                    alt="Green Metals Co." />
                                 <div>
                                     <p className="text-sm font-semibold text-slate-900">{data.seller_id?.company_name}</p>
                                     <p className="text-xs text-slate-500">Verified Seller</p>
@@ -93,9 +104,9 @@ const BuyerListingDetail = () => {
                             <ul className="text-sm text-slate-600 space-y-2">
                                 <li className="flex items-center gap-2">
                                     <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
-                                         viewBox="0 0 24 24">
+                                        viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                              d="M5 13l4 4L19 7"/>
+                                            d="M5 13l4 4L19 7" />
                                     </svg>
                                     98% on-time delivery rate
                                 </li>

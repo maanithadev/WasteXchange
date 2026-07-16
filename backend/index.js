@@ -11,6 +11,7 @@ const buyerRoutes = require('./routes/buyers.routes.js');
 const paymentRoutes = require('./routes/payment.route.js');
 const orderRoutes = require("./routes/orders.routes.js")
 const notificationRoutes = require("./routes/notifications.routes.js")
+const messageRoutes = require("./routes/messages.routes.js")
 
 connectDB()
 
@@ -25,6 +26,7 @@ app.use("/api/buyers", buyerRoutes)
 app.use("/api/payments", paymentRoutes)
 app.use("/api/orders", orderRoutes)
 app.use("/api/notifications", notificationRoutes)
+app.use("/api/messages", messageRoutes)
 
 app.use((error, req, res, next) => {
     if (error instanceof multer.MulterError) {

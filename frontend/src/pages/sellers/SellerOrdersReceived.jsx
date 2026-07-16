@@ -85,7 +85,7 @@ const SellerOrdersReceived = () => {
                             <p className="text-sm text-slate-500 mb-6">Select the new status for this order.</p>
 
                             <div className="grid grid-cols-2 gap-3 mb-8">
-                                {["pending", "confirmed", "collected", "cancelled"].map((statusOption) => (
+                                {["pending", "confirmed", "Shipped", "cancelled"].map((statusOption) => (
                                     <button
                                         key={statusOption}
                                         type="button"
