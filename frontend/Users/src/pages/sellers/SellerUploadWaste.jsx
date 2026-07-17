@@ -3,17 +3,16 @@ import { useForm } from "react-hook-form"
 import { useNavigate } from "react-router-dom";
 
 const SellerUploadWaste = () => {
-
     const wasteCategories = ["Construction", "Metals", "Wood"]
     const units = ["kg", "tons", "lbs", "units", "m3"]
-    const currency = ["LKR", "$"]
-    const status = ["Active", "Pending", "Draft"]
-    const navigate = useNavigate()
+    const currencyList = ["LKR", "$"]
+    const statusList = ["Active", "Pending", "Draft"]
 
     const [data, setData] = useState({})
     const [image, setImage] = useState(null)
     const [imagePreview, setImagePreview] = useState("")
     const [currentStep, setCurrentStep] = useState("step1")
+    const navigate = useNavigate()
 
     const { register, handleSubmit } = useForm({
         values: {
@@ -205,7 +204,7 @@ const SellerUploadWaste = () => {
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Currency</label>
                                     <select
                                         className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("currency")}>
-                                        {currency.map((item, index) => (
+                                        {currencyList.map((item, index) => (
                                             <option key={index} value={item}>{item}</option>
                                         ))}
                                     </select>
@@ -247,7 +246,7 @@ const SellerUploadWaste = () => {
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Status</label>
                                     <select
                                         className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("status")}>
-                                        {status.map((item, index) => (
+                                        {statusList.map((item, index) => (
                                             <option key={index} value={item}>{item}</option>
                                         ))}
                                     </select>

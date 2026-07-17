@@ -2,16 +2,16 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 const SellerMyListings = () => {
+    const wasteCategories = ["Construction", "Metals", "Wood"]
+    const units = ["kg", "tons", "lbs", "units", "m3"]
+    const currencyList = ["LKR", "$"]
+    const statusList = ["Active", "Pending", "Draft", "Sold"]
+
     const [data, setData] = useState([])
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editData, setEditData] = useState(null);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState(null);
-
-    const wasteCategories = ["Construction", "Metals", "Wood"]
-    const units = ["kg", "tons", "lbs", "units", "m3"]
-    const currencyList = ["LKR", "$"]
-    const statusList = ["Active", "Pending", "Draft", "Sold"]
 
     useEffect(() => {
         async function fetchData() {

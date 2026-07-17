@@ -3,6 +3,8 @@ const router = express.Router()
 require("dotenv").config()
 const verifyUser = require("../middleware/verifyUser.middleware.js")
 const createNotifications = require("../helpers/createNotifications.helper.js")
+const EmissionFactors = require("../models/emissionFactors.model.js")
+const CarbonRecords = require("../models/carbonRecords.model.js")
 const Payments = require("../models/payments.model.js")
 const Cybersource_Transactions = require("../models/cybersourceTransactions.model.js")
 const Orders = require("../models/orders.model.js")
@@ -116,6 +118,36 @@ router.post('/payment/response', async (req, res) => {
             return saved_payment
         }
 
+        const calculateAndSaveCarbonRecord = async (orderId) => {
+            const factorDoc = await EmissionFactors.findOne({
+                category: transaction_Data.category
+            });
+
+            if (!factorDoc) {
+                console.warn(
+                    `No emission factor found for category "${transaction_Data.category}" — skipping carbon record.`
+                );
+                return null;
+            }
+
+            let quantityInKg = transaction_Data.quantity;
+            if (transaction_Data.unit === 'tons') {
+                quantityInKg = transaction_Data.quantity * 1000;
+            }
+            // ⚠️ Add more unit conversions here if wasteListings.unit supports others.
+
+            const co2SavedKg = quantityInKg * factorDoc.co2FactorPerKg;
+
+            const carbonRecord = new CarbonRecords({
+                order_id: orderId,
+                co2SavedKg: co2SavedKg,
+                created_at: data.signed_date_time,
+                updated_at: data.signed_date_time,
+            });
+
+            return await carbonRecord.save();
+        };
+
         // Redirect the user's browser to the React success page
         const decision = data.decision;
         switch (decision) {
@@ -156,6 +188,8 @@ router.post('/payment/response', async (req, res) => {
                     { _id: transaction_Data._id },
                     { status: "Sold" }
                 )
+
+                await calculateAndSaveCarbonRecord(saved_Order._id)
 
                 // buyer notification
                 createNotifications({
