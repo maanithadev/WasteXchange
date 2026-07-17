@@ -6,13 +6,16 @@ const createNotifications = require("../helpers/createNotifications.helper.js")
 const Payments = require("../models/payments.model.js")
 const Cybersource_Transactions = require("../models/cybersourceTransactions.model.js")
 const Orders = require("../models/orders.model.js")
+const WasteListings = require("../models/wasteListings.model.js")
 
 // get
 router.get("/get-all-payments", verifyUser, async (req, res) => {
     try {
-        const payments = await Payments.find()
+        const payments = await Payments.find({}, "-_id -order_id -seller_id -buyer_id -cyberSourceTransaction_id  -__v")
             .sort({ created_at: -1 })
-            .populate("order_id").populate("seller_id").populate("buyer_id")
+            .populate("order_id", "-_id -wasteListings_id -seller_id -buyer_id -cyberSourceTransaction_id -__v")
+            .populate("seller_id", "-_id -password -__v")
+            .populate("buyer_id", "-_id -password -__v")
         res.json(payments)
     } catch (err) {
         res.json({ message: err.message })
@@ -123,6 +126,19 @@ router.post('/payment/response', async (req, res) => {
                     buyer_id: transaction_Data.buyer_id,
                     cyberSourceTransaction_id: saved_Cybersource_Transaction._id,
                     order_reference_number: data.req_reference_number,
+                    address: {
+                        address_line1: data.req_bill_to_address_line1,
+                        address_line2: data.req_bill_to_address_line2,
+                        city: data.req_bill_to_address_city,
+                        state: data.req_bill_to_address_state,
+                        postal_code: data.req_bill_to_address_postal_code,
+                        country: data.req_bill_to_address_country,
+                    },
+                    bill_to_email: data.req_bill_to_email,
+                    company_name: data.req_bill_to_company_name,
+                    forename: data.req_bill_to_forename,
+                    surname: data.req_bill_to_surname,
+                    phone: data.req_bill_to_phone,
                     quantity: transaction_Data.quantity,
                     unit: transaction_Data.unit,
                     total_price: data.auth_amount,
@@ -135,6 +151,11 @@ router.post('/payment/response', async (req, res) => {
                 })
                 const saved_Order = await Order_saveData.save();
                 payment_Status_Save(saved_Order._id)
+
+                await WasteListings.updateOne(
+                    { _id: transaction_Data._id },
+                    { status: "Sold" }
+                )
 
                 // buyer notification
                 createNotifications({

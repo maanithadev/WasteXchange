@@ -16,7 +16,7 @@ router.get("/get-buyer-details", verifyUser, async (req, res) => {
 
 router.get("/get-all-waste-listings", async (req, res) => {
     try {
-        const wasteListings = await WasteListings.find()
+        const wasteListings = await WasteListings.find({ status: "Active" })
         res.status(200).json(wasteListings)
     } catch (err) {
         res.status(500).send({ message: err.message })
@@ -52,7 +52,7 @@ router.put("/update-buyer-details", verifyUser, async (req, res) => {
                 }
             }
         )
-        res.json({message:"update Success"})
+        res.json({ message: "update Success" })
     } catch (err) {
         res.json({ message: err.message })
     }

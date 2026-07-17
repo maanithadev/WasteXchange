@@ -22,6 +22,41 @@ const ordersSchema = mongoose.Schema({
     order_reference_number: {
         type: String
     },
+    address: {
+        address_line1: {
+            type: String
+        },
+        address_line2: {
+            type: String
+        },
+        city: {
+            type: String
+        },
+        state: {
+            type: String
+        },
+        postal_code: {
+            type: String
+        },
+        country: {
+            type: String
+        },
+    },
+    bill_to_email: {
+        type: String
+    },
+    company_name: {
+        type: String
+    },
+    forename: {
+        type: String
+    },
+    surname: {
+        type: String
+    },
+    phone: {
+        type: String
+    },
     quantity: {
         type: Number
     },

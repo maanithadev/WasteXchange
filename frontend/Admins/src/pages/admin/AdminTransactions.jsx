@@ -43,15 +43,15 @@ const AdminTransactions = () => {
 
         return Object.entries(obj).map(([key, value]) => {
             // Ignore specified fields
-            if (key === '_id' || key === '__v' || key === 'cyberSourceTransaction_id') return null;
+            // if (key === '_id' || key === '__v' || key === 'cyberSourceTransaction_id') return null;
 
             // Format the label
             let label = key;
-            if (parentKey) {
-                let formattedParent = parentKey.replace('_id', '');
-                if (key === 'company_name') label = `${formattedParent} Company`;
-                else label = `${formattedParent} ${key}`;
-            }
+            // if (parentKey) {
+            //     let formattedParent = parentKey.replace('_id', '');
+            //     if (key === 'company_name') label = `${formattedParent} Company`;
+            //     else label = `${formattedParent} ${key}`;
+            // }
 
             if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
                 return renderDynamicFields(value, key);

@@ -11,7 +11,7 @@ const SellerMyListings = () => {
     const wasteCategories = ["Construction", "Metals", "Wood"]
     const units = ["kg", "tons", "lbs", "units", "m3"]
     const currencyList = ["LKR", "$"]
-    const statusList = ["Active", "Pending", "Draft"]
+    const statusList = ["Active", "Pending", "Draft", "Sold"]
 
     useEffect(() => {
         async function fetchData() {

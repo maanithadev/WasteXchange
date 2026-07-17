@@ -6,6 +6,8 @@ const SellerOrdersReceived = () => {
     const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
     const [orderToUpdate, setOrderToUpdate] = useState(null);
     const [selectedStatus, setSelectedStatus] = useState("");
+    const [selectedItem, setSelectedItem] = useState({});
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         async function loadOrders() {
@@ -26,6 +28,45 @@ const SellerOrdersReceived = () => {
         setIsStatusModalOpen(false);
         setOrderToUpdate(null);
     };
+
+    const handleView = async (id) => {
+        const res = await axios.get(import.meta.env.VITE_GET_SELLER_ORDER_ADVANCE_INFO_URL + id, {
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem("token")}`,
+            }
+        });
+        setSelectedItem(res.data);
+        setIsModalOpen(true);
+    };
+    console.log(selectedItem)
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setSelectedItem({});
+    };
+
+    const renderDynamicFields = (obj, parentKey = '') => {
+        if (!obj) return null;
+
+        return Object.entries(obj).map(([key, value]) => {
+            let label = key;
+
+            if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                return renderDynamicFields(value, key);
+            }
+
+            if (Array.isArray(value)) {
+                value = value.join(', ');
+            }
+
+            return (
+                <div key={`${parentKey}-${key}`} className="">
+                    <label className="block text-sm font-medium text-slate-700 mb-1 capitalize text-nowrap truncate">{label.replace(/_/g, ' ')}</label>
+                    <input type="text" readOnly value={value || ""} className="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-600 focus:outline-none" />
+                </div>
+            )
+        });
+    }
 
     return (
         <>
@@ -59,7 +100,7 @@ const SellerOrdersReceived = () => {
                                         <td className="px-6 py-4"><span
                                             className="text-xs font-semibold bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full capitalize">{item.status}</span>
                                         </td>
-                                        <td className="px-6 py-4 text-right">
+                                        <td className="flex px-6 py-4 text-right gap-2">
                                             <button
                                                 onClick={() => {
                                                     setOrderToUpdate(item);
@@ -69,6 +110,7 @@ const SellerOrdersReceived = () => {
                                                 className="text-xs font-medium border border-slate-300 text-slate-700 rounded-lg px-3 py-1.5 hover:bg-slate-50">Update
                                                 Status
                                             </button>
+                                            <button onClick={() => handleView(item._id)} className="text-xs font-medium border border-slate-300 text-slate-700 rounded-lg px-3 py-1.5 hover:bg-slate-50">View Details</button>
                                         </td>
                                     </tr>
                                 ))}
@@ -103,6 +145,31 @@ const SellerOrdersReceived = () => {
                             <div className="flex justify-end gap-3">
                                 <button type="button" onClick={() => setIsStatusModalOpen(false)} className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50">Cancel</button>
                                 <button type="button" onClick={handleUpdateStatus} className="px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700">Update</button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* <!-- MODAL --> */}
+                {isModalOpen && selectedItem && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+                        <div className="bg-white rounded-xl shadow-xl w-full max-w-5xl max-h-[90vh] flex flex-col">
+                            <div className="flex items-center justify-between p-6 border-b border-slate-200">
+                                <h2 className="text-xl font-bold text-slate-800">Order Details</h2>
+                                <button onClick={closeModal} className="text-slate-400 hover:text-slate-600 focus:outline-none">
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                            </div>
+                            <div className="p-6 overflow-y-auto flex-1">
+                                {selectedItem && (
+                                    <>
+                                        <div className="mb-8">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                                {renderDynamicFields(selectedItem)}
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
