@@ -1,6 +1,7 @@
 import { lazy } from "react"
 import { Route, Routes } from "react-router-dom"
 import ProtectedAdminRoutes from "./auth/ProtectedAdminRoutes"
+import { SidebarProvider } from "./contexts/SidebarContext"
 
 const AdminSidebar = lazy(() => import("./components/admin/AdminSidebar"))
 const AdminNavbar = lazy(() => import("./components/admin/AdminNavbar"))
@@ -18,7 +19,11 @@ const App = () => {
     <>
       <Routes>
         <Route element={<ProtectedAdminRoutes />}>
-          <Route element={<AdminSidebar />}>
+          <Route element={
+            <SidebarProvider>
+              <AdminSidebar />
+            </SidebarProvider>
+          }>
             <Route element={<AdminNavbar />}>
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/user-management" element={<AdminUserManagement />} />

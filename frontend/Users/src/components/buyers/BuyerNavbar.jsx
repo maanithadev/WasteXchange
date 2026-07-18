@@ -1,12 +1,23 @@
-import {Outlet} from "react-router-dom";
+import { Outlet } from "react-router-dom";
+import { useSidebarContext } from "../../contexts/SidebarContext.jsx";
 
 const BuyerNavbar = () => {
+    const { isSidebarOpen, setIsSidebarOpen } = useSidebarContext();
     return (
         <>
             {/* <!-- SHARED NAVBAR / TOPBAR COMPONENT (BUYER) --> */}
             <header className="h-16 w-full bg-white border-b border-slate-200 flex items-center justify-between px-6">
                 <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold text-blue-700">WasteXchange</span>
+                    <button 
+                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                        className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                        aria-label="Toggle Sidebar"
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                    
                     <span className="text-xs font-medium text-slate-400 border-l border-slate-200 pl-2 ml-1">Buyer Portal</span>
                 </div>
 
@@ -29,7 +40,7 @@ const BuyerNavbar = () => {
                 </div>
             </header>
 
-            <Outlet/>
+            <Outlet />
         </>
     )
 }

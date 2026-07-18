@@ -41,6 +41,7 @@ import ProtectedSellerRoutes from "./auth/ProtectedSellerRoutes.jsx";
 import ProtectedBuyerRoutes from "./auth/ProtectedBuyerRoutes.jsx";
 import Loading from "./components/Loading.jsx";
 import InitiateCheckout from "./pages/buyers/InitiateCheckout.jsx";
+import { SidebarProvider } from "./contexts/SidebarContext.jsx";
 
 const App = () => {
     return (
@@ -63,7 +64,10 @@ const App = () => {
 
                 {/*sellers*/}
                 <Route element={<ProtectedSellerRoutes />}>
-                    <Route element={<SellerSidebar />}>
+                    <Route element={
+                        <SidebarProvider>
+                            <SellerSidebar />
+                        </SidebarProvider>}>
                         <Route element={<SellerNavbar />}>
                             <Route path="/seller/dashboard" element={<SellerDashboard />} />
                             <Route path="/seller/upload-waste" element={<SellerUploadWaste />} />
@@ -80,7 +84,11 @@ const App = () => {
 
                 {/*buyers*/}
                 <Route element={<ProtectedBuyerRoutes />}>
-                    <Route element={<BuyerSidebar />}>
+                    <Route element={
+                        <SidebarProvider>
+                            <BuyerSidebar />
+                        </SidebarProvider>
+                    }>
                         <Route element={<BuyerNavbar />}>
                             <Route path="/buyer/dashboard" element={<BuyerDashboard />} />
                             <Route path="/buyer/browse-marketplace" element={<BuyerBrowseMarketplace />} />

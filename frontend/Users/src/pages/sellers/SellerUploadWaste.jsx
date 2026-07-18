@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { useNavigate } from "react-router-dom";
+import Loading from "../../components/Loading";
 
 const SellerUploadWaste = () => {
     const wasteCategories = ["Construction", "Metals", "Wood"]
@@ -12,6 +13,7 @@ const SellerUploadWaste = () => {
     const [image, setImage] = useState(null)
     const [imagePreview, setImagePreview] = useState("")
     const [currentStep, setCurrentStep] = useState("step1")
+    const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
 
     const { register, handleSubmit } = useForm({
@@ -48,6 +50,7 @@ const SellerUploadWaste = () => {
         imageData.append("image", image)
 
         try {
+            setLoading(true)
             const response = await fetch(import.meta.env.VITE_SELLER_UPLOAD_WASTE_URL, {
                 method: "POST",
                 body: imageData,
@@ -62,6 +65,7 @@ const SellerUploadWaste = () => {
             }).join("")
             setData({ ...result, description: updatedDescription })
             setCurrentStep("step2")
+            setLoading(false)
         } catch (err) {
             console.error("Error:", err);
         }
@@ -85,6 +89,7 @@ const SellerUploadWaste = () => {
         saveFormData.append("status", data.status)
 
         try {
+            setLoading(true)
             const response = await fetch(import.meta.env.VITE_SELLER_UPLOAD_WASTE_SAVE_URL, {
                 method: "POST",
                 body: saveFormData,
@@ -94,11 +99,14 @@ const SellerUploadWaste = () => {
             });
 
             await response.json();
+            setLoading(false)
             navigate("/seller/my-listings")
         } catch (err) {
             console.error("Error:", err);
         }
     }
+
+    if (loading) return <Loading />
 
     return (
         <>

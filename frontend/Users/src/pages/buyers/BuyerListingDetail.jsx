@@ -62,8 +62,23 @@ const BuyerListingDetail = () => {
                             </div>
                             <h1 className="text-2xl font-bold text-slate-900 mb-2">{data.title}</h1>
                             <p className="text-sm text-slate-500 mb-4">{data.quantity} {data.unit} available &middot; {data.location?.street}, {data.location?.city}, {data.location?.state}, {data.location?.postal_code}</p>
-                            <h2 className="text-sm font-semibold text-slate-900 mb-2">Description</h2>
-                            <p className="text-sm text-slate-600 leading-relaxed">{data.description}</p>
+                            {/* <h2 className="text-sm font-semibold text-slate-900 mb-2">Description</h2> */}
+                            <div className="bg-slate-50 rounded-xl border border-slate-200 p-5 mt-3">
+                                {data.description ? (
+                                    <ul className="space-y-4">
+                                        {data.description.split('\n').map(item => item.trim()).filter(item => item.length > 0).map((bullet, index) => (
+                                            <li key={index} className="flex items-start gap-3 text-sm text-slate-700 leading-relaxed">
+                                                <svg className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <span>{bullet}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p className="text-sm text-slate-500 italic">No description provided.</p>
+                                )}
+                            </div>
                         </div>
                     </div>
 
