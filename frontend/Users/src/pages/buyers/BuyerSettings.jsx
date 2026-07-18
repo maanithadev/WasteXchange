@@ -4,6 +4,12 @@ import { useForm } from "react-hook-form";
 
 const BuyerSettings = () => {
     const [data, setData] = useState([]);
+    const [passwordData, setPasswordData] = useState({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+    });
+    const [passwordMessage, setPasswordMessage] = useState({ type: '', text: '' });
 
     const { register, handleSubmit } = useForm({
         values: {
@@ -45,6 +51,38 @@ const BuyerSettings = () => {
             console.log(err.message)
         }
     }
+
+    const handlePasswordSubmit = async (e) => {
+        e.preventDefault();
+        setPasswordMessage({ type: '', text: '' });
+
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
+            return setPasswordMessage({ type: 'error', text: 'New passwords do not match' });
+        }
+
+        if (passwordData.newPassword.length < 6) {
+            return setPasswordMessage({ type: 'error', text: 'Password must be at least 6 characters' });
+        }
+
+        console.log(passwordData)
+        try {
+            const res = await axios.post(import.meta.env.VITE_CHANGE_PASSWORD_URL, {
+                currentPassword: passwordData.currentPassword,
+                newPassword: passwordData.newPassword
+            }, {
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                }
+            });
+            setPasswordMessage({ type: 'success', text: res.data.message });
+            setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+        } catch (err) {
+            setPasswordMessage({
+                type: 'error',
+                text: err.response?.data?.message || 'Failed to update password'
+            });
+        }
+    };
 
     return (
         <>
@@ -113,24 +151,36 @@ const BuyerSettings = () => {
                         </div>
                     </form>
 
-                    <form class="bg-white rounded-xl border border-slate-200 p-6 space-y-5">
+                    <form class="bg-white rounded-xl border border-slate-200 p-6 space-y-5" onSubmit={handlePasswordSubmit}>
                         <h2 class="text-lg font-semibold text-slate-900">Change Password</h2>
+
+                        {passwordMessage.text && (
+                            <div className={`p-3 rounded-lg text-sm ${passwordMessage.type === 'error' ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-emerald-50 text-emerald-600 border border-emerald-200'}`}>
+                                {passwordMessage.text}
+                            </div>
+                        )}
 
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-2">Current Password</label>
-                            <input type="password" placeholder="••••••••"
+                            <input type="password" placeholder="••••••••" required
+                                value={passwordData.currentPassword}
+                                onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
                                 class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-2">New Password</label>
-                            <input type="password" placeholder="••••••••"
+                            <input type="password" placeholder="••••••••" required
+                                value={passwordData.newPassword}
+                                onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
                                 class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-2">Confirm New Password</label>
-                            <input type="password" placeholder="••••••••"
+                            <input type="password" placeholder="••••••••" required
+                                value={passwordData.confirmPassword}
+                                onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
                                 class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                         </div>
 

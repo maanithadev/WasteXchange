@@ -34,7 +34,6 @@ router.get("/get-all-users", verifyUser, async (req, res) => {
     }
 })
 
-
 // post
 router.post("/signup", async (req, res) => {
     try {
@@ -90,6 +89,27 @@ router.post("/login", async (req, res) => {
         res.status(200).json({ message: 'User logged in successfully.', token, role: userExists.role })
     } catch (err) {
         res.send({ message: "server error" })
+    }
+})
+
+router.post("/change-password", verifyUser, async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const user = await Users.findOne({ _id: req.token.user_id });
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) return res.status(400).json({ message: "Incorrect current password" });
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        await Users.updateOne(
+            { _id: req.token.user_id },
+            { password: hashedPassword }
+        );
+
+        res.json({ message: "Password updated successfully" });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
 })
 
