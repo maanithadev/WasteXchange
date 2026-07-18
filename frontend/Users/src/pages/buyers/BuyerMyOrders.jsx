@@ -4,6 +4,9 @@ import { Link } from "react-router-dom";
 
 const BuyerMyOrders = () => {
     const [data, setData] = useState([]);
+    const [confirmOrder, setConfirmOrder] = useState(null);
+    const [isUpdating, setIsUpdating] = useState(false);
+
     useEffect(() => {
         async function loadOrders() {
             const res = await axios.get(import.meta.env.VITE_GET_BUYER_ORDER_INFO_URL, {
@@ -16,6 +19,29 @@ const BuyerMyOrders = () => {
 
         loadOrders()
     }, []);
+
+    const handleMarkCollected = async () => {
+        if (!confirmOrder) return;
+        setIsUpdating(true);
+        try {
+            await axios.get(`${import.meta.env.VITE_MARK_ORDER_COLLECTED_URL}${confirmOrder._id}`, {
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                }
+            });
+            // Update local state immediately
+            setData(data.map(order =>
+                order._id === confirmOrder._id
+                    ? { ...order, status: "collected" }
+                    : order
+            ));
+        } catch (err) {
+            console.error("Failed to mark order as collected:", err);
+        } finally {
+            setIsUpdating(false);
+            setConfirmOrder(null);
+        }
+    };
 
     return (
         <>
@@ -53,11 +79,28 @@ const BuyerMyOrders = () => {
                                         <td className="px-6 py-4"><span
                                             className="text-xs font-semibold bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full">{item.status.toUpperCase()}</span>
                                         </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <Link to={`/buyer/track-order/${1}`}>
+                                        <td className="px-6 py-4 text-right flex gap-2">
+                                            {item.status.toLowerCase() === "cancelled"
+                                                ? null
+                                                : <button
+                                                    className={`text-xs font-medium rounded-lg px-3 py-1.5 transition-colors ${item.status?.toLowerCase() === 'collected'
+                                                        ? 'border border-emerald-600 text-emerald-700 bg-emerald-50 cursor-not-allowed opacity-80'
+                                                        : item.status?.toLowerCase() === 'shipped'
+                                                            ? 'border border-blue-600 text-blue-600 hover:bg-blue-50 cursor-pointer'
+                                                            : 'border border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed opacity-60'
+                                                        }`}
+                                                    disabled={item.status?.toLowerCase() !== 'shipped'}
+                                                    onClick={() => setConfirmOrder(item)}
+                                                    title={
+                                                        item.status?.toLowerCase() === 'collected' ? "This order has already been collected" :
+                                                            item.status?.toLowerCase() !== 'shipped' ? "This button is only available when the order becomes Shipped" : "Mark order as collected"
+                                                    }
+                                                >
+                                                    {item.status?.toLowerCase() === 'collected' ? 'Order Collected' : 'Collected'}
+                                                </button>}
+                                            <Link to={`/buyer/track-order/${item.order_reference_number}`}>
                                                 <button
-                                                    className="text-xs font-medium border border-slate-300 text-slate-700 rounded-lg px-3 py-1.5 hover:bg-slate-50">Track
-                                                    Order
+                                                    className="text-xs font-medium border border-slate-300 text-slate-700 rounded-lg px-3 py-1.5 hover:bg-slate-50">Track Order
                                                 </button>
                                             </Link>
                                         </td>
@@ -68,6 +111,43 @@ const BuyerMyOrders = () => {
                     </div>
                 </div>
             </main>
+
+            {/* Confirmation Modal */}
+            {confirmOrder && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+                    <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                        <div className="p-6">
+                            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 mb-4 text-blue-600 mx-auto">
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
+                            </div>
+                            <h3 className="text-lg font-bold text-slate-900 text-center mb-2">Confirm Collection</h3>
+                            <p className="text-sm text-slate-500 text-center">
+                                Are you sure you want to mark this order as collected?
+                                <br />This action cannot be undone.
+                            </p>
+                        </div>
+                        <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+                            <button
+                                onClick={() => setConfirmOrder(null)}
+                                className="px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-200 transition-colors disabled:opacity-50"
+                                disabled={isUpdating}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleMarkCollected}
+                                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors disabled:opacity-50 flex items-center gap-2"
+                                disabled={isUpdating}
+                            >
+                                {isUpdating && (
+                                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                )}
+                                Confirm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     )
 }

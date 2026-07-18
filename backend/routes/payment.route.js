@@ -98,16 +98,16 @@ router.post('/payment/response', async (req, res) => {
         });
         const saved_Cybersource_Transaction = await cybersource_Transaction_saveData.save();
 
-        const payment_Status_Save = async (orderId) => {
+        const payment_Status_Save = async (decision, orderId) => {
             const Payment_saveData = new Payments({
                 order_id: orderId || null,
                 seller_id: transaction_Data.seller_id?._id,
                 buyer_id: transaction_Data.buyer_id,
                 cyberSourceTransaction_id: saved_Cybersource_Transaction._id,
                 transaction_id: data.transaction_id || null,
-                total_price: data.auth_amount,
+                total_price: transaction_Data.price,
                 currency: data.req_currency,
-                payment_method: data.req_payment_method || null,
+                payment_method: data.decision === "ACCEPT" ? data.req_payment_method : null,
                 card_number: data.req_card_number || null,
                 card_type_name: data.card_type_name || null,
                 payment_status: data.decision === "ACCEPT" ? "completed" : "failed",
@@ -182,7 +182,7 @@ router.post('/payment/response', async (req, res) => {
                     updated_at: data.signed_date_time,
                 })
                 const saved_Order = await Order_saveData.save();
-                payment_Status_Save(saved_Order._id)
+                payment_Status_Save(decision, saved_Order._id)
 
                 await WasteListings.updateOne(
                     { _id: transaction_Data._id },
@@ -221,7 +221,7 @@ router.post('/payment/response', async (req, res) => {
 
                 return res.redirect(process.env.PAYMENT_SUCCESS_REDIRECT_URL);
             case "CANCEL":
-                const payment_data = payment_Status_Save()
+                const payment_data = payment_Status_Save(decision)
 
                 // buyer notification
                 createNotifications({

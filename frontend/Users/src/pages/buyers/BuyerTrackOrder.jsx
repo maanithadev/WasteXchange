@@ -1,21 +1,23 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios"
 import Loading from "../../components/Loading";
 import { useVerifyUser } from "../../hooks/useVerifyUser";
 import { useConversationsContext } from "../../contexts/ConversationsContext.jsx";
+import { Ban } from "lucide-react";
 
 const BuyerTrackOrder = () => {
     const [data, setData] = useState({})
     const [loading, setLoading] = useState(true)
     const { user } = useVerifyUser();
     const { setConversationId } = useConversationsContext()
+    const { id } = useParams()
     const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchData() {
             setLoading(true)
-            const res = await axios.get(import.meta.env.VITE_GET_BUYER_TRACK_ORDER_URL, {
+            const res = await axios.get(import.meta.env.VITE_GET_BUYER_TRACK_ORDER_URL + id, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`
                 }
@@ -145,57 +147,74 @@ const BuyerTrackOrder = () => {
                         </div>
                         <div className="flex items-center gap-3">
                             <span
-                                className="px-4 py-2 bg-emerald-50 text-emerald-700 text-sm font-semibold rounded-full border border-emerald-200">
-                                Status: {data.order.status}
+                                className={`px-4 py-2 text-sm font-semibold rounded-full border ${data.order.status === 'cancelled'
+                                    ? 'bg-red-50 text-red-700 border-red-200'
+                                    : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                    }`}
+                            >
+                                Status: {data.order.status.toUpperCase()}
                             </span>
                         </div>
                     </div>
                 </div>
                 {/* Progress Tracker */}
                 <div className="mb-8 bg-white rounded-xl border border-slate-200 p-8 pt-10 shadow-sm overflow-hidden">
-                    <div className="relative flex justify-between items-center w-full max-w-4xl mx-auto">
-
-                        {/* Background Line */}
-                        <div className="absolute left-[12%] right-[12%] top-6 -translate-y-1/2 h-1 bg-slate-200 z-0"></div>
-
-                        {/* Active Line (mocking 'Confirmed' status) */}
-                        <div className="absolute left-[12%] top-6 -translate-y-1/2 h-1 bg-emerald-500 z-0 transition-all duration-500"
-                            style={handleGreenLine()}></div>
-
-                        {/* Step 1: Pending (Completed) */}
-                        <div className="relative z-10 flex flex-col items-center w-1/4">
-                            {data.order.status === "pending"
-                                ? <div
-                                    className="w-12 h-12 rounded-full bg-emerald-500 flex items-center justify-center shadow-md ring-[6px] ring-white">
-                                    <div className="w-3 h-3 bg-white rounded-full"></div>
+                    {data.order.status === "cancelled"
+                        ? (
+                            <div className="flex flex-col items-center justify-center py-6">
+                                <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-4 ring-8 ring-red-50/50">
+                                    <Ban className="w-8 h-8 text-red-500" strokeWidth={2.5} />
                                 </div>
-                                : <div
-                                    className="w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-md ring-[6px] ring-white">
-                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
-                                    </svg>
-                                </div>}
-                            <span className="text-sm font-bold mt-4 capitalize tracking-wide text-slate-400"> Pending</span>
-                        </div>
+                                <h2 className="text-xl font-bold text-slate-900 mb-2">Order Cancelled</h2>
+                                <p className="text-sm text-slate-500 text-center max-w-md">
+                                    This order has been cancelled and will not be processed further. If you believe this is a mistake, please contact the seller.
+                                </p>
+                            </div>
+                        )
 
-                        {/* Step 2: Confirmed (Current) */}
-                        <div className="relative z-10 flex flex-col items-center w-1/4">
-                            {handleConfirmed()}
-                            <span className="text-sm font-bold mt-4 capitalize tracking-wide text-slate-400">Confirmed</span>
-                        </div>
+                        : <div className="relative flex justify-between items-center w-full max-w-4xl mx-auto">
 
-                        {/* Step 3: Shipped (Upcoming) */}
-                        <div className="relative z-10 flex flex-col items-center w-1/4">
-                            {handleShipped()}
-                            <span className="text-sm font-bold mt-4 capitalize tracking-wide text-slate-400">Shipped</span>
-                        </div>
+                            {/* Background Line */}
+                            <div className="absolute left-[12%] right-[12%] top-6 -translate-y-1/2 h-1 bg-slate-200 z-0"></div>
 
-                        {/* Step 4: Collected (Upcoming) */}
-                        <div className="relative z-10 flex flex-col items-center w-1/4">
-                            {handleCollected()}
-                            <span className={`text-sm font-bold  mt-4 capitalize tracking-wide ${data.order.status === "collected" ? "text-emerald-600" : "text-slate-400"}`}>Collected</span>
-                        </div>
-                    </div>
+                            {/* Active Line (mocking 'Confirmed' status) */}
+                            <div className="absolute left-[12%] top-6 -translate-y-1/2 h-1 bg-emerald-500 z-0 transition-all duration-500"
+                                style={handleGreenLine()}></div>
+
+                            {/* Step 1: Pending (Completed) */}
+                            <div className="relative z-10 flex flex-col items-center w-1/4">
+                                {data.order.status === "pending"
+                                    ? <div
+                                        className="w-12 h-12 rounded-full bg-emerald-500 flex items-center justify-center shadow-md ring-[6px] ring-white">
+                                        <div className="w-3 h-3 bg-white rounded-full"></div>
+                                    </div>
+                                    : <div
+                                        className="w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-md ring-[6px] ring-white">
+                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>}
+                                <span className="text-sm font-bold mt-4 capitalize tracking-wide text-slate-400"> Pending</span>
+                            </div>
+
+                            {/* Step 2: Confirmed (Current) */}
+                            <div className="relative z-10 flex flex-col items-center w-1/4">
+                                {handleConfirmed()}
+                                <span className="text-sm font-bold mt-4 capitalize tracking-wide text-slate-400">Confirmed</span>
+                            </div>
+
+                            {/* Step 3: Shipped (Upcoming) */}
+                            <div className="relative z-10 flex flex-col items-center w-1/4">
+                                {handleShipped()}
+                                <span className="text-sm font-bold mt-4 capitalize tracking-wide text-slate-400">Shipped</span>
+                            </div>
+
+                            {/* Step 4: Collected (Upcoming) */}
+                            <div className="relative z-10 flex flex-col items-center w-1/4">
+                                {handleCollected()}
+                                <span className={`text-sm font-bold  mt-4 capitalize tracking-wide ${data.order.status === "collected" ? "text-emerald-600" : "text-slate-400"}`}>Collected</span>
+                            </div>
+                        </div>}
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -268,7 +287,7 @@ const BuyerTrackOrder = () => {
                                         d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                                 </svg>
                             </div>
-                            <h2 className="text-lg font-bold text-slate-900">Product Info</h2>
+                            <h2 className="text-lg font-bold text-slate-900">Waste Info</h2>
                         </div>
                         <div className="space-y-4">
                             <div className="flex justify-between border-b border-slate-100 pb-3">

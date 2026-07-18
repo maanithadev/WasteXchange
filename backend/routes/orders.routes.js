@@ -16,13 +16,26 @@ router.get("/buyer-simple-info", verifyUser, async (req, res) => {
     }
 })
 
-router.get("/buyer-track-order", verifyUser, async (req, res) => {
+router.get("/buyer-track-order/:id", verifyUser, async (req, res) => {
     try {
-        const order = await Orders.findOne({ buyer_id: req.token.user_id })
+        const order = await Orders.findOne({ order_reference_number: req.params.id })
             .populate("seller_id", "-email -password")
             .populate("wasteListings_id")
         const payment = await Payments.findOne({ order_id: order._id })
         res.json({ order, payment })
+    } catch (err) {
+        res.json({ message: err.message })
+    }
+})
+
+router.get("/mark-collected/:id", verifyUser, async (req, res) => {
+    try {
+        const order = await Orders.findOneAndUpdate(
+            { _id: req.params.id, buyer_id: req.token.user_id },
+            { status: "collected" },
+            { new: true }
+        )
+        res.json(order)
     } catch (err) {
         res.json({ message: err.message })
     }
