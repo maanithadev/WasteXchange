@@ -5,6 +5,14 @@ const carbonRecordsSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "orders"
     },
+    seller_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users"
+    },
+    buyer_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users"
+    },
     co2SavedKg: {
         type: Number
     },

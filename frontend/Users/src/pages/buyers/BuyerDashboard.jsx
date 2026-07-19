@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const BuyerDashboard = () => {
     const [data, setData] = useState([]);
@@ -25,14 +26,16 @@ const BuyerDashboard = () => {
                         <h1 class="text-2xl font-bold text-slate-900">Dashboard</h1>
                         <p class="text-sm text-slate-500 mt-1">Welcome back, EcoPlast Industries</p>
                     </div>
-                    <button
-                        class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />
-                        </svg>
-                        Browse Marketplace
-                    </button>
+                    <Link to="/buyer/browse-marketplace">
+                        <button
+                            class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />
+                            </svg>
+                            Browse Marketplace
+                        </button>
+                    </Link>
                 </div>
 
                 {/* <!-- Summary cards --> */}

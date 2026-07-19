@@ -1,17 +1,40 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
 
 const SellerMyListings = () => {
     const wasteCategories = ["Construction", "Metals", "Wood"]
-    const units = ["kg", "tons", "lbs", "units", "m3"]
-    const currencyList = ["LKR", "$"]
+    const units = ["kg", "tons"]
+    const currencyList = ["LKR"]
     const statusList = ["Active", "Pending", "Draft", "Sold"]
 
     const [data, setData] = useState([])
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [editData, setEditData] = useState(null);
+    const [editData, setEditData] = useState({});
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState(null);
+
+    const { register, handleSubmit } = useForm({
+        values: {
+            image: editData.image,
+            title: editData.title,
+            category: editData.category,
+            quantity: editData.quantity,
+            unit: editData.unit,
+            colour: editData.colour,
+            description: editData.description,
+            price: editData.price,
+            currency: editData.currency,
+            location: {
+                street: editData.location?.street,
+                city: editData.location?.city,
+                state: editData.location?.state,
+                postal_code: editData.location?.postal_code
+            },
+            status: editData.status
+        }
+    })
 
     useEffect(() => {
         async function fetchData() {
@@ -26,33 +49,78 @@ const SellerMyListings = () => {
         fetchData()
     }, []);
 
-    const handleEditChange = (e) => {
-        const { name, value } = e.target;
-        if (["street", "city", "state", "postal_code"].includes(name)) {
-            setEditData({
-                ...editData,
-                location: {
-                    ...editData.location,
-                    [name]: value
+    // const handleEditChange = (e) => {
+    //     const { name, value } = e.target;
+    //     if (["street", "city", "state", "postal_code"].includes(name)) {
+    //         setEditData({
+    //             ...editData,
+    //             location: {
+    //                 ...editData.location,
+    //                 [name]: value
+    //             }
+    //         });
+    //     } else {
+    //         setEditData({ ...editData, [name]: value });
+    //     }
+    // };
+
+    async function onsubmit(formData) {
+        const saveFormData = new FormData();
+
+        if (formData.image && formData.image.length > 0) {
+            saveFormData.append("image", formData.image[0]);
+        }
+
+        saveFormData.append("title", formData.title);
+        saveFormData.append("category", formData.category);
+        saveFormData.append("quantity", formData.quantity);
+        saveFormData.append("unit", formData.unit);
+        saveFormData.append("colour", formData.colour);
+        saveFormData.append("description", formData.description);
+        saveFormData.append("price", formData.price);
+        saveFormData.append("currency", formData.currency);
+        saveFormData.append("street", formData.location?.street);
+        saveFormData.append("city", formData.location?.city);
+        saveFormData.append("state", formData.location?.state);
+        saveFormData.append("postal_code", formData.location?.postal_code);
+        saveFormData.append("status", formData.status);
+
+        try {
+            const response = await axios.put(import.meta.env.VITE_UPDATE_SELLER_WASTE_LISTING_URL + editData._id,
+                saveFormData,
+                {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                        "Content-Type": "multipart/form-data"
+                    }
+                });
+
+            // Update local state dynamically
+            setData(prevData => prevData.map(item => item._id === editData._id ? response.data.formData : item));
+
+            setIsEditModalOpen(false);
+            setEditData({});
+        } catch (err) {
+            console.error("Error:", err);
+        }
+    }
+
+    const handleDeleteConfirm = async () => {
+        try {
+            await axios.delete(import.meta.env.VITE_DELETE_SELLER_WASTE_LISTING_URL + itemToDelete._id, {
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`
                 }
             });
-        } else {
-            setEditData({ ...editData, [name]: value });
+
+            // Update local state by removing the deleted item
+            setData(prevData => prevData.filter(item => item._id !== itemToDelete._id));
+
+            setIsDeleteModalOpen(false);
+            setItemToDelete(null);
+        } catch (err) {
+            console.error("Error deleting item:", err);
         }
-    };
-
-    const handleEditSubmit = (e) => {
-        e.preventDefault();
-        // Here you would typically make an API call to update the listing
-        console.log("Updated data:", editData);
-        setIsEditModalOpen(false);
-    };
-
-    const handleDeleteConfirm = () => {
-        // Here you would typically make an API call to delete the listing
-        console.log("Deleted item:", itemToDelete);
-        setIsDeleteModalOpen(false);
-        setItemToDelete(null);
     };
 
     return (
@@ -64,17 +132,19 @@ const SellerMyListings = () => {
                         <h1 className="text-2xl font-bold text-slate-900">My Listings</h1>
                         <p className="text-sm text-slate-500 mt-1">Manage the waste materials you've posted</p>
                     </div>
-                    <button
-                        className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        New Listing
-                    </button>
+                    <Link to="/seller/upload-waste">
+                        <button
+                            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            New Listing
+                        </button>
+                    </Link>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {/* <!-- Card 1 --> */}
+                    {/* <!-- Cards --> */}
                     {data.map((item, index) => (
                         <div key={index} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
                             <img src={`http://localhost:3000/uploads/${item.image}`}
@@ -90,7 +160,7 @@ const SellerMyListings = () => {
                                 <div className="flex gap-2">
                                     <button
                                         onClick={() => {
-                                            setEditData({ ...item, location: item.location || { street: "", city: "", state: "", postal_code: "" } });
+                                            setEditData(item);
                                             setIsEditModalOpen(true);
                                         }}
                                         className="flex-1 text-xs font-medium border border-slate-300 text-slate-700 rounded-lg py-2 hover:bg-slate-50">Edit
@@ -121,24 +191,24 @@ const SellerMyListings = () => {
                                 </button>
                             </div>
 
-                            <form onSubmit={handleEditSubmit} className="space-y-6">
+                            <form onSubmit={handleSubmit(onsubmit)} className="space-y-6">
                                 {/* Image upload (dummy for edit) */}
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Waste Image</label>
-                                    <input type="file" name="image" className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
+                                    <input type="file" {...register("image")} className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
                                 </div>
 
                                 {/* Title */}
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Waste Title</label>
-                                    <input type="text" name="title" value={editData.title || ""} onChange={handleEditChange} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" required />
+                                    <input type="text" {...register("title")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" required />
                                 </div>
 
                                 {/* Category + Quantity/Unit */}
                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                     <div className="sm:col-span-1">
                                         <label className="block text-sm font-medium text-slate-700 mb-2">Waste Category</label>
-                                        <select name="category" value={editData.category || ""} onChange={handleEditChange} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                        <select {...register("category")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                                             {wasteCategories.map((item, index) => (
                                                 <option key={index} value={item}>{item}</option>
                                             ))}
@@ -146,11 +216,11 @@ const SellerMyListings = () => {
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 mb-2">Quantity</label>
-                                        <input type="number" name="quantity" value={editData.quantity || ""} onChange={handleEditChange} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                        <input type="number" {...register("quantity")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 mb-2">Unit</label>
-                                        <select name="unit" value={editData.unit || ""} onChange={handleEditChange} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                        <select {...register("unit")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                                             {units.map((item, index) => (
                                                 <option key={index} value={item}>{item}</option>
                                             ))}
@@ -161,24 +231,24 @@ const SellerMyListings = () => {
                                 {/* Colour */}
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Waste Colour</label>
-                                    <input type="text" name="colour" value={editData.colour || ""} onChange={handleEditChange} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                    <input type="text" {...register("colour")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                                 </div>
 
                                 {/* Description */}
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Description</label>
-                                    <textarea name="description" value={editData.description || ""} onChange={handleEditChange} className="w-full min-h-[100px] rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                                    <textarea {...register("description")} className="w-full min-h-[100px] rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
                                 </div>
 
                                 {/* Pricing + Currency */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 mb-2">Price</label>
-                                        <input type="number" name="price" value={editData.price || ""} onChange={handleEditChange} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                        <input type="number" {...register("price")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 mb-2">Currency</label>
-                                        <select name="currency" value={editData.currency || ""} onChange={handleEditChange} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                        <select {...register("currency")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                                             {currencyList.map((item, index) => (
                                                 <option key={index} value={item}>{item}</option>
                                             ))}
@@ -194,19 +264,19 @@ const SellerMyListings = () => {
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-2">Street</label>
-                                            <input type="text" name="street" value={editData.location?.street || ""} onChange={handleEditChange} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                            <input type="text" {...register("location.street")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-2">City</label>
-                                            <input type="text" name="city" value={editData.location?.city || ""} onChange={handleEditChange} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                            <input type="text" {...register("location.city")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-2">State</label>
-                                            <input type="text" name="state" value={editData.location?.state || ""} onChange={handleEditChange} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                            <input type="text" {...register("location.state")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-2">Postal Code</label>
-                                            <input type="text" name="postal_code" value={editData.location?.postal_code || ""} onChange={handleEditChange} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                            <input type="text" {...register("location.postal_code")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                                         </div>
                                     </div>
                                 </div>
@@ -214,7 +284,7 @@ const SellerMyListings = () => {
                                 {/* Status */}
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Status</label>
-                                    <select name="status" value={editData.status || ""} onChange={handleEditChange} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                    <select {...register("status")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                                         {statusList.map((item, index) => (
                                             <option key={index} value={item}>{item}</option>
                                         ))}

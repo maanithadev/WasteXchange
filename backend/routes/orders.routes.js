@@ -3,7 +3,9 @@ const router = express.Router()
 const verifyUser = require("../middleware/verifyUser.middleware.js")
 const Orders = require("../models/orders.model.js")
 const Payments = require("../models/payments.model.js")
+const WasteListings = require("../models/wasteListings.model.js")
 
+// get
 router.get("/buyer-simple-info", verifyUser, async (req, res) => {
     try {
         const orders = await Orders.find({ buyer_id: req.token.user_id })
@@ -32,7 +34,7 @@ router.get("/mark-collected/:id", verifyUser, async (req, res) => {
     try {
         const order = await Orders.findOneAndUpdate(
             { _id: req.params.id, buyer_id: req.token.user_id },
-            { status: "collected" },
+            { status: "collected", collected_date: new Date() },
             { new: true }
         )
         res.json(order)
@@ -64,3 +66,34 @@ router.get("/seller-order-advance-info/:id", verifyUser, async (req, res) => {
 })
 
 module.exports = router
+
+
+// post
+router.post("/update-status", verifyUser, async (req, res) => {
+    try {
+        const { order_id, status } = req.body;
+        if (status === "cancelled") {
+            const order = await Orders.findOne({ _id: order_id })
+            await WasteListings.updateOne(
+                { _id: order.wasteListings_id },
+                { status: "Active" }
+            )
+            await Payments.updateOne(
+                { order_id: order_id },
+                { payment_status: "refunded" }
+            )
+            await Orders.updateOne(
+                { _id: order_id },
+                { status }
+            )
+        } else {
+            await Orders.updateOne(
+                { _id: order_id },
+                { status }
+            );
+        }
+        res.json({ message: "Order status updated successfully", status });
+    } catch (err) {
+        res.json({ message: err.message });
+    }
+});

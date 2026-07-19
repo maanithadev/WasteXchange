@@ -1,18 +1,31 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const SellerDashboard = () => {
-    const [data, setData] = useState([]);
+    const [notifications, setNotifications] = useState([]);
+    const [cards, setCards] = useState({});
+
     useEffect(() => {
+        async function load4Cards() {
+            const res = await axios.get(import.meta.env.VITE_GET_SELLER_DASHBOARD_CARDS_URL, {
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                }
+            });
+            setCards(res.data)
+        }
+
         async function loadNotifications() {
             const res = await axios.get(import.meta.env.VITE_GET_SPECIFIC_USER_NOTIFICATIONS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }
             });
-            setData(res.data);
+            setNotifications(res.data);
         }
 
+        load4Cards()
         loadNotifications()
     }, []);
 
@@ -25,13 +38,15 @@ const SellerDashboard = () => {
                         <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
                         <p className="text-sm text-slate-500 mt-1">Welcome back, Green Metals Co.</p>
                     </div>
-                    <button
-                        className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        Upload Waste
-                    </button>
+                    <Link to="/seller/upload-waste">
+                        <button
+                            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            Upload Waste
+                        </button>
+                    </Link>
                 </div>
 
                 {/* <!-- Summary cards --> */}
@@ -47,8 +62,8 @@ const SellerDashboard = () => {
                                 </svg>
                             </div>
                         </div>
-                        <p className="text-3xl font-bold text-slate-900">18</p>
-                        <p className="text-xs text-slate-400 mt-1">+2 this week</p>
+                        <p className="text-3xl font-bold text-slate-900">{cards.activeListings}</p>
+                        {/* <p className="text-xs text-slate-400 mt-1">+2 this week</p> */}
                     </div>
 
                     <div className="bg-white rounded-xl border border-slate-200 p-5">
@@ -62,7 +77,7 @@ const SellerDashboard = () => {
                                 </svg>
                             </div>
                         </div>
-                        <p className="text-3xl font-bold text-slate-900">6</p>
+                        <p className="text-3xl font-bold text-slate-900">{cards.pendingOrders}</p>
                         <p className="text-xs text-slate-400 mt-1">Awaiting confirmation</p>
                     </div>
 
@@ -77,7 +92,7 @@ const SellerDashboard = () => {
                                 </svg>
                             </div>
                         </div>
-                        <p className="text-3xl font-bold text-slate-900">3</p>
+                        <p className="text-3xl font-bold text-slate-900">{cards.unreadNotifications}</p>
                         <p className="text-xs text-slate-400 mt-1">New updates</p>
                     </div>
 
@@ -92,8 +107,8 @@ const SellerDashboard = () => {
                                 </svg>
                             </div>
                         </div>
-                        <p className="text-3xl font-bold text-slate-900">4.2t</p>
-                        <p className="text-xs text-slate-400 mt-1">CO2e this year</p>
+                        <p className="text-3xl font-bold text-slate-900">{cards.totalCarbonSaved}t</p>
+                        {/* <p className="text-xs text-slate-400 mt-1">CO2e this year</p> */}
                     </div>
                 </div>
 
@@ -101,7 +116,7 @@ const SellerDashboard = () => {
                 <div className="bg-white rounded-xl border border-slate-200 p-6">
                     <h2 className="text-lg font-semibold text-slate-900 mb-4">Recent Activity</h2>
                     <ul className="divide-y divide-slate-100">
-                        {data.map((item, index) => (
+                        {notifications.map((item, index) => (
                             <li key={index} className="flex items-start gap-4 py-4">
                                 <div
                                     className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">

@@ -9,6 +9,8 @@ const SellerOrdersReceived = () => {
     const [selectedItem, setSelectedItem] = useState({});
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    const statusList = ["pending", "confirmed", "shipped", "cancelled"]
+
     useEffect(() => {
         async function loadOrders() {
             const res = await axios.get(import.meta.env.VITE_GET_SELLER_ORDER_INFO_URL, {
@@ -22,11 +24,26 @@ const SellerOrdersReceived = () => {
         loadOrders()
     }, []);
 
-    const handleUpdateStatus = () => {
-        console.log("Update order:", orderToUpdate, "to status:", selectedStatus);
-        // Here you would typically make an API call to update the order status
-        setIsStatusModalOpen(false);
-        setOrderToUpdate(null);
+    const handleUpdateStatus = async () => {
+        try {
+            await axios.post(import.meta.env.VITE_UPDATE_SELLER_ORDER_STATUS_URL, {
+                order_id: orderToUpdate._id,
+                status: selectedStatus,
+            }, {
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                }
+            });
+
+            setData(prevData => prevData.map(item =>
+                item._id === orderToUpdate._id ? { ...item, status: selectedStatus } : item
+            ));
+
+            setIsStatusModalOpen(false);
+            setOrderToUpdate(null);
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     const handleView = async (id) => {
@@ -101,15 +118,17 @@ const SellerOrdersReceived = () => {
                                             className="text-xs font-semibold bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full capitalize">{item.status}</span>
                                         </td>
                                         <td className="flex px-6 py-4 text-right gap-2">
-                                            <button
-                                                onClick={() => {
-                                                    setOrderToUpdate(item);
-                                                    setSelectedStatus(item.status?.toLowerCase() || "pending");
-                                                    setIsStatusModalOpen(true);
-                                                }}
-                                                className="text-xs font-medium border border-slate-300 text-slate-700 rounded-lg px-3 py-1.5 hover:bg-slate-50">Update
-                                                Status
-                                            </button>
+                                            {item.status === "shipped" || item.status === "collected" || item.status === "cancelled"
+                                                ? null
+                                                : <button
+                                                    onClick={() => {
+                                                        setOrderToUpdate(item);
+                                                        setSelectedStatus(item.status?.toLowerCase() || "pending");
+                                                        setIsStatusModalOpen(true);
+                                                    }}
+                                                    className="text-xs font-medium border border-slate-300 text-slate-700 rounded-lg px-3 py-1.5 hover:bg-slate-50">Update
+                                                    Status
+                                                </button>}
                                             <button onClick={() => handleView(item._id)} className="text-xs font-medium border border-slate-300 text-slate-700 rounded-lg px-3 py-1.5 hover:bg-slate-50">View Details</button>
                                         </td>
                                     </tr>
@@ -127,9 +146,9 @@ const SellerOrdersReceived = () => {
                             <p className="text-sm text-slate-500 mb-6">Select the new status for this order.</p>
 
                             <div className="grid grid-cols-2 gap-3 mb-8">
-                                {["pending", "confirmed", "Shipped", "cancelled"].map((statusOption) => (
+                                {statusList.map((statusOption, index) => (
                                     <button
-                                        key={statusOption}
+                                        key={index}
                                         type="button"
                                         onClick={() => setSelectedStatus(statusOption)}
                                         className={`capitalize px-4 py-3 rounded-lg text-sm font-medium border transition-colors ${selectedStatus === statusOption
@@ -144,6 +163,7 @@ const SellerOrdersReceived = () => {
 
                             <div className="flex justify-end gap-3">
                                 <button type="button" onClick={() => setIsStatusModalOpen(false)} className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50">Cancel</button>
+                                {/* update status */}
                                 <button type="button" onClick={handleUpdateStatus} className="px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700">Update</button>
                             </div>
                         </div>

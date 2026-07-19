@@ -5,8 +5,8 @@ import Loading from "../../components/Loading";
 
 const SellerUploadWaste = () => {
     const wasteCategories = ["Construction", "Metals", "Wood"]
-    const units = ["kg", "tons", "lbs", "units", "m3"]
-    const currencyList = ["LKR", "$"]
+    const units = ["kg", "tons"]
+    const currencyList = ["LKR"]
     const statusList = ["Active", "Pending", "Draft"]
 
     const [data, setData] = useState({})

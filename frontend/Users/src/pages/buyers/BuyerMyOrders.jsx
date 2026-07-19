@@ -80,14 +80,12 @@ const BuyerMyOrders = () => {
                                             className="text-xs font-semibold bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full">{item.status.toUpperCase()}</span>
                                         </td>
                                         <td className="px-6 py-4 text-right flex gap-2">
-                                            {item.status.toLowerCase() === "cancelled"
+                                            {item.status.toLowerCase() === "cancelled" || item.status.toLowerCase() === "collected"
                                                 ? null
                                                 : <button
-                                                    className={`text-xs font-medium rounded-lg px-3 py-1.5 transition-colors ${item.status?.toLowerCase() === 'collected'
-                                                        ? 'border border-emerald-600 text-emerald-700 bg-emerald-50 cursor-not-allowed opacity-80'
-                                                        : item.status?.toLowerCase() === 'shipped'
-                                                            ? 'border border-blue-600 text-blue-600 hover:bg-blue-50 cursor-pointer'
-                                                            : 'border border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed opacity-60'
+                                                    className={`text-xs font-medium rounded-lg px-3 py-1.5 transition-colors ${item.status?.toLowerCase() === 'shipped'
+                                                        ? 'border border-blue-600 text-blue-600 hover:bg-blue-50 cursor-pointer'
+                                                        : 'border border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed opacity-60'
                                                         }`}
                                                     disabled={item.status?.toLowerCase() !== 'shipped'}
                                                     onClick={() => setConfirmOrder(item)}

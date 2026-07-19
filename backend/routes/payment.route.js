@@ -140,6 +140,8 @@ router.post('/payment/response', async (req, res) => {
 
             const carbonRecord = new CarbonRecords({
                 order_id: orderId,
+                seller_id: transaction_Data.seller_id?._id,
+                buyer_id: transaction_Data.buyer_id,
                 co2SavedKg: co2SavedKg,
                 created_at: data.signed_date_time,
                 updated_at: data.signed_date_time,

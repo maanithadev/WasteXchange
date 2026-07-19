@@ -35,8 +35,8 @@ const SellerEarnings = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
                     <div className="bg-white rounded-xl border border-slate-200 p-6">
                         <p className="text-sm font-medium text-slate-500 mb-2">Total Earnings</p>
-                        <p className="text-3xl font-bold text-slate-900">{totalEarnings}</p>
-                        {/*<p className="text-xs text-emerald-600 mt-1">+$1,240.00 this month</p>*/}
+                        <p className="text-3xl font-bold text-slate-900">RS.{totalEarnings}</p>
+                        <p className="text-xs text-slate-400 mt-1">This month</p>
                     </div>
                     <div className="bg-white rounded-xl border border-slate-200 p-6">
                         <p className="text-sm font-medium text-slate-500 mb-2">Pending Payouts</p>
@@ -47,9 +47,9 @@ const SellerEarnings = () => {
 
                 {/* <!-- Transaction history --> */}
                 <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-                    <div className="px-6 py-4 border-b border-slate-200">
+                    {/* <div className="px-6 py-4 border-b border-slate-200">
                         <h2 className="text-lg font-semibold text-slate-900">Transaction History</h2>
-                    </div>
+                    </div> */}
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
