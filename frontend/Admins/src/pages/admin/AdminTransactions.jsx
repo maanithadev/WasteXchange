@@ -3,8 +3,16 @@ import axios from "axios"
 
 const AdminTransactions = () => {
     const [data, setData] = useState([]);
+    const [cardData, setCardData] = useState({});
     const [selectedItem, setSelectedItem] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [filter, setFilter] = useState("all");
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filter]);
 
     useEffect(() => {
         async function loadPayments() {
@@ -15,8 +23,18 @@ const AdminTransactions = () => {
             });
             setData(res.data);
         }
+        
+        async function loadCards() {
+            const res = await axios.get(import.meta.env.VITE_GET_ADMIN_TRANSACTIONS_CARDS_URL, {
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                }
+            });
+            setCardData(res.data);
+        }
 
         loadPayments()
+        loadCards()
     }, []);
 
     const handleView = (item) => {
@@ -70,6 +88,25 @@ const AdminTransactions = () => {
         });
     }
 
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+
+    const filteredData = data.filter((item) => {
+        if (!item.created_at) return false;
+        const itemDate = new Date(item.created_at);
+        if (filter === "month") {
+            return itemDate.getMonth() === currentMonth && itemDate.getFullYear() === currentYear;
+        } else if (filter === "year") {
+            return itemDate.getFullYear() === currentYear;
+        }
+        return true;
+    });
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
     return (
         <>
             {/* <!-- TRANSACTIONS / PAYMENT OVERSIGHT PAGE --> */}
@@ -82,16 +119,25 @@ const AdminTransactions = () => {
                 {/* <!-- Summary stat cards --> */}
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                     <div class="bg-white rounded-lg border border-slate-200 p-4">
-                        <p class="text-xs font-medium text-slate-500 mb-1">Total Revenue Processed</p>
-                        <p class="text-2xl font-bold text-slate-900">$482,910</p>
+                        <p class="text-xs font-medium text-slate-500 mb-1">Total Revenue Processed (Current Month)</p>
+                        <p class="text-2xl font-bold text-slate-900">RS. {cardData.totalRevenue || 0}</p>
                     </div>
                     <div class="bg-white rounded-lg border border-slate-200 p-4">
-                        <p class="text-xs font-medium text-slate-500 mb-1">Pending Payouts</p>
-                        <p class="text-2xl font-bold text-slate-900">$18,240</p>
+                        <p class="text-xs font-medium text-slate-500 mb-1">Pending Payouts (Current Month)</p>
+                        <p class="text-2xl font-bold text-slate-900">RS. {cardData.pendingPayouts || 0}</p>
                     </div>
                     <div class="bg-white rounded-lg border border-slate-200 p-4">
-                        <p class="text-xs font-medium text-slate-500 mb-1">Disputed Transactions</p>
-                        <p class="text-2xl font-bold text-red-600">7</p>
+                        <p class="text-xs font-medium text-slate-500 mb-1">Disputed Transactions (Failed Current Month)</p>
+                        <p class="text-2xl font-bold text-red-600">RS. {cardData.disputedTransactions || 0}</p>
+                    </div>
+                </div>
+
+                {/* Filter Controls */}
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+                    <div class="flex items-center gap-1 bg-white border border-slate-200 rounded-lg p-1 w-fit">
+                        <button onClick={() => setFilter("all")} class={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'all' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>All</button>
+                        <button onClick={() => setFilter("month")} class={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'month' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>Current Month</button>
+                        <button onClick={() => setFilter("year")} class={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'year' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>Current Year</button>
                     </div>
                 </div>
 
@@ -111,7 +157,7 @@ const AdminTransactions = () => {
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
-                                {data.map((item, index) => (
+                                {currentItems.map((item, index) => (
                                     <tr key={index}>
                                         <td class="px-6 py-3.5 font-mono text-xs text-slate-600">{item.transaction_id}</td>
                                         <td class="px-6 py-3.5 font-mono text-xs text-slate-600">{item.order_id?.order_reference_number}</td>
@@ -119,13 +165,46 @@ const AdminTransactions = () => {
                                         <td class="px-6 py-3.5 text-slate-700">{item.seller_id?.company_name}</td>
                                         <td class="px-6 py-3.5 text-slate-700">{item.order_id?.currency}{item.order_id?.total_price}</td>
                                         <td class="px-6 py-3.5"><span class="text-xs font-semibold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">{item.payment_status}</span></td>
-                                        <td class="px-6 py-3.5 text-slate-500">{item.created_at}</td>
+                                        <td class="px-6 py-3.5 text-slate-500">{new Date(item.created_at).toLocaleDateString()}</td>
                                         <td class="px-6 py-3.5 text-right"><button onClick={() => handleView(item)} class="text-xs font-medium border border-slate-300 text-slate-600 rounded-md px-2.5 py-1 hover:bg-slate-50">View Details</button></td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
                     </div>
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                        <div className="px-6 py-4 border-t border-slate-200 flex items-center justify-between">
+                            <p className="text-sm text-slate-500">
+                                Showing <span className="font-medium">{indexOfFirstItem + 1}</span> to <span className="font-medium">{Math.min(indexOfLastItem, filteredData.length)}</span> of <span className="font-medium">{filteredData.length}</span> results
+                            </p>
+                            <div className="flex space-x-1">
+                                <button 
+                                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                    disabled={currentPage === 1}
+                                    className="px-3 py-1 text-sm border border-slate-300 rounded-md disabled:opacity-50 text-slate-600 bg-white hover:bg-slate-50"
+                                >
+                                    Previous
+                                </button>
+                                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                                    <button 
+                                        key={page}
+                                        onClick={() => setCurrentPage(page)}
+                                        className={`px-3 py-1 text-sm border rounded-md ${currentPage === page ? 'bg-indigo-600 text-white border-indigo-600' : 'border-slate-300 text-slate-600 hover:bg-slate-50 bg-white'}`}
+                                    >
+                                        {page}
+                                    </button>
+                                ))}
+                                <button 
+                                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                    disabled={currentPage === totalPages}
+                                    className="px-3 py-1 text-sm border border-slate-300 rounded-md disabled:opacity-50 text-slate-600 bg-white hover:bg-slate-50"
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* <!-- MODAL --> */}

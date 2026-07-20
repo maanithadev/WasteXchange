@@ -10,7 +10,7 @@ const AdminListingModeration = () => {
     const [rejectMessage, setRejectMessage] = useState("")
     const [statusValue, setStatusValue] = useState(null)
 
-    const statusList = ["Active", "Rejected", "Review"]
+    const statusList = ["Active", "Rejected"]
 
     useEffect(() => {
         async function fetchData() {
@@ -135,6 +135,7 @@ const AdminListingModeration = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Status</label>
                                     <select value={statusValue} onChange={handleStatusChange} className={`w-full text-sm border-2 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none ${statusValue === "Rejected" ? "border-red-500" : "border-slate-200"}`}>
+                                        <option>Select Option</option>
                                         {statusList.map((item, index) => (
                                             <option key={index} value={item}>{item}</option>
                                         ))}

@@ -1,5 +1,38 @@
+import { useForm } from "react-hook-form"
+import axios from "axios"
+import { useEffect, useState } from "react"
 
 const AdminNotificationsManagement = () => {
+    const { register, handleSubmit } = useForm()
+    const [data, setData] = useState([])
+    const [refresh, setRefresh] = useState(false)
+
+    useEffect(() => {
+        async function fetchData() {
+            const res = await axios.get(import.meta.env.VITE_GET_ALL_ADMIN_ANNOUNCEMENTS_URL, {
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                }
+            })
+            setData(res.data)
+        }
+
+        fetchData()
+    }, [refresh])
+
+    async function onsubmit(formData) {
+        const res = await axios.post(import.meta.env.VITE_ADMIN_ANNOUNCEMENT_SENT_URL,
+            { formData },
+            {
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                }
+            }
+        )
+        setRefresh(!refresh)
+    }
+
+
     return (
         <>
             {/* <!-- NOTIFICATIONS MANAGEMENT PAGE --> */}
@@ -15,24 +48,24 @@ const AdminNotificationsManagement = () => {
 
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-2">Title</label>
-                        <input type="text" placeholder="Announcement title" class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                        <input type="text" {...register("title")} placeholder="Announcement title" class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-2">Message</label>
-                        <textarea rows="4" placeholder="Write your announcement..." class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                        <textarea rows="4" {...register("message")} placeholder="Write your announcement..." class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-2">Target Audience</label>
-                        <select class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            <option>All Users</option>
-                            <option>Sellers Only</option>
-                            <option>Buyers Only</option>
+                        <select {...register("target_audience")} class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="all">All Users</option>
+                            <option value="sellers">Sellers Only</option>
+                            <option value="buyers">Buyers Only</option>
                         </select>
                     </div>
 
-                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-5 py-2.5 rounded-lg">Send Notification</button>
+                    <button type="button" onClick={handleSubmit(onsubmit)} class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-5 py-2.5 rounded-lg">Send Notification</button>
                 </form>
 
                 {/* <!-- History table --> */}
@@ -47,34 +80,16 @@ const AdminNotificationsManagement = () => {
                                     <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Title</th>
                                     <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Audience</th>
                                     <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Sent Date</th>
-                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Reach</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
-                                <tr>
-                                    <td class="px-6 py-3.5 font-medium text-slate-800">Scheduled Maintenance – Jul 12</td>
-                                    <td class="px-6 py-3.5"><span class="text-xs font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">All Users</span></td>
-                                    <td class="px-6 py-3.5 text-slate-500">Jul 7, 2026</td>
-                                    <td class="px-6 py-3.5 text-slate-600">3,214 users</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3.5 font-medium text-slate-800">New AI Classification Model Live</td>
-                                    <td class="px-6 py-3.5"><span class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">Sellers Only</span></td>
-                                    <td class="px-6 py-3.5 text-slate-500">Jul 3, 2026</td>
-                                    <td class="px-6 py-3.5 text-slate-600">1,340 users</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3.5 font-medium text-slate-800">New Filter Options in Marketplace</td>
-                                    <td class="px-6 py-3.5"><span class="text-xs font-semibold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">Buyers Only</span></td>
-                                    <td class="px-6 py-3.5 text-slate-500">Jun 28, 2026</td>
-                                    <td class="px-6 py-3.5 text-slate-600">1,874 users</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-3.5 font-medium text-slate-800">Platform Terms Update</td>
-                                    <td class="px-6 py-3.5"><span class="text-xs font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">All Users</span></td>
-                                    <td class="px-6 py-3.5 text-slate-500">Jun 15, 2026</td>
-                                    <td class="px-6 py-3.5 text-slate-600">3,102 users</td>
-                                </tr>
+                                {data.map((item, index) => (
+                                    <tr key={index}>
+                                        <td class="px-6 py-3.5 font-medium text-slate-800 capitalize">{item.title}</td>
+                                        <td class="px-6 py-3.5"><span class="text-xs font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full capitalize">{item.audience}</span></td>
+                                        <td class="px-6 py-3.5 text-slate-500">{item.send_date}</td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>

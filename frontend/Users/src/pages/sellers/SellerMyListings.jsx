@@ -14,7 +14,7 @@ const SellerMyListings = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editData, setEditData] = useState({});
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const [itemToDelete, setItemToDelete] = useState(null);
+    const [selectedItem, setSelectedItem] = useState(null)
 
     const { register, handleSubmit } = useForm({
         values: {
@@ -33,7 +33,7 @@ const SellerMyListings = () => {
                 state: editData.location?.state,
                 postal_code: editData.location?.postal_code
             },
-            status: editData.status
+            status: editData.status === "Review" ? "Send for Review" : editData.status
         }
     })
 
@@ -56,6 +56,10 @@ const SellerMyListings = () => {
             case "active":
                 return setFilterData(data.filter(item => {
                     return item.status === "Active"
+                }))
+            case "sold":
+                return setFilterData(data.filter(item => {
+                    return item.status === "Sold"
                 }))
             case "pending":
                 return setFilterData(data.filter(item => {
@@ -132,21 +136,41 @@ const SellerMyListings = () => {
 
     const handleDeleteConfirm = async () => {
         try {
-            await axios.delete(import.meta.env.VITE_DELETE_SELLER_WASTE_LISTING_URL + itemToDelete._id, {
+            await axios.delete(import.meta.env.VITE_DELETE_SELLER_WASTE_LISTING_URL + selectedItem._id, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`
                 }
             });
 
             // Update local state by removing the deleted item
-            setData(prevData => prevData.filter(item => item._id !== itemToDelete._id));
+            setData(prevData => prevData.filter(item => item._id !== selectedItem._id));
 
             setIsDeleteModalOpen(false);
-            setItemToDelete(null);
+            setSelectedItem(null);
         } catch (err) {
             console.error("Error deleting item:", err);
         }
     };
+
+    const handleUpdateStatus = async () => {
+        try {
+            await axios.put(import.meta.env.VITE_UPDATE_LISTING_STATUS_URL,
+                {
+                    listing_id: editData._id,
+                    status: "Review",
+                },
+                {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`
+                    }
+                })
+            setSelectedItem(null)
+            setFilterData(prevData => prevData.map(item => item._id === editData._id ? { ...item, status: "Review" } : item))
+            setIsEditModalOpen(false)
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
 
     return (
         <>
@@ -173,6 +197,7 @@ const SellerMyListings = () => {
                         className="rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="all">All</option>
                         <option value="active">Active</option>
+                        <option value="sold">Sold</option>
                         <option value="pending">Pending</option>
                         <option value="draft">Draft</option>
                         <option value="rejected">Rejected</option>
@@ -203,7 +228,7 @@ const SellerMyListings = () => {
                                     </button>
                                     <button
                                         onClick={() => {
-                                            setItemToDelete(item);
+                                            setSelectedItem(item);
                                             setIsDeleteModalOpen(true);
                                         }}
                                         className="flex-1 text-xs font-medium border border-red-200 text-red-600 rounded-lg py-2 hover:bg-red-50">Delete
@@ -238,7 +263,7 @@ const SellerMyListings = () => {
                                         </div>}
                                     </div>
                                     <div className="flex justify-end gap-3 pt-4">
-                                        <button type="button" className="px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700">Request Editing Access</button>
+                                        <button type="button" onClick={handleUpdateStatus} className="px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700">Request Editing Access</button>
                                         <button type="button" onClick={() => setIsEditModalOpen(false)} className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50">Cancel</button>
                                     </div>
                                 </div>
@@ -335,7 +360,7 @@ const SellerMyListings = () => {
                                     {/* Status */}
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 mb-2">Status</label>
-                                        <select {...register("status")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                        <select {...register("status", { required: true })} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                                             {editData.status === "Review"
                                                 ? <option value="Send for Review">Send for Review</option>
                                                 : statusList.map((item, index) => (

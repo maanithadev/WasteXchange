@@ -13,6 +13,7 @@ const AdminTransactions = lazy(() => import("./pages/admin/AdminTransactions"))
 const AdminReportsAndAnalytics = lazy(() => import("./pages/admin/AdminReportsAndAnalytics"))
 const AdminSupportResolution = lazy(() => import("./pages/admin/AdminSupportResolution"))
 const AdminNotificationsManagement = lazy(() => import("./pages/admin/AdminNotificationsManagement"))
+const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"))
 
 const App = () => {
   return (
@@ -33,7 +34,7 @@ const App = () => {
               <Route path="/admin/reports-and-analytics" element={<AdminReportsAndAnalytics />} />
               <Route path="/admin/support-resolution" element={<AdminSupportResolution />} />
               <Route path="/admin/notifications" element={<AdminNotificationsManagement />} />
-              {/* <Route path="/admin/settings" element={} /> */}
+              <Route path="/admin/settings" element={<AdminSettings />} />
             </Route>
           </Route>
         </Route>

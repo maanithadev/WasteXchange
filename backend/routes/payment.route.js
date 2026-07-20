@@ -24,6 +24,38 @@ router.get("/get-all-payments", verifyUser, async (req, res) => {
     }
 })
 
+router.get("/admin-dashboard-cards", verifyUser, async (req, res) => {
+    try {
+        const currentMonthStr = new Date().toISOString().slice(0, 7); // e.g. "2026-07"
+
+        const completedPayments = await Payments.aggregate([
+            { $match: { payment_status: "completed", created_at: { $regex: `^${currentMonthStr}` } } },
+            { $group: { _id: null, totalSum: { $sum: "$total_price" } } }
+        ]);
+        const totalRevenue = completedPayments.length > 0 ? completedPayments[0].totalSum : 0;
+
+        const pendingPayments = await Payments.aggregate([
+            { $match: { payment_status: "completed", created_at: { $regex: `^${currentMonthStr}` } } },
+            { $group: { _id: null, totalSum: { $sum: "$total_price" } } }
+        ]);
+        const pendingPayouts = pendingPayments.length > 0 ? pendingPayments[0].totalSum : 0;
+
+        const failedPayments = await Payments.aggregate([
+            { $match: { payment_status: "failed", created_at: { $regex: `^${currentMonthStr}` } } },
+            { $group: { _id: null, totalSum: { $sum: "$total_price" } } }
+        ]);
+        const disputedTransactions = failedPayments.length > 0 ? failedPayments[0].totalSum : 0;
+
+        res.json({
+            totalRevenue,
+            pendingPayouts,
+            disputedTransactions
+        });
+    } catch (err) {
+        res.json({ message: err.message })
+    }
+})
+
 router.get("/buyer-simple-info", verifyUser, async (req, res) => {
     try {
         const payments = await Payments.find({ buyer_id: req.token.user_id })
