@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 
 const BuyerDashboard = () => {
     const [data, setData] = useState([]);
+    const [card, setCard] = useState({});
+
     useEffect(() => {
         async function loadNotifications() {
             const res = await axios.get(import.meta.env.VITE_GET_SPECIFIC_USER_NOTIFICATIONS_URL, {
@@ -14,7 +16,17 @@ const BuyerDashboard = () => {
             setData(res.data);
         }
 
-        loadNotifications()
+        async function loadCard() {
+            const res = await axios.get(import.meta.env.VITE_GET_BUYER_DASHBOARD_CARDS_URL, {
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                }
+            });
+            setCard(res.data);
+        }
+
+        loadNotifications();
+        loadCard();
     }, []);
 
     return (
@@ -66,7 +78,7 @@ const BuyerDashboard = () => {
                                 </svg>
                             </div>
                         </div>
-                        <p class="text-3xl font-bold text-slate-900">5</p>
+                        <p class="text-3xl font-bold text-slate-900">{card.activeOrders || 0}</p>
                         <p class="text-xs text-slate-400 mt-1">In progress</p>
                     </div>
 
@@ -80,13 +92,13 @@ const BuyerDashboard = () => {
                                 </svg>
                             </div>
                         </div>
-                        <p class="text-3xl font-bold text-slate-900">2</p>
+                        <p class="text-3xl font-bold text-slate-900">{card.unreadNotifications || 0}</p>
                         <p class="text-xs text-slate-400 mt-1">New updates</p>
                     </div>
 
                     <div class="bg-white rounded-xl border border-slate-200 p-5">
                         <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm font-medium text-slate-500">Total Carbon Offset</span>
+                            <span class="text-sm font-medium text-slate-500">Total Carbon Saved</span>
                             <div class="w-9 h-9 rounded-lg bg-teal-50 flex items-center justify-center">
                                 <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
@@ -95,8 +107,8 @@ const BuyerDashboard = () => {
                                 </svg>
                             </div>
                         </div>
-                        <p class="text-3xl font-bold text-slate-900">3.1t</p>
-                        <p class="text-xs text-slate-400 mt-1">CO2e from purchases</p>
+                        <p class="text-3xl font-bold text-slate-900">{card.currentMonthCarbonSaved || 0}t</p>
+                        <p class="text-xs text-slate-400 mt-1">Carbon Saved from purchases</p>
                     </div>
                 </div>
 

@@ -39,12 +39,32 @@ router.get("/seller-simple-info", verifyUser, async (req, res) => {
     try {
         const payments = await Payments.find({ seller_id: req.token.user_id, payment_status: "completed" })
             .sort({ created_at: -1 })
-            .populate("buyer_id", "company_name")
-        res.json(payments)
+            .populate("buyer_id", "company_name");
+
+        const allTimeEarnings = payments.reduce((sum, p) => sum + p.total_price, 0);
+
+        const currentMonth = new Date().getMonth();
+        const currentYear = new Date().getFullYear();
+
+        const currentMonthEarnings = payments.reduce((sum, p) => {
+            if (p.created_at) {
+                const date = new Date(p.created_at);
+                if (date.getMonth() === currentMonth && date.getFullYear() === currentYear) {
+                    return sum + p.total_price;
+                }
+            }
+            return sum;
+        }, 0);
+
+        res.json({
+            payments,
+            allTimeEarnings,
+            currentMonthEarnings
+        });
     } catch (err) {
-        res.json({ message: err.message })
+        res.json({ message: err.message });
     }
-})
+});
 
 
 // post

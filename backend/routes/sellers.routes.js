@@ -15,7 +15,9 @@ router.get("/seller-dashboard-cards", verifyUser, async (req, res) => {
         const wasteListings = await WasteListings.countDocuments({ seller_id: req.token.user_id, status: "Active" })
         const orders = await Orders.countDocuments({ seller_id: req.token.user_id, status: "pending" })
         const notifications = await Notifications.countDocuments({ user_id: req.token.user_id, isRead: false })
-        const carbonRecords = await CarbonRecords.aggregate([
+        const currentYear = new Date().getFullYear().toString();
+
+        const carbonRecordsAllTime = await CarbonRecords.aggregate([
             { $match: { seller_id: new mongoose.Types.ObjectId(req.token.user_id) } },
             {
                 $group: {
@@ -24,14 +26,50 @@ router.get("/seller-dashboard-cards", verifyUser, async (req, res) => {
                 }
             }
         ]);
+        const totalCarbonAllTime = carbonRecordsAllTime.length > 0 ? carbonRecordsAllTime[0].totalSum : 0;
 
-        const totalCarbon = carbonRecords.length > 0 ? carbonRecords[0].totalSum : 0;
+        const currentYearDocs = await CarbonRecords.find({
+            seller_id: new mongoose.Types.ObjectId(req.token.user_id),
+            created_at: { $regex: `^${currentYear}` }
+        });
+
+        let totalCarbonCurrentYear = 0;
+        
+        const monthlyData = [
+            { name: 'Jan', co2Saved: 0 },
+            { name: 'Feb', co2Saved: 0 },
+            { name: 'Mar', co2Saved: 0 },
+            { name: 'Apr', co2Saved: 0 },
+            { name: 'May', co2Saved: 0 },
+            { name: 'Jun', co2Saved: 0 },
+            { name: 'Jul', co2Saved: 0 },
+            { name: 'Aug', co2Saved: 0 },
+            { name: 'Sep', co2Saved: 0 },
+            { name: 'Oct', co2Saved: 0 },
+            { name: 'Nov', co2Saved: 0 },
+            { name: 'Dec', co2Saved: 0 }
+        ];
+
+        currentYearDocs.forEach(doc => {
+            totalCarbonCurrentYear += doc.co2SavedKg;
+            
+            if (doc.created_at && doc.created_at.length >= 7) {
+                const monthStr = doc.created_at.substring(5, 7);
+                const monthIndex = parseInt(monthStr, 10) - 1;
+                
+                if (monthIndex >= 0 && monthIndex <= 11) {
+                    monthlyData[monthIndex].co2Saved += (doc.co2SavedKg / 1000);
+                }
+            }
+        });
 
         res.json({
             activeListings: wasteListings,
             pendingOrders: orders,
             unreadNotifications: notifications,
-            totalCarbonSaved: (totalCarbon / 1000),  // converting to ton. 1ton = 1000kg. so converting kg to ton means /1000
+            totalCarbonSaved: (totalCarbonAllTime / 1000),
+            currentYearCarbonSaved: (totalCarbonCurrentYear / 1000),
+            chartData: monthlyData
         })
     } catch (err) {
         res.json({ message: err.message })

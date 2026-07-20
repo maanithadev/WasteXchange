@@ -10,7 +10,7 @@ const WasteListings = require("../models/wasteListings.model.js")
 // get
 router.get("/get-all-wastelistings", verifyUser, async (req, res) => {
     try {
-        const wastelistings = await WasteListings.find().populate("seller_id", "company_name")
+        const wastelistings = await WasteListings.find({}).populate("seller_id", "company_name")
         res.json(wastelistings)
     } catch (err) {
         res.json({ message: err.message })
@@ -120,6 +120,7 @@ router.post("/seller-upload-waste-save", localUpload.single("image"), verifyUser
                 postal_code: req.body.postal_code
             },
             status: req.body.status,
+            suspend_message: null,
             created_at: new Date(),
             updated_at: new Date(),
         })
@@ -135,6 +136,22 @@ router.post("/seller-upload-waste-save", localUpload.single("image"), verifyUser
 
 
 //put
+router.put("/update-listing-status", verifyUser, async (req, res) => {
+    try {
+        const { listing_id, status, suspend_message } = req.body;
+        const updatedListing = await WasteListings.updateOne(
+            { _id: listing_id },
+            {
+                status: status,
+                suspend_message: status === "Rejected" ? suspend_message : null
+            }
+        );
+        res.json(updatedListing)
+    } catch (err) {
+        res.status(500).json({ message: err.message })
+    }
+})
+
 router.put("/update-listing/:id", localUpload.single("image"), verifyUser, async (req, res) => {
     try {
         const listingId = req.params.id;
@@ -186,23 +203,23 @@ router.put("/update-listing/:id", localUpload.single("image"), verifyUser, async
 router.delete("/delete-listing/:id", verifyUser, async (req, res) => {
     try {
         const listingId = req.params.id;
-        
+
         const existingListing = await WasteListings.findOne({ _id: listingId, seller_id: req.token.user_id });
         if (!existingListing) {
             return res.status(404).json({ message: "Listing not found or not authorized" });
         }
-        
+
         if (existingListing.image) {
             const oldImagePath = path.join(__dirname, "../uploads", existingListing.image);
             if (fs.existsSync(oldImagePath)) {
                 fs.unlinkSync(oldImagePath);
             }
         }
-        
+
         await WasteListings.deleteOne({ _id: listingId, seller_id: req.token.user_id });
-        
+
         res.status(200).json({ message: "Listing deleted successfully", id: listingId });
-        
+
     } catch (err) {
         res.status(500).json({ message: "server error", error: err.message });
     }

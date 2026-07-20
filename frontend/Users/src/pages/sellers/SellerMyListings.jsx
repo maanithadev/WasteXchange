@@ -7,9 +7,10 @@ const SellerMyListings = () => {
     const wasteCategories = ["Construction", "Metals", "Wood"]
     const units = ["kg", "tons"]
     const currencyList = ["LKR"]
-    const statusList = ["Active", "Pending", "Draft", "Sold"]
+    const statusList = ["Active", "Pending", "Draft"]
 
     const [data, setData] = useState([])
+    const [filterData, setFilterData] = useState([])
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editData, setEditData] = useState({});
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -44,10 +45,34 @@ const SellerMyListings = () => {
                 }
             })
             setData(res.data)
+            setFilterData(res.data)
         }
 
         fetchData()
     }, []);
+
+    function handleFilterChange(e) {
+        switch (e.target.value) {
+            case "active":
+                return setFilterData(data.filter(item => {
+                    return item.status === "Active"
+                }))
+            case "pending":
+                return setFilterData(data.filter(item => {
+                    return item.status === "Pending"
+                }))
+            case "draft":
+                return setFilterData(data.filter(item => {
+                    return item.status === "Draft"
+                }))
+            case "rejected":
+                return setFilterData(data.filter(item => {
+                    return item.status === "Rejected"
+                }))
+            default:
+                return setFilterData(data)
+        }
+    }
 
     // const handleEditChange = (e) => {
     //     const { name, value } = e.target;
@@ -96,7 +121,7 @@ const SellerMyListings = () => {
                 });
 
             // Update local state dynamically
-            setData(prevData => prevData.map(item => item._id === editData._id ? response.data.formData : item));
+            setFilterData(prevData => prevData.map(item => item._id === editData._id ? response.data.formData : item));
 
             setIsEditModalOpen(false);
             setEditData({});
@@ -127,7 +152,7 @@ const SellerMyListings = () => {
         <>
             {/* <!-- MY LISTINGS PAGE --> */}
             <main className="flex-1 p-8 bg-slate-50 min-h-screen relative">
-                <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center justify-between mb-5">
                     <div>
                         <h1 className="text-2xl font-bold text-slate-900">My Listings</h1>
                         <p className="text-sm text-slate-500 mt-1">Manage the waste materials you've posted</p>
@@ -143,9 +168,20 @@ const SellerMyListings = () => {
                     </Link>
                 </div>
 
+                <div className="mb-5">
+                    <select onChange={handleFilterChange}
+                        className="rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="all">All</option>
+                        <option value="active">Active</option>
+                        <option value="pending">Pending</option>
+                        <option value="draft">Draft</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                     {/* <!-- Cards --> */}
-                    {data.map((item, index) => (
+                    {filterData.map((item, index) => (
                         <div key={index} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
                             <img src={`http://localhost:3000/uploads/${item.image}`}
                                 className="w-full h-40 object-cover"
@@ -191,111 +227,128 @@ const SellerMyListings = () => {
                                 </button>
                             </div>
 
-                            <form onSubmit={handleSubmit(onsubmit)} className="space-y-6">
-                                {/* Image upload (dummy for edit) */}
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Waste Image</label>
-                                    <input type="file" {...register("image")} className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
-                                </div>
-
-                                {/* Title */}
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Waste Title</label>
-                                    <input type="text" {...register("title")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" required />
-                                </div>
-
-                                {/* Category + Quantity/Unit */}
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                    <div className="sm:col-span-1">
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">Waste Category</label>
-                                        <select {...register("category")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                            {wasteCategories.map((item, index) => (
-                                                <option key={index} value={item}>{item}</option>
-                                            ))}
-                                        </select>
-                                    </div>
+                            {editData.status === "Rejected"
+                                ? <div className="w-full">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">Quantity</label>
-                                        <input type="number" {...register("quantity")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                        <label className="block text-sm font-medium text-slate-700 mb-2">Status</label>
+                                        <input type="text" value={editData.status} readOnly className={`w-full text-sm border-2 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none ${editData.status === "Rejected" ? "border-red-500" : "border-slate-200"}`} />
+                                        {editData.suspend_message !== null && <div className="mt-5">
+                                            <label className="block text-sm font-medium text-slate-700 mb-2">Reason for Rejection</label>
+                                            <textarea value={editData.suspend_message} rows="5" readOnly className={`w-full text-sm border-2 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none ${editData.status === "Rejected" ? "border-red-500" : "border-slate-200"}`} />
+                                        </div>}
                                     </div>
+                                    <div className="flex justify-end gap-3 pt-4">
+                                        <button type="button" className="px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700">Request Editing Access</button>
+                                        <button type="button" onClick={() => setIsEditModalOpen(false)} className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50">Cancel</button>
+                                    </div>
+                                </div>
+                                : <form onSubmit={handleSubmit(onsubmit)} className="space-y-6">
+                                    {/* Image upload (dummy for edit) */}
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">Unit</label>
-                                        <select {...register("unit")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                            {units.map((item, index) => (
-                                                <option key={index} value={item}>{item}</option>
-                                            ))}
-                                        </select>
+                                        <label className="block text-sm font-medium text-slate-700 mb-2">Waste Image</label>
+                                        <input type="file" {...register("image")} className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
                                     </div>
-                                </div>
 
-                                {/* Colour */}
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Waste Colour</label>
-                                    <input type="text" {...register("colour")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
-                                </div>
-
-                                {/* Description */}
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Description</label>
-                                    <textarea {...register("description")} className="w-full min-h-[100px] rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
-                                </div>
-
-                                {/* Pricing + Currency */}
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {/* Title */}
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">Price</label>
-                                        <input type="number" {...register("price")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                        <label className="block text-sm font-medium text-slate-700 mb-2">Waste Title</label>
+                                        <input type="text" {...register("title")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" required />
                                     </div>
+
+                                    {/* Category + Quantity/Unit */}
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                        <div className="sm:col-span-1">
+                                            <label className="block text-sm font-medium text-slate-700 mb-2">Waste Category</label>
+                                            <select {...register("category")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                                {wasteCategories.map((item, index) => (
+                                                    <option key={index} value={item}>{item}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700 mb-2">Quantity</label>
+                                            <input type="number" {...register("quantity")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700 mb-2">Unit</label>
+                                            <select {...register("unit")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                                {units.map((item, index) => (
+                                                    <option key={index} value={item}>{item}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    {/* Colour */}
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">Currency</label>
-                                        <select {...register("currency")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                            {currencyList.map((item, index) => (
-                                                <option key={index} value={item}>{item}</option>
-                                            ))}
-                                        </select>
+                                        <label className="block text-sm font-medium text-slate-700 mb-2">Waste Colour</label>
+                                        <input type="text" {...register("colour")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                                     </div>
-                                </div>
 
-                                <hr className="border-slate-200" />
+                                    {/* Description */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700 mb-2">Description</label>
+                                        <textarea {...register("description")} className="w-full min-h-[100px] rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                                    </div>
 
-                                {/* Location */}
-                                <div className="flex flex-col gap-3">
-                                    <label className="block text-md font-medium text-slate-700">Location</label>
+                                    {/* Pricing + Currency */}
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-2">Street</label>
-                                            <input type="text" {...register("location.street")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                            <label className="block text-sm font-medium text-slate-700 mb-2">Price</label>
+                                            <input type="number" {...register("price")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-2">City</label>
-                                            <input type="text" {...register("location.city")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-2">State</label>
-                                            <input type="text" {...register("location.state")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-2">Postal Code</label>
-                                            <input type="text" {...register("location.postal_code")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                            <label className="block text-sm font-medium text-slate-700 mb-2">Currency</label>
+                                            <select {...register("currency")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                                {currencyList.map((item, index) => (
+                                                    <option key={index} value={item}>{item}</option>
+                                                ))}
+                                            </select>
                                         </div>
                                     </div>
-                                </div>
 
-                                {/* Status */}
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Status</label>
-                                    <select {...register("status")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                        {statusList.map((item, index) => (
-                                            <option key={index} value={item}>{item}</option>
-                                        ))}
-                                    </select>
-                                </div>
+                                    <hr className="border-slate-200" />
 
-                                <div className="flex justify-end gap-3 pt-4">
-                                    <button type="button" onClick={() => setIsEditModalOpen(false)} className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50">Cancel</button>
-                                    <button type="submit" className="px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700">Save Changes</button>
-                                </div>
-                            </form>
+                                    {/* Location */}
+                                    <div className="flex flex-col gap-3">
+                                        <label className="block text-md font-medium text-slate-700">Location</label>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-700 mb-2">Street</label>
+                                                <input type="text" {...register("location.street")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-700 mb-2">City</label>
+                                                <input type="text" {...register("location.city")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-700 mb-2">State</label>
+                                                <input type="text" {...register("location.state")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-700 mb-2">Postal Code</label>
+                                                <input type="text" {...register("location.postal_code")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Status */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700 mb-2">Status</label>
+                                        <select {...register("status")} className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                            {editData.status === "Review"
+                                                ? <option value="Send for Review">Send for Review</option>
+                                                : statusList.map((item, index) => (
+                                                    <option key={index} value={item}>{item}</option>
+                                                ))}
+                                        </select>
+                                    </div>
+
+                                    <div className="flex justify-end gap-3 pt-4">
+                                        <button type="button" onClick={() => setIsEditModalOpen(false)} className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50">Cancel</button>
+                                        <button type="submit" className="px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700">Save Changes</button>
+                                    </div>
+                                </form>}
                         </div>
                     </div>
                 )}

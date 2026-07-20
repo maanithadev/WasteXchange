@@ -15,6 +15,7 @@ router.get("/verifyUser", async (req, res) => {
             const user = jwt.verify(token, process.env.JWT_SECRET)
             const foundUser = await Users.findById(user.user_id)
             if (!foundUser) return res.json({ message: 'No user found' })
+            if (foundUser.status === "suspended") return res.json({ message: 'User Account is Suspended' })
             res.json(user)
         } else {
             res.status(401).json({ message: 'No token provided' })
@@ -27,7 +28,7 @@ router.get("/verifyUser", async (req, res) => {
 router.get("/get-all-users", verifyUser, async (req, res) => {
     try {
         // Find all users whose role is NOT "admin"
-        const users = await Users.find({ role: { $ne: "admin" } });
+        const users = await Users.find({ role: { $ne: "admin" } }, "-__v -password");
         res.json(users)
     } catch (err) {
         res.status(500).json({ message: err.message })
@@ -82,6 +83,8 @@ router.post("/login", async (req, res) => {
         const passwordMatch = await bcrypt.compare(password, userExists.password)
         if (!passwordMatch) return res.json({ message: "password wrong" })
 
+        if (userExists.status === "suspended") return res.json({ message: 'User Account is Suspended' })
+
         const token = jwt.sign({
             user_id: userExists._id,
             role: userExists.role
@@ -119,7 +122,7 @@ router.put("/update-user-status", verifyUser, async (req, res) => {
     try {
         const users = await Users.updateOne(
             { _id: req.body.user_id },
-            { status: "suspended" }
+            { status: req.body.status || "suspended" }
         );
         res.json(users)
     } catch (err) {

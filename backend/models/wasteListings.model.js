@@ -49,6 +49,9 @@ const wasteListingsSchema = mongoose.Schema({
     status: {       // "active" | "pending" | "sold" | "removed" | "flagged"
         type: String
     },
+    suspend_message: {
+        type: String
+    },
     created_at: {
         type: Date
     },

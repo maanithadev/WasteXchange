@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
+import { useEffect } from "react";
 
 export function useVerifyUser() {
     const [user, setUser] = useState(null)
@@ -7,9 +8,10 @@ export function useVerifyUser() {
     const token = localStorage.getItem("token") || null
 
     useEffect(() => {
-        async function verifyUser() {
+        async function fetchUser() {
             try {
                 if (token !== null) {
+                    setLoading(true)
                     const res = await axios.get(import.meta.env.VITE_VERIFY_USER_HOOK_URL, {
                         headers: {
                             Authorization: `Bearer ${token}`
@@ -24,8 +26,8 @@ export function useVerifyUser() {
             }
         }
 
-        verifyUser()
-    }, []);
+        fetchUser()
+    }, [])
 
     return { user, loading, token }
 }

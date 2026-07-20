@@ -3,7 +3,8 @@ import axios from "axios";
 
 const SellerEarnings = () => {
     const [data, setData] = useState([]);
-    const [totalEarnings, setTotalEarnings] = useState();
+    const [totalEarnings, setTotalEarnings] = useState(0);
+    const [currentMonthEarnings, setCurrentMonthEarnings] = useState(0);
 
     useEffect(() => {
         async function loadProducts() {
@@ -12,11 +13,9 @@ const SellerEarnings = () => {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }
             });
-            setData(res.data);
-
-            setTotalEarnings(res.data.reduce((total, item) => {
-                return total + item.total_price
-            }, 0))
+            setData(res.data.payments || []);
+            setTotalEarnings(res.data.allTimeEarnings || 0);
+            setCurrentMonthEarnings(res.data.currentMonthEarnings || 0);
         }
 
         loadProducts()
@@ -33,15 +32,16 @@ const SellerEarnings = () => {
 
                 {/* <!-- Summary cards --> */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
-                    <div className="bg-white rounded-xl border border-slate-200 p-6">
-                        <p className="text-sm font-medium text-slate-500 mb-2">Total Earnings</p>
-                        <p className="text-3xl font-bold text-slate-900">RS.{totalEarnings}</p>
+                    <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+                        <p className="text-sm font-medium text-slate-500 mb-2">Pending Payouts</p>
+                        <p className="text-3xl font-bold text-slate-900">RS.{currentMonthEarnings}</p>
                         <p className="text-xs text-slate-400 mt-1">This month</p>
                     </div>
-                    <div className="bg-white rounded-xl border border-slate-200 p-6">
-                        <p className="text-sm font-medium text-slate-500 mb-2">Pending Payouts</p>
-                        <p className="text-3xl font-bold text-slate-900">$2,150.00</p>
-                        <p className="text-xs text-slate-400 mt-1">Next payout on Jul 15, 2026</p>
+
+                    <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+                        <p className="text-sm font-medium text-slate-500 mb-2">Total Earnings</p>
+                        <p className="text-3xl font-bold text-slate-900">RS.{totalEarnings}</p>
+                        <p className="text-xs text-slate-400 mt-1">Since registered</p>
                     </div>
                 </div>
 
