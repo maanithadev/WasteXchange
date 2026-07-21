@@ -14,7 +14,7 @@ const AdminListingModeration = () => {
 
     useEffect(() => {
         async function fetchData() {
-            const res = await axios.get(import.meta.env.VITE_GET_ALL_WASTE_LISTINGS_URL, {
+            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_ALL_WASTE_LISTINGS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`
                 }
@@ -42,7 +42,7 @@ const AdminListingModeration = () => {
 
     const handleUpdateStatus = async () => {
         try {
-            await axios.put(import.meta.env.VITE_UPDATE_LISTING_STATUS_URL,
+            await axios.put(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_UPDATE_LISTING_STATUS_URL,
                 {
                     listing_id: selectedItem._id,
                     status: statusValue,

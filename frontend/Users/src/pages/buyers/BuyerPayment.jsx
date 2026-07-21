@@ -5,7 +5,7 @@ const BuyerPayment = () => {
     const [data, setData] = useState([]);
     useEffect(() => {
         async function loadPayments() {
-            const res = await axios.get(import.meta.env.VITE_GET_BUYER_PAYMENTS_INFO_URL, {
+            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_BUYER_PAYMENTS_INFO_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }

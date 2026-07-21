@@ -27,7 +27,7 @@ const SellerSettings = () => {
 
     useEffect(() => {
         async function loadseller() {
-            const res = await axios.get(import.meta.env.VITE_GET_SELLER_DETAILS_URL, {
+            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_SELLER_DETAILS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }
@@ -40,7 +40,7 @@ const SellerSettings = () => {
 
     async function onSubmit(data) {
         try {
-            await axios.put(import.meta.env.VITE_UPDATE_SELLER_DETAILS_URL,
+            await axios.put(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_UPDATE_SELLER_DETAILS_URL,
                 { data },
                 {
                     headers: {
@@ -65,7 +65,7 @@ const SellerSettings = () => {
         }
 
         try {
-            const res = await axios.post(import.meta.env.VITE_CHANGE_PASSWORD_URL, {
+            const res = await axios.post(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_CHANGE_PASSWORD_URL, {
                 currentPassword: passwordData.currentPassword,
                 newPassword: passwordData.newPassword
             }, {
@@ -76,9 +76,9 @@ const SellerSettings = () => {
             setPasswordMessage({ type: 'success', text: res.data.message });
             setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
         } catch (err) {
-            setPasswordMessage({ 
-                type: 'error', 
-                text: err.response?.data?.message || 'Failed to update password' 
+            setPasswordMessage({
+                type: 'error',
+                text: err.response?.data?.message || 'Failed to update password'
             });
         }
     };
@@ -165,7 +165,7 @@ const SellerSettings = () => {
                             <label class="block text-sm font-medium text-slate-700 mb-2">Current Password</label>
                             <input type="password" placeholder="••••••••" required
                                 value={passwordData.currentPassword}
-                                onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
+                                onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
                                 class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                         </div>
 
@@ -173,7 +173,7 @@ const SellerSettings = () => {
                             <label class="block text-sm font-medium text-slate-700 mb-2">New Password</label>
                             <input type="password" placeholder="••••••••" required
                                 value={passwordData.newPassword}
-                                onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
+                                onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
                                 class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                         </div>
 
@@ -181,7 +181,7 @@ const SellerSettings = () => {
                             <label class="block text-sm font-medium text-slate-700 mb-2">Confirm New Password</label>
                             <input type="password" placeholder="••••••••" required
                                 value={passwordData.confirmPassword}
-                                onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
+                                onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
                                 class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                         </div>
 

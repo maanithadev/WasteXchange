@@ -12,7 +12,7 @@ const BuyerNavbar = () => {
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const response = await axios.get(import.meta.env.VITE_GET_SPECIFIC_USER_NOTIFICATIONS_URL, {
+                const response = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_SPECIFIC_USER_NOTIFICATIONS_URL, {
                     headers: {
                         "Authorization": `Bearer ${localStorage.getItem("token")}`
                     }
@@ -44,7 +44,7 @@ const BuyerNavbar = () => {
     const handleMarkAsRead = async (id, isRead) => {
         if (isRead) return;
         try {
-            await axios.get(`${import.meta.env.VITE_MARK_NOTIFICATION_READ_URL}${id}`, {
+            await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_MARK_NOTIFICATION_READ_URL + id, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`
                 }
@@ -57,7 +57,7 @@ const BuyerNavbar = () => {
 
     const handleMarkAllAsRead = async () => {
         try {
-            await axios.get(import.meta.env.VITE_MARK_ALL_NOTIFICATIONS_READ_URL, {
+            await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_MARK_ALL_NOTIFICATIONS_READ_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`
                 }

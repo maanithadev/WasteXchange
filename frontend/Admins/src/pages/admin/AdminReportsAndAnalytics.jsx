@@ -9,7 +9,7 @@ const AdminReportsAndAnalytics = () => {
   useEffect(() => {
     async function loadData() {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_GET_ADMIN_REPORTS_URL}?filter=${filter}`, {
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_ADMIN_REPORTS_URL}?filter=${filter}`, {
           headers: {
             "Authorization": `Bearer ${localStorage.getItem("token")}`
           }

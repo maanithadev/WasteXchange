@@ -19,7 +19,7 @@ export function useVerifyUser() {
         async function verifyUser() {
             try {
                 if (token !== null) {
-                    const res = await axios.get(import.meta.env.VITE_VERIFY_USER_HOOK_URL, {
+                    const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_VERIFY_USER_HOOK_URL, {
                         headers: {
                             Authorization: `Bearer ${token}`
                         }

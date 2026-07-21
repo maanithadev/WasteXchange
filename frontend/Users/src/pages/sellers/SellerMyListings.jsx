@@ -39,7 +39,7 @@ const SellerMyListings = () => {
 
     useEffect(() => {
         async function fetchData() {
-            const res = await axios.get(import.meta.env.VITE_SELLERS_GET_ALL_WASTE_LISTINGS_URL, {
+            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_SELLERS_GET_ALL_WASTE_LISTINGS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }
@@ -115,7 +115,7 @@ const SellerMyListings = () => {
         saveFormData.append("status", formData.status);
 
         try {
-            const response = await axios.put(import.meta.env.VITE_UPDATE_SELLER_WASTE_LISTING_URL + editData._id,
+            const response = await axios.put(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_UPDATE_SELLER_WASTE_LISTING_URL + editData._id,
                 saveFormData,
                 {
                     headers: {
@@ -136,7 +136,7 @@ const SellerMyListings = () => {
 
     const handleDeleteConfirm = async () => {
         try {
-            await axios.delete(import.meta.env.VITE_DELETE_SELLER_WASTE_LISTING_URL + selectedItem._id, {
+            await axios.delete(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_DELETE_SELLER_WASTE_LISTING_URL + selectedItem._id, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`
                 }
@@ -154,7 +154,7 @@ const SellerMyListings = () => {
 
     const handleUpdateStatus = async () => {
         try {
-            await axios.put(import.meta.env.VITE_UPDATE_LISTING_STATUS_URL,
+            await axios.put(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_UPDATE_LISTING_STATUS_URL,
                 {
                     listing_id: editData._id,
                     status: "Review",

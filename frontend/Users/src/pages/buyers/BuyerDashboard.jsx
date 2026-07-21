@@ -8,7 +8,7 @@ const BuyerDashboard = () => {
 
     useEffect(() => {
         async function loadNotifications() {
-            const res = await axios.get(import.meta.env.VITE_GET_SPECIFIC_USER_NOTIFICATIONS_URL, {
+            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_SPECIFIC_USER_NOTIFICATIONS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }
@@ -17,7 +17,7 @@ const BuyerDashboard = () => {
         }
 
         async function loadCard() {
-            const res = await axios.get(import.meta.env.VITE_GET_BUYER_DASHBOARD_CARDS_URL, {
+            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_BUYER_DASHBOARD_CARDS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }

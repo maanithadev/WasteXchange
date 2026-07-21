@@ -9,7 +9,7 @@ const AdminNotificationsManagement = () => {
 
     useEffect(() => {
         async function fetchData() {
-            const res = await axios.get(import.meta.env.VITE_GET_ALL_ADMIN_ANNOUNCEMENTS_URL, {
+            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_ALL_ADMIN_ANNOUNCEMENTS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`
                 }
@@ -21,7 +21,7 @@ const AdminNotificationsManagement = () => {
     }, [refresh])
 
     async function onsubmit(formData) {
-        const res = await axios.post(import.meta.env.VITE_ADMIN_ANNOUNCEMENT_SENT_URL,
+        const res = await axios.post(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_ADMIN_ANNOUNCEMENT_SENT_URL,
             { formData },
             {
                 headers: {

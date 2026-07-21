@@ -9,7 +9,7 @@ const AdminUserManagement = () => {
 
     useEffect(() => {
         async function fetchData() {
-            const res = await axios.get(import.meta.env.VITE_GET_ALL_USERS_URL, {
+            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_ALL_USERS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`
                 }
@@ -42,7 +42,7 @@ const AdminUserManagement = () => {
 
     async function handleUpdateStatus(id, newStatus) {
         try {
-            await axios.put(import.meta.env.VITE_UPDATE_USER_STATUS_URL,
+            await axios.put(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_UPDATE_USER_STATUS_URL,
                 { user_id: id, status: newStatus },
                 {
                     headers: {

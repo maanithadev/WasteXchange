@@ -36,7 +36,7 @@ const AdminDashboard = () => {
     useEffect(() => {
         async function fetchSummary() {
             try {
-                const res = await axios.get(import.meta.env.VITE_GET_ADMIN_DASHBOARD_SUMMARY_URL, {
+                const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_ADMIN_DASHBOARD_SUMMARY_URL, {
                     headers: {
                         "Authorization": `Bearer ${localStorage.getItem("token")}`
                     }

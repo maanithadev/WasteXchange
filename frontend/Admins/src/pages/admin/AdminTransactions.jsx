@@ -16,16 +16,16 @@ const AdminTransactions = () => {
 
     useEffect(() => {
         async function loadPayments() {
-            const res = await axios.get(import.meta.env.VITE_GET_ALL_PAYMENTS_URL, {
+            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_ALL_PAYMENTS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }
             });
             setData(res.data);
         }
-        
+
         async function loadCards() {
-            const res = await axios.get(import.meta.env.VITE_GET_ADMIN_TRANSACTIONS_CARDS_URL, {
+            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_ADMIN_TRANSACTIONS_CARDS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }
@@ -179,7 +179,7 @@ const AdminTransactions = () => {
                                 Showing <span className="font-medium">{indexOfFirstItem + 1}</span> to <span className="font-medium">{Math.min(indexOfLastItem, filteredData.length)}</span> of <span className="font-medium">{filteredData.length}</span> results
                             </p>
                             <div className="flex space-x-1">
-                                <button 
+                                <button
                                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                                     disabled={currentPage === 1}
                                     className="px-3 py-1 text-sm border border-slate-300 rounded-md disabled:opacity-50 text-slate-600 bg-white hover:bg-slate-50"
@@ -187,7 +187,7 @@ const AdminTransactions = () => {
                                     Previous
                                 </button>
                                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                                    <button 
+                                    <button
                                         key={page}
                                         onClick={() => setCurrentPage(page)}
                                         className={`px-3 py-1 text-sm border rounded-md ${currentPage === page ? 'bg-indigo-600 text-white border-indigo-600' : 'border-slate-300 text-slate-600 hover:bg-slate-50 bg-white'}`}
@@ -195,7 +195,7 @@ const AdminTransactions = () => {
                                         {page}
                                     </button>
                                 ))}
-                                <button 
+                                <button
                                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                                     disabled={currentPage === totalPages}
                                     className="px-3 py-1 text-sm border border-slate-300 rounded-md disabled:opacity-50 text-slate-600 bg-white hover:bg-slate-50"

@@ -17,7 +17,7 @@ const BuyerTrackOrder = () => {
     useEffect(() => {
         async function fetchData() {
             setLoading(true)
-            const res = await axios.get(import.meta.env.VITE_GET_BUYER_TRACK_ORDER_URL + id, {
+            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_BUYER_TRACK_ORDER_URL + id, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`
                 }
@@ -29,7 +29,7 @@ const BuyerTrackOrder = () => {
     }, [])
 
     async function startMessaging() {
-        const res = await axios.post(import.meta.env.VITE_START_CHAT_URL, {
+        const res = await axios.post(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_START_CHAT_URL, {
             buyer_id: user.user_id,
             seller_id: data.order?.seller_id._id
         })

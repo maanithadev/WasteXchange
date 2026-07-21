@@ -9,7 +9,7 @@ const BuyerMyOrders = () => {
 
     useEffect(() => {
         async function loadOrders() {
-            const res = await axios.get(import.meta.env.VITE_GET_BUYER_ORDER_INFO_URL, {
+            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_BUYER_ORDER_INFO_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }
@@ -24,7 +24,7 @@ const BuyerMyOrders = () => {
         if (!confirmOrder) return;
         setIsUpdating(true);
         try {
-            await axios.get(`${import.meta.env.VITE_MARK_ORDER_COLLECTED_URL}${confirmOrder._id}`, {
+            await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_MARK_ORDER_COLLECTED_URL + confirmOrder._id, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`
                 }

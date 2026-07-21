@@ -16,7 +16,7 @@ const BuyerListingDetail = () => {
 
     useEffect(() => {
         async function fetchWasteListingData() {
-            const res = await axios.get(import.meta.env.VITE_GET_SINGLE_WASTE_LISTING_URL + id)
+            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_SINGLE_WASTE_LISTING_URL + id)
             setData(res.data)
         }
 
@@ -25,7 +25,7 @@ const BuyerListingDetail = () => {
 
     async function handlePlaceOrder() {
         const completeDataToSend = { ...data, buyer_id: user.user_id }
-        const res = await axios.post(import.meta.env.VITE_CHECKOUT_URL, {
+        const res = await axios.post(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_CHECKOUT_URL, {
             data: completeDataToSend,
         })
         setCheckoutParams(res.data)
@@ -33,7 +33,7 @@ const BuyerListingDetail = () => {
     }
 
     async function startMessaging() {
-        const res = await axios.post(import.meta.env.VITE_START_CHAT_URL, {
+        const res = await axios.post(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_START_CHAT_URL, {
             buyer_id: user.user_id,
             seller_id: data.seller_id?._id
         })

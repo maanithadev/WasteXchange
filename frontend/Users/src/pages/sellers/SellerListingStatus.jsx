@@ -8,7 +8,7 @@ const SellerListingStatus = () => {
 
     useEffect(() => {
         async function fetchData() {
-            const res = await axios.get(import.meta.env.VITE_GET_ALL_ACTIVE_WASTELISTINGS_URL, {
+            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_ALL_ACTIVE_WASTELISTINGS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }
