@@ -1,78 +1,65 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 const SellerListingStatus = () => {
+
+    const [data, setData] = useState([])
+
+    useEffect(() => {
+        async function fetchData() {
+            const res = await axios.get(import.meta.env.VITE_GET_ALL_ACTIVE_WASTELISTINGS_URL, {
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                }
+            })
+            setData(res.data)
+        }
+
+        fetchData()
+    }, []);
+
     return (
         <>
-            {/* <!-- LISTING STATUS / MATCH VIEW PAGE --> */}
-            <main className="flex-1 p-8 bg-slate-50 min-h-screen">
-                <div className="mb-8">
-                    <p className="text-xs font-medium text-emerald-600 mb-1">My Listings / Match View</p>
-                    <h1 className="text-2xl font-bold text-slate-900">Shredded HDPE Pellets</h1>
-                    <p className="text-sm text-slate-500 mt-1">500 kg &middot; Plastics &middot; Listed 4 days ago</p>
+            {/* <!-- MY LISTINGS PAGE --> */}
+            <main className="flex-1 p-8 bg-slate-50 min-h-screen relative">
+                <div className="flex items-center justify-between mb-5">
+                    <div>
+                        <h1 className="text-2xl font-bold text-slate-900">Listing Status / Matches</h1>
+                        <p className="text-sm text-slate-500 mt-1">Only Active Listings are Displayed Here</p>
+                    </div>
+                    <Link to="/seller/upload-waste">
+                        <button
+                            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            New Listing
+                        </button>
+                    </Link>
                 </div>
 
-                <div className="bg-white rounded-xl border border-slate-200 p-6">
-                    <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-lg font-semibold text-slate-900">Matched Buyers</h2>
-                        <span className="text-xs font-medium text-slate-400">4 matches found</span>
-                    </div>
-
-                    <ul className="divide-y divide-slate-100">
-                        {/* <!-- Match 1 --> */}
-                        <li className="py-5 flex flex-col sm:flex-row sm:items-center gap-4">
-                            <img src="https://placehold.co/48x48" className="w-12 h-12 rounded-full object-cover" alt="EcoPlast Industries" />
-                            <div className="flex-1">
-                                <p className="text-sm font-semibold text-slate-900">EcoPlast Industries</p>
-                                <p className="text-xs text-slate-500">Recycled Plastics Manufacturer &middot; 12 mi away</p>
-                                <div className="w-full bg-slate-100 rounded-full h-2 mt-2 max-w-xs">
-                                    <div className="bg-emerald-500 h-2 rounded-full" style={{width: "96%"}}></div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {/* <!-- Cards --> */}
+                    {data.map((item, index) => (
+                        <div key={index} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                            <img src={`http://localhost:3000/uploads/${item.image}`}
+                                className="w-full h-40 object-cover"
+                                alt={item.title} />
+                            <div className="w-full p-4 flex flex-col">
+                                <div className="flex items-center justify-between mb-2">
+                                    <h3 className="font-semibold text-slate-900 text-sm">{item.title}</h3>
+                                    {/* <span className="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">{item.status}</span> */}
                                 </div>
-                                <p className="text-xs font-semibold text-emerald-700 mt-1">96% match</p>
-                            </div>
-                            <button className="text-xs font-medium bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 shrink-0">Message Buyer</button>
-                        </li>
-
-                        {/* <!-- Match 2 --> */}
-                        <li className="py-5 flex flex-col sm:flex-row sm:items-center gap-4">
-                            <img src="https://placehold.co/48x48" className="w-12 h-12 rounded-full object-cover" alt="Circular Metals Ltd." />
-                            <div className="flex-1">
-                                <p className="text-sm font-semibold text-slate-900">Circular Metals Ltd.</p>
-                                <p className="text-xs text-slate-500">Industrial Polymer Buyer &middot; 28 mi away</p>
-                                <div className="w-full bg-slate-100 rounded-full h-2 mt-2 max-w-xs">
-                                    <div className="bg-emerald-500 h-2 rounded-full" style={{width: "84%"}}></div>
+                                <p className="text-xs text-slate-500 mb-4">{item.quantity} {item.unit} &middot; {item.category}</p>
+                                <div className="w-full">
+                                    <Link to={`/seller/listing-matches-details/${item._id}`}>
+                                        <button className="w-full px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700">View Buyers</button>
+                                    </Link>
                                 </div>
-                                <p className="text-xs font-semibold text-emerald-700 mt-1">84% match</p>
                             </div>
-                            <button className="text-xs font-medium bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 shrink-0">Message Buyer</button>
-                        </li>
-
-                        {/* <!-- Match 3 --> */}
-                        <li className="py-5 flex flex-col sm:flex-row sm:items-center gap-4">
-                            <img src="https://placehold.co/48x48" className="w-12 h-12 rounded-full object-cover" alt="Greenline Polymers" />
-                            <div className="flex-1">
-                                <p className="text-sm font-semibold text-slate-900">Greenline Polymers</p>
-                                <p className="text-xs text-slate-500">Plastic Reprocessing Plant &middot; 35 mi away</p>
-                                <div className="w-full bg-slate-100 rounded-full h-2 mt-2 max-w-xs">
-                                    <div className="bg-amber-500 h-2 rounded-full" style={{width: "67%"}}></div>
-                                </div>
-                                <p className="text-xs font-semibold text-amber-600 mt-1">67% match</p>
-                            </div>
-                            <button className="text-xs font-medium bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 shrink-0">Message Buyer</button>
-                        </li>
-
-                        {/* <!-- Match 4 --> */}
-                        <li className="py-5 flex flex-col sm:flex-row sm:items-center gap-4">
-                            <img src="https://placehold.co/48x48" className="w-12 h-12 rounded-full object-cover" alt="Renew Plastics Co." />
-                            <div className="flex-1">
-                                <p className="text-sm font-semibold text-slate-900">Renew Plastics Co.</p>
-                                <p className="text-xs text-slate-500">Packaging Materials Supplier &middot; 51 mi away</p>
-                                <div className="w-full bg-slate-100 rounded-full h-2 mt-2 max-w-xs">
-                                    <div className="bg-amber-500 h-2 rounded-full" style={{width: "58%"}}></div>
-                                </div>
-                                <p className="text-xs font-semibold text-amber-600 mt-1">58% match</p>
-                            </div>
-                            <button className="text-xs font-medium bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 shrink-0">Message Buyer</button>
-                        </li>
-                    </ul>
+                        </div>
+                    ))}
                 </div>
             </main>
         </>

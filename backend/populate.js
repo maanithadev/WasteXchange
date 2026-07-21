@@ -34,3 +34,5 @@ const populate = async () => {
 }
 
 populate()
+
+module.exports = populate

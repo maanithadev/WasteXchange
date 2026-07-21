@@ -143,7 +143,7 @@ const SellerMyListings = () => {
             });
 
             // Update local state by removing the deleted item
-            setData(prevData => prevData.filter(item => item._id !== selectedItem._id));
+            setFilterData(prevData => prevData.filter(item => item._id !== selectedItem._id));
 
             setIsDeleteModalOpen(false);
             setSelectedItem(null);

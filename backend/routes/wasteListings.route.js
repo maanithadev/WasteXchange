@@ -6,12 +6,44 @@ const path = require("path")
 const fs = require("fs")
 const verifyUser = require("../middleware/verifyUser.middleware.js")
 const WasteListings = require("../models/wasteListings.model.js")
+const BuyerDetails = require("../models/buyerDetails.model.js")
+const Matches = require("../models/matches.model.js")
 
 // get
 router.get("/get-all-wastelistings", verifyUser, async (req, res) => {
     try {
-        const wastelistings = await WasteListings.find({}).populate("seller_id", "company_name")
+        const wastelistings = await WasteListings.find().populate("seller_id", "company_name")
         res.json(wastelistings)
+    } catch (err) {
+        res.json({ message: err.message })
+    }
+})
+
+router.get("/get-all-active-wastelistings", verifyUser, async (req, res) => {
+    try {
+        const wastelistings = await WasteListings.find({ status: "Active" })
+        res.json(wastelistings)
+    } catch (err) {
+        res.json({ message: err.message })
+    }
+})
+
+router.get("/get-buyer-waste-matches", verifyUser, async (req, res) => {
+    try {
+        const matches = await Matches.find({ buyer_id: req.token.user_id })
+            .populate("wasteListings_id")
+        res.json(matches)
+    } catch (err) {
+        res.json({ message: err.message })
+    }
+})
+
+router.get("/get-seller-waste-matches/:id", verifyUser, async (req, res) => {
+    try {
+        const matches = await Matches.find({ wasteListings_id: req.params.id })
+            .populate("buyerDetails", "company_name user_id -_id")
+            .populate("wasteListings_id", "seller_id title quantity unit category -_id")
+        res.json(matches)
     } catch (err) {
         res.json({ message: err.message })
     }
@@ -125,12 +157,54 @@ router.post("/seller-upload-waste-save", localUpload.single("image"), verifyUser
             updated_at: new Date(),
         })
         formData.image = req.file.filename
-        await formData.save();
+        const saved_formData = await formData.save();
 
-        res.status(200).json({ message: "data was saved", formData })
+        function calculateLocationScore(listingLocation, buyerAddress) {
+            if (listingLocation.postal_code === buyerAddress.postal_code) {
+                return 100; // same postal code — best possible proximity signal you have
+            }
+            if (listingLocation.city === buyerAddress.city) {
+                return 70; // same city, different postal code
+            }
+            if (listingLocation.state === buyerAddress.state) {
+                return 40; // same state/region — still worth showing, just lower priority
+            }
+            return 10; // different state — still technically matched on category, but low priority
+        }
+
+        function calculateQuantityFitScore(listingQuantity, buyerMinQty, buyerMaxQty) {
+            if (listingQuantity >= buyerMinQty && listingQuantity <= buyerMaxQty) {
+                return 100; // listing is right in the buyer's stated range
+            }
+            // Listing is outside range — score based on how far outside
+            const nearestBound = listingQuantity < buyerMinQty ? buyerMinQty : buyerMaxQty;
+            const distance = Math.abs(listingQuantity - nearestBound);
+            const percentOff = distance / nearestBound;
+
+            // Decay the score the further outside the range it is, floor at 0
+            return Math.max(0, 100 - (percentOff * 100));
+        }
+
+        // matchScore = (categoryMatch × 50) + (locationScore × 30) + (quantityFitScore × 20)
+
+        const buyers = await BuyerDetails.find({ interested_category: req.body.category })
+        buyers.forEach(async (buyer) => {
+            const locationScore = calculateLocationScore(saved_formData.location, buyer.address);
+            const quantityFitScore = calculateQuantityFitScore(saved_formData.quantity, buyer.minqty, buyer.maxqty);
+            const matchScore = (100 * 50) + (locationScore * 30) + (quantityFitScore * 20);
+            const match = await new Matches({
+                wasteListings_id: saved_formData._id,
+                buyer_id: buyer.user_id,
+                matchScore: matchScore / 100,
+                created_at: new Date()
+            })
+            await match.save();
+        })
+
+        res.json({ message: "data was saved", formData })
 
     } catch (err) {
-        res.status(500).json({ message: "server error", error: err.message });
+        res.json({ message: "server error", error: err.message });
     }
 })
 
@@ -191,6 +265,53 @@ router.put("/update-listing/:id", localUpload.single("image"), verifyUser, async
         );
 
         const updatedListing = await WasteListings.findOne({ _id: listingId });
+
+        if (req.body.status === "Active") {
+            function calculateLocationScore(listingLocation, buyerAddress) {
+                if (listingLocation.postal_code === buyerAddress.postal_code) {
+                    return 100; // same postal code — best possible proximity signal you have
+                }
+                if (listingLocation.city === buyerAddress.city) {
+                    return 70; // same city, different postal code
+                }
+                if (listingLocation.state === buyerAddress.state) {
+                    return 40; // same state/region — still worth showing, just lower priority
+                }
+                return 10; // different state — still technically matched on category, but low priority
+            }
+
+            function calculateQuantityFitScore(listingQuantity, buyerMinQty, buyerMaxQty) {
+                if (listingQuantity >= buyerMinQty && listingQuantity <= buyerMaxQty) {
+                    return 100; // listing is right in the buyer's stated range
+                }
+                // Listing is outside range — score based on how far outside
+                const nearestBound = listingQuantity < buyerMinQty ? buyerMinQty : buyerMaxQty;
+                const distance = Math.abs(listingQuantity - nearestBound);
+                const percentOff = distance / nearestBound;
+
+                // Decay the score the further outside the range it is, floor at 0
+                return Math.max(0, 100 - (percentOff * 100));
+            }
+
+            // matchScore = (categoryMatch × 50) + (locationScore × 30) + (quantityFitScore × 20)
+
+            const buyers = await BuyerDetails.find({ interested_category: req.body.category })
+            buyers.forEach(async (buyer) => {
+                const locationScore = calculateLocationScore(updatedListing.location, buyer.address);
+                const quantityFitScore = calculateQuantityFitScore(updatedListing.quantity, buyer.minqty, buyer.maxqty);
+                const matchScore = (100 * 50) + (locationScore * 30) + (quantityFitScore * 20);
+                const match = await new Matches({
+                    wasteListings_id: updatedListing._id,
+                    buyer_id: buyer.user_id,
+                    matchScore: matchScore / 100,
+                    created_at: new Date()
+                })
+                await match.save();
+            })
+        } else {
+            await Matches.deleteMany({ wasteListings_id: updatedListing._id })
+        }
+
         res.status(200).json({ message: "Listing updated successfully", formData: updatedListing });
 
     } catch (err) {
@@ -217,6 +338,7 @@ router.delete("/delete-listing/:id", verifyUser, async (req, res) => {
         }
 
         await WasteListings.deleteOne({ _id: listingId, seller_id: req.token.user_id });
+        await Matches.deleteMany({ wasteListings_id: listingId });
 
         res.status(200).json({ message: "Listing deleted successfully", id: listingId });
 

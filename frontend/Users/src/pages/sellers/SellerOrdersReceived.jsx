@@ -53,9 +53,9 @@ const SellerOrdersReceived = () => {
             }
         });
         setSelectedItem(res.data);
+        console.log(res.data)
         setIsModalOpen(true);
     };
-    console.log(selectedItem)
 
     const closeModal = () => {
         setIsModalOpen(false);
@@ -110,7 +110,7 @@ const SellerOrdersReceived = () => {
                             <tbody className="divide-y divide-slate-100">
                                 {data.map((item, index) => (
                                     <tr key={index}>
-                                        <td className="px-6 py-4 font-medium text-slate-800">{item.buyer_id?.company_name}</td>
+                                        <td className="px-6 py-4 font-medium text-slate-800">{item.buyerDetails?.company_name}</td>
                                         <td className="px-6 py-4 text-slate-600">{item.wasteListings_id?.title}</td>
                                         <td className="px-6 py-4 text-slate-600">{item.quantity} {item.unit}</td>
                                         <td className="px-6 py-4 text-slate-600">{item.ordered_date}</td>

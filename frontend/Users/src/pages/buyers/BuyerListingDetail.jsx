@@ -9,7 +9,7 @@ const BuyerListingDetail = () => {
     const { id } = useParams()
     const [data, setData] = useState({})
 
-    const { checkoutParams, setCheckoutParams } = useCheckoutContext()
+    const { setCheckoutParams } = useCheckoutContext()
     const { user } = useVerifyUser();
     const { setConversationId } = useConversationsContext()
     const navigate = useNavigate();

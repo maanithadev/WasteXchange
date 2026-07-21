@@ -16,6 +16,7 @@ const SellerDashboard = lazy(() => import("./pages/sellers/SellerDashboard.jsx")
 const SellerUploadWaste = lazy(() => import("./pages/sellers/SellerUploadWaste.jsx"));
 const SellerMyListings = lazy(() => import("./pages/sellers/SellerMyListings.jsx"));
 const SellerListingStatus = lazy(() => import("./pages/sellers/SellerListingStatus.jsx"));
+const SellerListingStatusDetails = lazy(() => import("./pages/sellers/SellerListingStatusDetails.jsx"));
 const SellerOrdersReceived = lazy(() => import("./pages/sellers/SellerOrdersReceived.jsx"));
 const SellerMessages = lazy(() => import("./pages/sellers/SellerMessages.jsx"));
 const SellerCarbonFootprintDashboard = lazy(() => import("./pages/sellers/SellerCarbonFootprintDashboard.jsx"));
@@ -33,9 +34,9 @@ const BuyerMessages = lazy(() => import("./pages/buyers/BuyerMessages.jsx"));
 const BuyerCarbonFootprintDashboard = lazy(() => import("./pages/buyers/BuyerCarbonFootprintDashboard.jsx"));
 const BuyerPayment = lazy(() => import("./pages/buyers/BuyerPayment.jsx"));
 const BuyerSettings = lazy(() => import("./pages/buyers/BuyerSettings.jsx"));
-const NotFoundPage = lazy(() => import("./pages/NotFoundPage.jsx"));
 const BuyerPaymentSuccess = lazy(() => import("./pages/buyers/BuyerPaymentSuccess.jsx"));
 const BuyerPaymentFailed = lazy(() => import("./pages/buyers/BuyerPaymentFailed.jsx"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage.jsx"));
 
 import ProtectedSellerRoutes from "./auth/ProtectedSellerRoutes.jsx";
 import ProtectedBuyerRoutes from "./auth/ProtectedBuyerRoutes.jsx";
@@ -73,6 +74,7 @@ const App = () => {
                             <Route path="/seller/upload-waste" element={<SellerUploadWaste />} />
                             <Route path="/seller/my-listings" element={<SellerMyListings />} />
                             <Route path="/seller/listing-matches" element={<SellerListingStatus />} />
+                            <Route path="/seller/listing-matches-details/:id" element={<SellerListingStatusDetails />} />
                             <Route path="/seller/orders-received" element={<SellerOrdersReceived />} />
                             <Route path="/seller/messages" element={<SellerMessages />} />
                             <Route path="/seller/carbon-footprint" element={<SellerCarbonFootprintDashboard />} />

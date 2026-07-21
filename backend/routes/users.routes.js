@@ -5,6 +5,8 @@ const jwt = require("jsonwebtoken")
 require("dotenv").config()
 const verifyUser = require("../middleware/verifyUser.middleware.js")
 const Users = require("../models/users.model.js")
+const SellerDetails = require("../models/sellerDetails.model.js")
+const BuyerDetails = require("../models/buyerDetails.model.js")
 const WasteListings = require("../models/wasteListings.model.js")
 const CarbonRecords = require("../models/carbonRecords.model.js")
 const Payments = require("../models/payments.model.js")
@@ -212,27 +214,55 @@ router.post("/signup", async (req, res) => {
     try {
         const { email } = req.body
         const existingUser = await Users.findOne({ email })
-        if (existingUser) return res.json({ message: "User already exist" })
+        if (existingUser) return res.json({ message: "Email already exists. Retry using another Email" })
 
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
         const userData = new Users({
             role: req.body.role,
             email: req.body.email,
             password: hashedPassword,
-            company_name: req.body.company_name,
-            phone_number: req.body.phone_number,
-            address: {
-                street: req.body.address?.street,
-                city: req.body.address?.city,
-                state: req.body.address?.state,
-                postal_code: req.body.address?.postal_code,
-                country: req.body.address?.country
-            },
-            status: req.body.status,
+            status: "active",
             created_at: new Date(),
-            updated_at: new Date(),
+            updated_at: new Date()
         })
         const savedUser = await userData.save()
+
+        if (req.body.role === "seller") {
+            const sellerData = await new SellerDetails({
+                user_id: savedUser._id,
+                company_name: req.body.company_name,
+                phone_number: req.body.phone_number,
+                address: {
+                    street: req.body.address?.street,
+                    city: req.body.address?.city,
+                    state: req.body.address?.state,
+                    postal_code: req.body.address?.postal_code,
+                    country: req.body.address?.country
+                },
+                created_at: new Date(),
+                updated_at: new Date()
+            })
+            await sellerData.save()
+        } else {
+            const buyerData = await new BuyerDetails({
+                user_id: savedUser._id,
+                company_name: req.body.company_name,
+                phone_number: req.body.phone_number,
+                address: {
+                    street: req.body.address?.street,
+                    city: req.body.address?.city,
+                    state: req.body.address?.state,
+                    postal_code: req.body.address?.postal_code,
+                    country: req.body.address?.country
+                },
+                interested_category: req.body.interested_category,
+                minqty: req.body.minqty,
+                maxqty: req.body.maxqty,
+                created_at: new Date(),
+                updated_at: new Date()
+            })
+            await buyerData.save()
+        }
 
         const token = jwt.sign({
             user_id: savedUser._id,
