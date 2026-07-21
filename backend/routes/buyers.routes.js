@@ -6,6 +6,7 @@ const User = require("../models/users.model.js")
 const Orders = require("../models/orders.model.js")
 const Notifications = require("../models/notifications.model.js")
 const CarbonRecords = require("../models/carbonRecords.model.js")
+const Matches = require("../models/matches.model.js")
 const mongoose = require("mongoose");
 
 // get
@@ -20,10 +21,11 @@ router.get("/get-buyer-details", verifyUser, async (req, res) => {
 
 router.get("/buyer-dashboard-cards", verifyUser, async (req, res) => {
     try {
+        const matchedListings = await Matches.countDocuments({ buyer_id: req.token.user_id })
         const activeOrders = await Orders.countDocuments({ buyer_id: req.token.user_id, status: { $ne: "collected" } })
-        
+
         const unreadNotifications = await Notifications.countDocuments({ user_id: req.token.user_id, isRead: false })
-        
+
         const currentMonthStr = new Date().toISOString().slice(0, 7); // e.g. "2026-07"
         const currentYearStr = new Date().getFullYear().toString(); // e.g. "2026"
 
@@ -36,11 +38,11 @@ router.get("/buyer-dashboard-cards", verifyUser, async (req, res) => {
 
         // Current Month Carbon (for BuyerDashboard)
         const carbonRecordsMonth = await CarbonRecords.aggregate([
-            { 
-                $match: { 
+            {
+                $match: {
                     buyer_id: new mongoose.Types.ObjectId(req.token.user_id),
                     created_at: { $regex: `^${currentMonthStr}` }
-                } 
+                }
             },
             { $group: { _id: null, totalSum: { $sum: "$co2SavedKg" } } }
         ]);
@@ -72,6 +74,7 @@ router.get("/buyer-dashboard-cards", verifyUser, async (req, res) => {
         });
 
         res.json({
+            matchedListings,
             activeOrders,
             unreadNotifications,
             currentMonthCarbonSaved: (currentMonthCarbonSaved / 1000),

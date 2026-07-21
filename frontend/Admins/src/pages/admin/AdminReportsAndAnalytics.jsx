@@ -86,12 +86,12 @@ const AdminReportsAndAnalytics = () => {
             </div>
           </div>
 
-          <div class="bg-white rounded-xl border border-slate-200 p-6">
+          {/* <div class="bg-white rounded-xl border border-slate-200 p-6">
             <h2 class="text-sm font-semibold text-slate-900 mb-4">Matching Engine Performance</h2>
             <div class="w-full h-64 rounded-lg border-2 border-dashed border-slate-200 bg-slate-50 flex items-center justify-center">
               <p class="text-sm font-medium text-slate-400">Chart Placeholder</p>
             </div>
-          </div>
+          </div> */}
 
           <div class="bg-white rounded-xl border border-slate-200 p-6">
             <h2 class="text-sm font-semibold text-slate-900 mb-4">User Growth</h2>

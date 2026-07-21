@@ -63,8 +63,8 @@ const BuyerDashboard = () => {
                                 </svg>
                             </div>
                         </div>
-                        <p class="text-3xl font-bold text-slate-900">12</p>
-                        <p class="text-xs text-slate-400 mt-1">+3 this week</p>
+                        <p class="text-3xl font-bold text-slate-900">{card.matchedListings || 0}</p>
+                        {/* <p class="text-xs text-slate-400 mt-1">+3 this week</p> */}
                     </div>
 
                     <div class="bg-white rounded-xl border border-slate-200 p-5">

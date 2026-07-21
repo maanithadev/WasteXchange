@@ -23,7 +23,7 @@ const BuyerMatchedRecommendations = () => {
             <main className="flex-1 p-8 bg-slate-50 min-h-screen">
                 <div className="mb-8">
                     <h1 className="text-2xl font-bold text-slate-900">Matched Recommendations</h1>
-                    <p className="text-sm text-slate-500 mt-1">AI-suggested listings tailored to your buying profile</p>
+                    <p className="text-sm text-slate-500 mt-1">Suggested listings tailored to your buying profile</p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
