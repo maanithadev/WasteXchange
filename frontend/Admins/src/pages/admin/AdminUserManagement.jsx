@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
+import Loading from "../../components/Loading"
 
 const AdminUserManagement = () => {
     const [data, setData] = useState([])
     const [filteredData, setFilteredData] = useState([])
+    const [loading, setLoading] = useState(true)
     const [refresh, setRefresh] = useState(false)
     const [selectedUser, setSelectedUser] = useState(null)
 
     useEffect(() => {
         async function fetchData() {
+            setLoading(true)
             const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_ALL_USERS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`
@@ -16,9 +19,11 @@ const AdminUserManagement = () => {
             })
             setData(res.data)
             setFilteredData(res.data)
+            setLoading(false)
         }
         fetchData()
     }, [refresh])
+    console.log(data)
 
     function handleUser(option) {
         switch (option) {
@@ -56,7 +61,7 @@ const AdminUserManagement = () => {
         }
     }
 
-    return (
+    return loading ? <Loading /> : (
         <>
             {/* <!-- USER MANAGEMENT PAGE --> */}
             <main class="flex-1 p-8 bg-slate-50 min-h-screen">

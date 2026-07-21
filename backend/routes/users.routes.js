@@ -201,9 +201,48 @@ router.get("/admin-reports-charts", verifyUser, async (req, res) => {
 router.get("/get-all-users", verifyUser, async (req, res) => {
     try {
         // Find all users whose role is NOT "admin"
-        // const users = await Users.find({ role: { $ne: "admin" } }, "-__v -password");
-        const users = await Users.find({}, "-__v -password");
-        res.json(users)
+        const users = await Users.find({ role: { $ne: "admin" } }, "-__v -password");
+        
+        let combinedUsers = [];
+
+        for (let user of users) {
+            let details = null;
+            if (user.role === "seller") {
+                details = await SellerDetails.findOne({ user_id: user._id });
+            } else if (user.role === "buyer") {
+                details = await BuyerDetails.findOne({ user_id: user._id });
+            }
+            
+            // Convert mongoose document to plain object
+            const userObj = user.toObject();
+
+            // Merge details into user object if they exist
+            if (details) {
+                userObj.company_name = details.company_name || "N/A";
+                userObj.phone_number = details.phone_number || "N/A";
+                userObj.address = details.address || {
+                    street: "N/A",
+                    city: "N/A",
+                    state: "N/A",
+                    postal_code: "N/A",
+                    country: "N/A"
+                };
+            } else {
+                userObj.company_name = "N/A";
+                userObj.phone_number = "N/A";
+                userObj.address = {
+                    street: "N/A",
+                    city: "N/A",
+                    state: "N/A",
+                    postal_code: "N/A",
+                    country: "N/A"
+                };
+            }
+
+            combinedUsers.push(userObj);
+        }
+
+        res.json(combinedUsers);
     } catch (err) {
         res.status(500).json({ message: err.message })
     }

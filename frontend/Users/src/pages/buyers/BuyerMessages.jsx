@@ -32,6 +32,7 @@ const BuyerMessages = () => {
         getConversations()
         if (conversationId !== "") findMessages()
     }, [conversationId])
+    console.log(conversations)
 
     async function sendMessage() {
         const res = await axios.post(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_SEND_MESSAGE_URL + conversationId,
@@ -60,7 +61,7 @@ const BuyerMessages = () => {
                             <li key={index} class={`flex items-center gap-3 px-4 py-3 bg-blue-50 border-l-4 ${conversationId === item._id ? "border-blue-600" : "border-transparent"} cursor-pointer`} onClick={() => setConversationId(item._id)}>
                                 <img src="https://placehold.co/40x40" class="w-10 h-10 rounded-full object-cover" alt="Green Metals Co." />
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-semibold text-slate-900 truncate">{item.seller_id?.company_name}</p>
+                                    <p class="text-sm font-semibold text-slate-900 truncate">{item.sellerDetails?.company_name}</p>
                                     <p class="text-xs text-slate-500 truncate">{item.last_message}</p>
                                 </div>
                                 <span class="text-xs text-slate-400 shrink-0">2m</span>

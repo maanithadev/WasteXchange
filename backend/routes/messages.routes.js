@@ -7,7 +7,7 @@ const Messages = require("../models/messages.model.js")
 // get
 router.get("/get-all-buyer-conversations", verifyUser, async (req, res) => {
     try {
-        const conversations = await Conversations.find({ buyer_id: req.token.user_id }).populate("seller_id", "company_name")
+        const conversations = await Conversations.find({ buyer_id: req.token.user_id }).populate("sellerDetails", "company_name")
         res.json(conversations)
     } catch (err) {
         res.json({ message: err.message })
@@ -16,7 +16,7 @@ router.get("/get-all-buyer-conversations", verifyUser, async (req, res) => {
 
 router.get("/get-all-seller-conversations", verifyUser, async (req, res) => {
     try {
-        const conversations = await Conversations.find({ seller_id: req.token.user_id }).populate("buyer_id", "company_name")
+        const conversations = await Conversations.find({ seller_id: req.token.user_id }).populate("buyerDetails", "company_name")
         res.json(conversations)
     } catch (err) {
         res.json({ message: err.message })

@@ -22,6 +22,7 @@ const BuyerListingDetail = () => {
 
         fetchWasteListingData()
     }, []);
+    console.log(data)
 
     async function handlePlaceOrder() {
         const completeDataToSend = { ...data, buyer_id: user.user_id }
@@ -35,7 +36,7 @@ const BuyerListingDetail = () => {
     async function startMessaging() {
         const res = await axios.post(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_START_CHAT_URL, {
             buyer_id: user.user_id,
-            seller_id: data.seller_id?._id
+            seller_id: data.sellerDetails?._id
         })
         setConversationId(res.data.conversation_id)
         navigate("/buyer/messages")
@@ -112,11 +113,11 @@ const BuyerListingDetail = () => {
                                 <img src="https://placehold.co/48x48" className="w-12 h-12 rounded-full object-cover"
                                     alt="Green Metals Co." />
                                 <div>
-                                    <p className="text-sm font-semibold text-slate-900">{data.seller_id?.company_name}</p>
+                                    <p className="text-sm font-semibold text-slate-900">{data.sellerDetails?.company_name}</p>
                                     <p className="text-xs text-slate-500">Verified Seller</p>
                                 </div>
                             </div>
-                            <ul className="text-sm text-slate-600 space-y-2">
+                            {/* <ul className="text-sm text-slate-600 space-y-2">
                                 <li className="flex items-center gap-2">
                                     <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
@@ -125,7 +126,7 @@ const BuyerListingDetail = () => {
                                     </svg>
                                     98% on-time delivery rate
                                 </li>
-                            </ul>
+                            </ul> */}
                         </div>
                     </div>
                 </div>

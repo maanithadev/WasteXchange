@@ -10,7 +10,7 @@ router.get("/buyer-simple-info", verifyUser, async (req, res) => {
     try {
         const orders = await Orders.find({ buyer_id: req.token.user_id })
             .sort({ ordered_date: -1 })
-            .populate("seller_id", "company_name")
+            .populate("sellerDetails", "company_name")
             .populate("wasteListings_id", "title")
         res.json(orders)
     } catch (err) {
@@ -21,7 +21,7 @@ router.get("/buyer-simple-info", verifyUser, async (req, res) => {
 router.get("/buyer-track-order/:id", verifyUser, async (req, res) => {
     try {
         const order = await Orders.findOne({ order_reference_number: req.params.id })
-            .populate("seller_id", "-email -password")
+            .populate("sellerDetails", "-email -password")
             .populate("wasteListings_id")
         const payment = await Payments.findOne({ order_id: order._id })
         res.json({ order, payment })

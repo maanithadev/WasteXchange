@@ -4,6 +4,7 @@ const verifyUser = require("../middleware/verifyUser.middleware.js")
 const WasteListings = require("../models/wasteListings.model.js")
 const User = require("../models/users.model.js")
 const Orders = require("../models/orders.model.js")
+const BuyerDetails = require("../models/buyerDetails.model.js")
 const Notifications = require("../models/notifications.model.js")
 const CarbonRecords = require("../models/carbonRecords.model.js")
 const Matches = require("../models/matches.model.js")
@@ -12,8 +13,8 @@ const mongoose = require("mongoose");
 // get
 router.get("/get-buyer-details", verifyUser, async (req, res) => {
     try {
-        const user = await User.findOne({ _id: req.token.user_id })
-        res.json(user)
+        const buyerDetails = await BuyerDetails.findOne({ user_id: req.token.user_id })
+        res.json(buyerDetails)
     } catch (err) {
         res.json({ message: err.message })
     }
@@ -98,7 +99,7 @@ router.get("/get-all-waste-listings", async (req, res) => {
 
 router.get("/get-single-waste-listing/:id", async (req, res) => {
     try {
-        const wasteListing = await WasteListings.findOne({ _id: req.params.id }).populate('seller_id', '-email -password');
+        const wasteListing = await WasteListings.findOne({ _id: req.params.id }).populate('sellerDetails', '-email -password');
         res.status(200).json(wasteListing)
     } catch (err) {
         res.status(500).send({ message: err.message })
@@ -109,8 +110,8 @@ router.get("/get-single-waste-listing/:id", async (req, res) => {
 // put
 router.put("/update-buyer-details", verifyUser, async (req, res) => {
     try {
-        const user = await User.updateOne(
-            { _id: req.token.user_id },
+        await BuyerDetails.updateOne(
+            { user_id: req.token.user_id },
             {
                 $set: {
                     company_name: req.body.data.company_name,

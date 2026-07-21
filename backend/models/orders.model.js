@@ -96,4 +96,11 @@ ordersSchema.virtual("buyerDetails", {
     justOne: true              // one buyer has one buyerDetails doc
 });
 
+ordersSchema.virtual("sellerDetails", {
+    ref: "sellerDetails",       // the collection to populate from
+    localField: "seller_id",    // field on THIS (orders) schema
+    foreignField: "user_id",   // field on the sellerDetails schema
+    justOne: true              // one seller has one sellerDetails doc
+});
+
 module.exports = mongoose.model("orders", ordersSchema)

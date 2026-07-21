@@ -36,6 +36,7 @@ const AdminTransactions = () => {
         loadPayments()
         loadCards()
     }, []);
+    console.log(data)
 
     const handleView = (item) => {
         setSelectedItem(item);

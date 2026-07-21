@@ -7,7 +7,7 @@ const AdminSidebar = () => {
 
     function logOut() {
         localStorage.clear()
-        window.location.href = import.meta.env.VITE_LOGIN_REDIRECT_URL + "?logout=true"
+        window.location.href = import.meta.env.VITE_USERS_URL + import.meta.env.VITE_LOGIN_REDIRECT_URL + "?logout=true"
     }
 
     const navItems = [

@@ -58,6 +58,16 @@ const wasteListingsSchema = mongoose.Schema({
     updated_at: {
         type: Date
     }
+}, {
+    toJSON: { virtuals: true },   // important, so virtuals show up when converting to JSON
+    toObject: { virtuals: true }  // important, so virtuals show up in .toObject()
 })
+
+wasteListingsSchema.virtual("sellerDetails", {
+    ref: "sellerDetails",       // the collection to populate from
+    localField: "seller_id",    // field on THIS (orders) schema
+    foreignField: "user_id",   // field on the buyerDetails schema
+    justOne: true              // one buyer has one buyerDetails doc
+});
 
 module.exports = mongoose.model("wasteListings", wasteListingsSchema)

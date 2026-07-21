@@ -17,7 +17,9 @@ router.get("/get-all-payments", verifyUser, async (req, res) => {
             .sort({ created_at: -1 })
             .populate("order_id", "-_id -wasteListings_id -seller_id -buyer_id -cyberSourceTransaction_id -__v")
             .populate("seller_id", "-_id -password -__v")
+            .populate("sellerDetails", "-_id")
             .populate("buyer_id", "-_id -password -__v")
+            .populate("buyerDetails", "-_id")
         res.json(payments)
     } catch (err) {
         res.json({ message: err.message })
@@ -60,7 +62,7 @@ router.get("/buyer-simple-info", verifyUser, async (req, res) => {
     try {
         const payments = await Payments.find({ buyer_id: req.token.user_id })
             .sort({ created_at: -1 })
-            .populate("seller_id", "company_name")
+            .populate("sellerDetails", "company_name")
         res.json(payments)
     } catch (err) {
         res.json({ message: err.message })
@@ -71,7 +73,7 @@ router.get("/seller-simple-info", verifyUser, async (req, res) => {
     try {
         const payments = await Payments.find({ seller_id: req.token.user_id, payment_status: "completed" })
             .sort({ created_at: -1 })
-            .populate("buyer_id", "company_name");
+            .populate("buyerDetails", "company_name");
 
         const allTimeEarnings = payments.reduce((sum, p) => sum + p.total_price, 0);
 
@@ -108,7 +110,7 @@ let saved_payment_id = null
 router.post('/checkout', (req, res) => {
     try {
         transaction_Data = req.body.data
-        // console.log(transaction_Data)
+
         const { price, currency } = req.body.data
 
         // // Build the payment parameters to send to CyberSource
@@ -153,7 +155,7 @@ router.post('/payment/response', async (req, res) => {
         const payment_Status_Save = async (decision, orderId) => {
             const Payment_saveData = new Payments({
                 order_id: orderId || null,
-                seller_id: transaction_Data.seller_id?._id,
+                seller_id: transaction_Data.seller_id,
                 buyer_id: transaction_Data.buyer_id,
                 cyberSourceTransaction_id: saved_Cybersource_Transaction._id,
                 transaction_id: data.transaction_id || null,
@@ -192,7 +194,7 @@ router.post('/payment/response', async (req, res) => {
 
             const carbonRecord = new CarbonRecords({
                 order_id: orderId,
-                seller_id: transaction_Data.seller_id?._id,
+                seller_id: transaction_Data.seller_id,
                 buyer_id: transaction_Data.buyer_id,
                 co2SavedKg: co2SavedKg,
                 created_at: data.signed_date_time,
@@ -208,7 +210,7 @@ router.post('/payment/response', async (req, res) => {
             case "ACCEPT":
                 const Order_saveData = new Orders({
                     wasteListings_id: transaction_Data._id,
-                    seller_id: transaction_Data?.seller_id?._id,
+                    seller_id: transaction_Data.seller_id,
                     buyer_id: transaction_Data.buyer_id,
                     cyberSourceTransaction_id: saved_Cybersource_Transaction._id,
                     order_reference_number: data.req_reference_number,
@@ -265,7 +267,7 @@ router.post('/payment/response', async (req, res) => {
 
                 // seller notification
                 createNotifications({
-                    user_id: transaction_Data?.seller_id?._id,
+                    user_id: transaction_Data.seller_id,
                     reference_id: saved_Order._id,
                     type: "order",
                     title: "order pending",

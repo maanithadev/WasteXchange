@@ -29,7 +29,6 @@ const AdminListingModeration = () => {
         setStatusValue(item.status)
         setIsModalOpen(true)
     }
-    console.log(statusValue)
 
     const closeModal = () => {
         setIsModalOpen(false)

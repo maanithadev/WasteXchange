@@ -72,7 +72,7 @@ const BuyerMyOrders = () => {
                             <tbody class="divide-y divide-slate-100">
                                 {data.map((item, index) => (
                                     <tr key={index}>
-                                        <td className="px-6 py-4 font-medium text-slate-800">{item.seller_id?.company_name}</td>
+                                        <td className="px-6 py-4 font-medium text-slate-800">{item.sellerDetails?.company_name}</td>
                                         <td className="px-6 py-4 text-slate-600">{item.wasteListings_id?.title}</td>
                                         <td className="px-6 py-4 text-slate-600">{item.quantity} {item.unit}</td>
                                         <td className="px-6 py-4 text-slate-600">{item.ordered_date}</td>

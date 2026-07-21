@@ -5,6 +5,7 @@ const verifyUser = require("../middleware/verifyUser.middleware.js")
 const WasteListings = require("../models/wasteListings.model.js")
 const User = require("../models/users.model.js")
 const Orders = require("../models/orders.model.js")
+const SellerDetails = require("../models/sellerDetails.model.js")
 const Notifications = require("../models/notifications.model.js")
 const CarbonRecords = require("../models/carbonRecords.model.js")
 const mongoose = require("mongoose");
@@ -34,7 +35,7 @@ router.get("/seller-dashboard-cards", verifyUser, async (req, res) => {
         });
 
         let totalCarbonCurrentYear = 0;
-        
+
         const monthlyData = [
             { name: 'Jan', co2Saved: 0 },
             { name: 'Feb', co2Saved: 0 },
@@ -52,11 +53,11 @@ router.get("/seller-dashboard-cards", verifyUser, async (req, res) => {
 
         currentYearDocs.forEach(doc => {
             totalCarbonCurrentYear += doc.co2SavedKg;
-            
+
             if (doc.created_at && doc.created_at.length >= 7) {
                 const monthStr = doc.created_at.substring(5, 7);
                 const monthIndex = parseInt(monthStr, 10) - 1;
-                
+
                 if (monthIndex >= 0 && monthIndex <= 11) {
                     monthlyData[monthIndex].co2Saved += (doc.co2SavedKg / 1000);
                 }
@@ -78,7 +79,7 @@ router.get("/seller-dashboard-cards", verifyUser, async (req, res) => {
 
 router.get("/get-seller-details", verifyUser, async (req, res) => {
     try {
-        const user = await User.findOne({ _id: req.token.user_id })
+        const user = await SellerDetails.findOne({ user_id: req.token.user_id })
         res.json(user)
     } catch (err) {
         res.json({ message: err.message })
@@ -98,8 +99,8 @@ router.get("/get-all-waste-listings", verifyUser, async (req, res) => {
 // put
 router.put("/update-seller-details", verifyUser, async (req, res) => {
     try {
-        const user = await User.updateOne(
-            { _id: req.token.user_id },
+        const user = await SellerDetails.updateOne(
+            { user_id: req.token.user_id },
             {
                 $set: {
                     company_name: req.body.data.company_name,

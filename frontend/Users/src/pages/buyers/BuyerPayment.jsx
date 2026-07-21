@@ -105,7 +105,7 @@ const BuyerPayment = () => {
                                 {data.map((item, index) => (
                                     <tr key={index}>
                                         <td className="px-6 py-4 text-slate-600">{item.created_at}</td>
-                                        <td className="px-6 py-4 font-medium text-slate-800">{item.seller_id?.company_name}</td>
+                                        <td className="px-6 py-4 font-medium text-slate-800">{item.sellerDetails?.company_name}</td>
                                         <td className="px-6 py-4 text-slate-600">{item.currency === "LKR" ? "RS." : "$"}{item.total_price}</td>
                                         <td className="px-6 py-4"><span
                                             className="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full">{item.payment_status}</span>

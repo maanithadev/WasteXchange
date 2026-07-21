@@ -27,11 +27,12 @@ const BuyerTrackOrder = () => {
         }
         fetchData()
     }, [])
+    console.log(data)
 
     async function startMessaging() {
         const res = await axios.post(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_START_CHAT_URL, {
             buyer_id: user.user_id,
-            seller_id: data.order?.seller_id._id
+            seller_id: data.order?.sellerDetails._id
         })
         setConversationId(res.data.conversation_id)
         navigate("/buyer/messages")
@@ -329,10 +330,10 @@ const BuyerTrackOrder = () => {
                             <div className="flex items-center gap-5 bg-slate-50 border border-slate-100 rounded-xl p-5 mt-2">
                                 <div
                                     className="w-16 h-16 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xl font-bold uppercase shrink-0">
-                                    {data.order?.seller_id.company_name.substring(0, 2)}
+                                    {data.order?.sellerDetails.company_name.substring(0, 2)}
                                 </div>
                                 <div>
-                                    <h3 className="text-md font-bold text-slate-900">{data.order?.seller_id.company_name}</h3>
+                                    <h3 className="text-md font-bold text-slate-900">{data.order?.sellerDetails.company_name}</h3>
                                     <div className="flex items-center gap-1.5 mt-1">
                                         <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"

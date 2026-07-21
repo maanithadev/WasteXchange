@@ -53,7 +53,6 @@ const SellerOrdersReceived = () => {
             }
         });
         setSelectedItem(res.data);
-        console.log(res.data)
         setIsModalOpen(true);
     };
 
