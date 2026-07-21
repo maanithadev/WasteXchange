@@ -295,6 +295,7 @@ router.put("/update-listing/:id", localUpload.single("image"), verifyUser, async
 
             // matchScore = (categoryMatch × 50) + (locationScore × 30) + (quantityFitScore × 20)
 
+            await Matches.deleteMany({ wasteListings_id: updatedListing._id });
             const buyers = await BuyerDetails.find({ interested_category: req.body.category })
             buyers.forEach(async (buyer) => {
                 const locationScore = calculateLocationScore(updatedListing.location, buyer.address);

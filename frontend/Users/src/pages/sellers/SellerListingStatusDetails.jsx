@@ -48,23 +48,25 @@ const SellerListingStatusDetails = () => {
                     </div>
 
                     <div className="bg-white rounded-xl border border-slate-200 p-6">
-                        <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center justify-between pb-6 border-b-2 border-yellow-500">
                             <h2 className="text-lg font-semibold text-slate-900">Matched Buyers</h2>
-                            <span className="text-xs font-medium text-slate-400">{data.length} matches found</span>
+                            <span className="text-sm font-medium text-slate-400">{data.length} matches found</span>
                         </div>
 
                         <ul className="divide-y divide-slate-100">
                             {data.map((item, index) => (
-                                <li key={index} className="py-5 flex flex-col sm:flex-row sm:items-center gap-4">
+                                <li key={index} className="py-5 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                                     {/* <img src="https://placehold.co/48x48" className="w-12 h-12 rounded-full object-cover" alt="EcoPlast Industries" /> */}
-                                    <div className="flex-1">
-                                        <p className="text-sm font-semibold text-slate-900">{item.buyerDetails?.company_name}</p>
-                                        {/* <p className="text-xs text-slate-500">Recycled Plastics Manufacturer &middot; 12 mi away</p> */}
+                                    <p className="text-sm font-semibold text-slate-900">{item.buyerDetails?.company_name}</p>
+
+                                    {/* <p className="text-xs text-slate-500">Recycled Plastics Manufacturer &middot; 12 mi away</p> */}
+                                    <div className="w-full sm:w-[40%] flex flex-col md:flex-row md:items-center justify-center md:gap-4">
                                         <div className="w-full bg-slate-100 rounded-full h-2 mt-2 max-w-xs">
                                             <div className="bg-emerald-500 h-2 rounded-full" style={{ width: `${item.matchScore}%` }}></div>
                                         </div>
                                         <p className="text-xs font-semibold text-emerald-700 mt-1">{item.matchScore}% Match</p>
                                     </div>
+
                                     <button onClick={() => startMessaging(item.buyerDetails?.user_id, item.wasteListings_id?.seller_id)}
                                         className="text-xs font-medium bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 shrink-0">Message Buyer</button>
                                 </li>
