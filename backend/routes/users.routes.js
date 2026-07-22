@@ -11,6 +11,7 @@ const WasteListings = require("../models/wasteListings.model.js")
 const CarbonRecords = require("../models/carbonRecords.model.js")
 const Payments = require("../models/payments.model.js")
 const Notifications = require("../models/notifications.model.js")
+const matchedRecommendations = require("../helpers/matchedRecommendations.helper");
 
 // get
 router.get("/verifyUser", async (req, res) => {
@@ -20,23 +21,23 @@ router.get("/verifyUser", async (req, res) => {
             const token = bearerHeader.split(' ')[1]
             const user = jwt.verify(token, process.env.JWT_SECRET)
             const foundUser = await Users.findById(user.user_id)
-            if (!foundUser) return res.json({ message: 'No user found' })
-            if (foundUser.status === "suspended") return res.json({ message: 'User Account is Suspended' })
+            if (!foundUser) return res.json({message: 'No user found'})
+            if (foundUser.status === "suspended") return res.json({message: 'User Account is Suspended'})
             res.json(user)
         } else {
-            res.status(401).json({ message: 'No token provided' })
+            res.status(401).json({message: 'No token provided'})
         }
     } catch (err) {
-        res.status(403).json({ message: 'Invalid or expired token' })
+        res.status(403).json({message: 'Invalid or expired token'})
     }
 })
 
 router.get("/admin-dashboard-summary", verifyUser, async (req, res) => {
     try {
         const totalUsers = await Users.countDocuments({});
-        const totalSellers = await Users.countDocuments({ role: "seller" });
-        const totalBuyers = await Users.countDocuments({ role: "buyer" });
-        const activeListings = await WasteListings.countDocuments({ status: "Active" });
+        const totalSellers = await Users.countDocuments({role: "seller"});
+        const totalBuyers = await Users.countDocuments({role: "buyer"});
+        const activeListings = await WasteListings.countDocuments({status: "Active"});
         const totalTransactions = await Payments.countDocuments({});
 
         const allCarbon = await CarbonRecords.find({});
@@ -53,7 +54,7 @@ router.get("/admin-dashboard-summary", verifyUser, async (req, res) => {
         const userMap = {};
         for (let i = 0; i < 12; i++) {
             const d = new Date(now.getFullYear(), i, 1);
-            const key = d.toLocaleDateString("en-US", { month: "short" });
+            const key = d.toLocaleDateString("en-US", {month: "short"});
             userMap[key] = 0;
         }
 
@@ -61,14 +62,14 @@ router.get("/admin-dashboard-summary", verifyUser, async (req, res) => {
             if (!user.created_at) return;
             const d = new Date(user.created_at);
             if (d >= startOfYear && d <= now) {
-                const key = d.toLocaleDateString("en-US", { month: "short" });
+                const key = d.toLocaleDateString("en-US", {month: "short"});
                 if (userMap[key] !== undefined) {
                     userMap[key] += 1;
                 }
             }
         });
 
-        const chartData = Object.keys(userMap).map(key => ({ name: key, value: userMap[key] }));
+        const chartData = Object.keys(userMap).map(key => ({name: key, value: userMap[key]}));
 
         let allNotifications = await Notifications.find({});
         allNotifications.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
@@ -85,7 +86,7 @@ router.get("/admin-dashboard-summary", verifyUser, async (req, res) => {
             recentActivity
         });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({message: err.message});
     }
 })
 
@@ -173,18 +174,21 @@ router.get("/admin-reports-charts", verifyUser, async (req, res) => {
             if (sortKey.length === 7) {
                 const [y, m] = sortKey.split('-');
                 const d = new Date(y, parseInt(m) - 1, 1);
-                return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+                return d.toLocaleDateString("en-US", {month: "short", year: "numeric"});
             } else {
                 const [y, m, d] = sortKey.split('-');
                 const date = new Date(y, parseInt(m) - 1, parseInt(d));
-                return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+                return date.toLocaleDateString("en-US", {month: "short", day: "numeric"});
             }
         };
 
         const toSortedArray = (map) => {
             return Object.keys(map)
                 .sort()
-                .map(key => ({ name: getFriendlyLabel(key), value: map[key] === 0 ? 0 : parseFloat(map[key].toFixed(2)) }));
+                .map(key => ({
+                    name: getFriendlyLabel(key),
+                    value: map[key] === 0 ? 0 : parseFloat(map[key].toFixed(2))
+                }));
         };
 
         res.json({
@@ -194,25 +198,25 @@ router.get("/admin-reports-charts", verifyUser, async (req, res) => {
         });
 
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({message: err.message});
     }
 })
 
 router.get("/get-all-users", verifyUser, async (req, res) => {
     try {
         // Find all users whose role is NOT "admin"
-        const users = await Users.find({ role: { $ne: "admin" } }, "-__v -password");
-        
+        const users = await Users.find({role: {$ne: "admin"}}, "-__v -password");
+
         let combinedUsers = [];
 
         for (let user of users) {
             let details = null;
             if (user.role === "seller") {
-                details = await SellerDetails.findOne({ user_id: user._id });
+                details = await SellerDetails.findOne({user_id: user._id});
             } else if (user.role === "buyer") {
-                details = await BuyerDetails.findOne({ user_id: user._id });
+                details = await BuyerDetails.findOne({user_id: user._id});
             }
-            
+
             // Convert mongoose document to plain object
             const userObj = user.toObject();
 
@@ -244,16 +248,16 @@ router.get("/get-all-users", verifyUser, async (req, res) => {
 
         res.json(combinedUsers);
     } catch (err) {
-        res.status(500).json({ message: err.message })
+        res.status(500).json({message: err.message})
     }
 })
 
 // post
 router.post("/signup", async (req, res) => {
     try {
-        const { email } = req.body
-        const existingUser = await Users.findOne({ email })
-        if (existingUser) return res.json({ message: "Email already exists. Retry using another Email" })
+        const {email} = req.body
+        const existingUser = await Users.findOne({email})
+        if (existingUser) return res.json({message: "Email already exists. Retry using another Email"})
 
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
         const userData = new Users({
@@ -300,60 +304,65 @@ router.post("/signup", async (req, res) => {
                 created_at: new Date(),
                 updated_at: new Date()
             })
-            await buyerData.save()
+            const saved_buyer = await buyerData.save()
+
+            const wasteListings = await WasteListings.find({category: saved_buyer.interested_category})
+            wasteListings.forEach(waste => {
+                matchedRecommendations(waste.location, saved_buyer.address, waste.quantity, saved_buyer.minqty, saved_buyer.maxqty, waste._id, saved_buyer.user_id)
+            })
         }
 
         const token = jwt.sign({
             user_id: savedUser._id,
             role: savedUser.role
-        }, process.env.JWT_SECRET, { expiresIn: "7d" })
-        res.status(200).json({ message: 'User saved successfully.', token, role: savedUser.role })
+        }, process.env.JWT_SECRET, {expiresIn: "7d"})
+        res.status(200).json({message: 'User saved successfully.', token, role: savedUser.role})
     } catch (err) {
-        res.status(400).send({ message: "server error" })
+        res.status(400).send({message: "server error"})
     }
 })
 
 router.post("/login", async (req, res) => {
     try {
-        const { email, password } = req.body
-        const userExists = await Users.findOne({ email })
-        if (!userExists) return res.json({ message: "User not found" })
+        const {email, password} = req.body
+        const userExists = await Users.findOne({email})
+        if (!userExists) return res.json({message: "User not found"})
 
-        if (password === "") return res.json({ message: "Passwords is empty" })
+        if (password === "") return res.json({message: "Passwords is empty"})
 
         const passwordMatch = await bcrypt.compare(password, userExists.password)
-        if (!passwordMatch) return res.json({ message: "password wrong" })
+        if (!passwordMatch) return res.json({message: "password wrong"})
 
-        if (userExists.status === "suspended") return res.json({ message: 'User Account is Suspended' })
+        if (userExists.status === "suspended") return res.json({message: 'User Account is Suspended'})
 
         const token = jwt.sign({
             user_id: userExists._id,
             role: userExists.role
-        }, process.env.JWT_SECRET, { expiresIn: "7d" })
-        res.status(200).json({ message: 'User logged in successfully.', token, role: userExists.role })
+        }, process.env.JWT_SECRET, {expiresIn: "7d"})
+        res.status(200).json({message: 'User logged in successfully.', token, role: userExists.role})
     } catch (err) {
-        res.send({ message: "server error" })
+        res.send({message: "server error"})
     }
 })
 
 router.post("/change-password", verifyUser, async (req, res) => {
     try {
-        const { currentPassword, newPassword } = req.body;
-        const user = await Users.findOne({ _id: req.token.user_id });
-        if (!user) return res.status(404).json({ message: "User not found" });
+        const {currentPassword, newPassword} = req.body;
+        const user = await Users.findOne({_id: req.token.user_id});
+        if (!user) return res.status(404).json({message: "User not found"});
 
         const isMatch = await bcrypt.compare(currentPassword, user.password);
-        if (!isMatch) return res.status(400).json({ message: "Incorrect current password" });
+        if (!isMatch) return res.status(400).json({message: "Incorrect current password"});
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         await Users.updateOne(
-            { _id: req.token.user_id },
-            { password: hashedPassword }
+            {_id: req.token.user_id},
+            {password: hashedPassword}
         );
 
-        res.json({ message: "Password updated successfully" });
+        res.json({message: "Password updated successfully"});
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({message: err.message});
     }
 })
 
@@ -362,12 +371,12 @@ router.post("/change-password", verifyUser, async (req, res) => {
 router.put("/update-user-status", verifyUser, async (req, res) => {
     try {
         const users = await Users.updateOne(
-            { _id: req.body.user_id },
-            { status: req.body.status || "suspended" }
+            {_id: req.body.user_id},
+            {status: req.body.status || "suspended"}
         );
         res.json(users)
     } catch (err) {
-        res.status(500).json({ message: err.message })
+        res.status(500).json({message: err.message})
     }
 })
 
