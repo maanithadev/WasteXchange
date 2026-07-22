@@ -48,46 +48,15 @@ const AdminTransactions = () => {
         setSelectedItem(null);
     };
 
-    const getPaymentDetails = (item) => {
-        if (!item) return null;
-        const details = { ...item };
-        delete details.order_id;
-        delete details.seller_id;
-        delete details.buyer_id;
-        return details;
+    const renderField = (label, value) => {
+        if (value === undefined || value === null) return null;
+        return (
+            <div className="">
+                <label className="block text-sm font-medium text-slate-700 mb-1 capitalize text-nowrap truncate">{label}</label>
+                <input type="text" readOnly value={value || ""} className="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-600 focus:outline-none" />
+            </div>
+        );
     };
-
-    const renderDynamicFields = (obj, parentKey = '') => {
-        if (!obj) return null;
-
-        return Object.entries(obj).map(([key, value]) => {
-            // Ignore specified fields
-            // if (key === '_id' || key === '__v' || key === 'cyberSourceTransaction_id') return null;
-
-            // Format the label
-            let label = key;
-            // if (parentKey) {
-            //     let formattedParent = parentKey.replace('_id', '');
-            //     if (key === 'company_name') label = `${formattedParent} Company`;
-            //     else label = `${formattedParent} ${key}`;
-            // }
-
-            if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-                return renderDynamicFields(value, key);
-            }
-
-            if (Array.isArray(value)) {
-                value = value.join(', ');
-            }
-
-            return (
-                <div key={`${parentKey}-${key}`} className="">
-                    <label className="block text-sm font-medium text-slate-700 mb-1 capitalize text-nowrap truncate">{label.replace(/_/g, ' ')}</label>
-                    <input type="text" readOnly value={value || ""} className="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-600 focus:outline-none" />
-                </div>
-            )
-        });
-    }
 
     const currentMonth = new Date().getMonth();
     const currentYear = new Date().getFullYear();
@@ -162,8 +131,8 @@ const AdminTransactions = () => {
                                     <tr key={index}>
                                         <td class="px-6 py-3.5 font-mono text-xs text-slate-600">{item.transaction_id}</td>
                                         <td class="px-6 py-3.5 font-mono text-xs text-slate-600">{item.order_id?.order_reference_number}</td>
-                                        <td class="px-6 py-3.5 text-slate-700">{item.buyer_id?.company_name}</td>
-                                        <td class="px-6 py-3.5 text-slate-700">{item.seller_id?.company_name}</td>
+                                        <td class="px-6 py-3.5 text-slate-700">{item.buyerDetails?.company_name}</td>
+                                        <td class="px-6 py-3.5 text-slate-700">{item.sellerDetails?.company_name}</td>
                                         <td class="px-6 py-3.5 text-slate-700">{item.order_id?.currency}{item.order_id?.total_price}</td>
                                         <td class="px-6 py-3.5"><span class="text-xs font-semibold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">{item.payment_status}</span></td>
                                         <td class="px-6 py-3.5 text-slate-500">{new Date(item.created_at).toLocaleDateString()}</td>
@@ -224,28 +193,73 @@ const AdminTransactions = () => {
                                         <div className="mb-8">
                                             <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-200 pb-2">Payment Details</h3>
                                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                                {renderDynamicFields(getPaymentDetails(selectedItem))}
+                                                {renderField("Transaction ID", selectedItem.transaction_id)}
+                                                {renderField("Total Price", selectedItem.total_price)}
+                                                {renderField("Currency", selectedItem.currency)}
+                                                {renderField("Payment Method", selectedItem.payment_method)}
+                                                {renderField("Card Number", selectedItem.card_number)}
+                                                {renderField("Card Type Name", selectedItem.card_type_name)}
+                                                {renderField("Payment Status", selectedItem.payment_status)}
+                                                {renderField("Created At", selectedItem.created_at)}
                                             </div>
                                         </div>
 
                                         <div className="mb-8">
                                             <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-200 pb-2">Order Details</h3>
                                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                                {renderDynamicFields(selectedItem.order_id)}
+                                                {renderField("Order Reference Number", selectedItem.order_id?.order_reference_number)}
+                                                {renderField("Company Name", selectedItem.order_id?.company_name)}
+                                                {renderField("Forename", selectedItem.order_id?.forename)}
+                                                {renderField("Surname", selectedItem.order_id?.surname)}
+                                                {renderField("Phone", selectedItem.order_id?.phone)}
+                                                {renderField("Bill To Email", selectedItem.order_id?.bill_to_email)}
+                                                {renderField("Quantity", selectedItem.order_id?.quantity)}
+                                                {renderField("Unit", selectedItem.order_id?.unit)}
+                                                {renderField("Total Price", selectedItem.order_id?.total_price)}
+                                                {renderField("Currency", selectedItem.order_id?.currency)}
+                                                {renderField("Status", selectedItem.order_id?.status)}
+                                                {renderField("Ordered Date", selectedItem.order_id?.ordered_date)}
+                                                {renderField("Address Line 1", selectedItem.order_id?.address?.address_line1)}
+                                                {renderField("Address Line 2", selectedItem.order_id?.address?.address_line2)}
+                                                {renderField("City", selectedItem.order_id?.address?.city)}
+                                                {renderField("State", selectedItem.order_id?.address?.state)}
+                                                {renderField("Postal Code", selectedItem.order_id?.address?.postal_code)}
+                                                {renderField("Country", selectedItem.order_id?.address?.country)}
                                             </div>
                                         </div>
 
                                         <div className="mb-8">
                                             <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-200 pb-2">Seller Details</h3>
                                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                                {renderDynamicFields(selectedItem.seller_id)}
+                                                {renderField("Company Name", selectedItem.sellerDetails?.company_name)}
+                                                {renderField("Role", selectedItem.seller_id?.role)}
+                                                {renderField("Email", selectedItem.seller_id?.email)}
+                                                {renderField("Phone Number", selectedItem.sellerDetails?.phone_number)}
+                                                {renderField("Status", selectedItem.seller_id?.status)}
+                                                {renderField("Street", selectedItem.sellerDetails?.address?.street)}
+                                                {renderField("City", selectedItem.sellerDetails?.address?.city)}
+                                                {renderField("State", selectedItem.sellerDetails?.address?.state)}
+                                                {renderField("Postal Code", selectedItem.sellerDetails?.address?.postal_code)}
+                                                {renderField("Country", selectedItem.sellerDetails?.address?.country)}
                                             </div>
                                         </div>
 
                                         <div className="mb-4">
                                             <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-200 pb-2">Buyer Details</h3>
                                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                                {renderDynamicFields(selectedItem.buyer_id)}
+                                                {renderField("Company Name", selectedItem.buyerDetails?.company_name)}
+                                                {renderField("Role", selectedItem.buyer_id?.role)}
+                                                {renderField("Email", selectedItem.buyer_id?.email)}
+                                                {renderField("Phone Number", selectedItem.buyerDetails?.phone_number)}
+                                                {renderField("Status", selectedItem.buyer_id?.status)}
+                                                {renderField("Interested Category", selectedItem.buyerDetails?.interested_category)}
+                                                {renderField("Min Qty", selectedItem.buyerDetails?.minqty)}
+                                                {renderField("Max Qty", selectedItem.buyerDetails?.maxqty)}
+                                                {renderField("Street", selectedItem.buyerDetails?.address?.street)}
+                                                {renderField("City", selectedItem.buyerDetails?.address?.city)}
+                                                {renderField("State", selectedItem.buyerDetails?.address?.state)}
+                                                {renderField("Postal Code", selectedItem.buyerDetails?.address?.postal_code)}
+                                                {renderField("Country", selectedItem.buyerDetails?.address?.country)}
                                             </div>
                                         </div>
                                     </>

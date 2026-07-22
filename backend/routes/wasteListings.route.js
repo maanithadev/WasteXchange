@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const multer = require("multer")
-const {GoogleGenAI} = require("@google/genai")
+const { GoogleGenAI } = require("@google/genai")
 const path = require("path")
 const fs = require("fs")
 const verifyUser = require("../middleware/verifyUser.middleware.js")
@@ -13,40 +13,40 @@ const matchedRecommendations = require("../helpers/matchedRecommendations.helper
 // get
 router.get("/get-all-wastelistings", verifyUser, async (req, res) => {
     try {
-        const wastelistings = await WasteListings.find().populate("seller_id", "company_name")
+        const wastelistings = await WasteListings.find().populate("sellerDetails", "company_name")
         res.json(wastelistings)
     } catch (err) {
-        res.json({message: err.message})
+        res.json({ message: err.message })
     }
 })
 
 router.get("/get-all-active-wastelistings", verifyUser, async (req, res) => {
     try {
-        const wastelistings = await WasteListings.find({status: "Active"})
+        const wastelistings = await WasteListings.find({ status: "Active" })
         res.json(wastelistings)
     } catch (err) {
-        res.json({message: err.message})
+        res.json({ message: err.message })
     }
 })
 
 router.get("/get-buyer-waste-matches", verifyUser, async (req, res) => {
     try {
-        const matches = await Matches.find({buyer_id: req.token.user_id})
+        const matches = await Matches.find({ buyer_id: req.token.user_id })
             .populate("wasteListings_id")
         res.json(matches)
     } catch (err) {
-        res.json({message: err.message})
+        res.json({ message: err.message })
     }
 })
 
 router.get("/get-seller-waste-matches/:id", verifyUser, async (req, res) => {
     try {
-        const matches = await Matches.find({wasteListings_id: req.params.id})
+        const matches = await Matches.find({ wasteListings_id: req.params.id })
             .populate("buyerDetails", "company_name user_id -_id")
             .populate("wasteListings_id", "seller_id title quantity unit category -_id")
         res.json(matches)
     } catch (err) {
-        res.json({message: err.message})
+        res.json({ message: err.message })
     }
 })
 
@@ -54,7 +54,7 @@ router.get("/get-seller-waste-matches/:id", verifyUser, async (req, res) => {
 // post
 const geminiUpload = multer({
     storage: multer.memoryStorage(),
-    limits: {fileSize: 10 * 1024 * 1024}, // 10MB max
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max
 });
 
 const storage = multer.diskStorage({
@@ -69,16 +69,16 @@ const storage = multer.diskStorage({
 
 const localUpload = multer({
     storage: storage,
-    limits: {fileSize: 10 * 1024 * 1024},
+    limits: { fileSize: 10 * 1024 * 1024 },
 })
 
 router.post("/seller-upload-waste", geminiUpload.single("image"), verifyUser, async (req, res) => {
     try {
         if (!req.file) {
-            return res.status(400).json({message: "No image uploaded"});
+            return res.status(400).json({ message: "No image uploaded" });
         }
 
-        const ai = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY});
+        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
         const PROMPT = `
         You are a waste classification assistant. Your task is to analyze an image of waste material and provide a detailed classification and description based on the visual information.
@@ -106,8 +106,8 @@ If you are unsure about a field, make your best visual estimate rather than leav
                 {
                     role: "user",
                     parts: [
-                        {text: PROMPT},
-                        {inlineData: {mimeType, data: imageBase64}},
+                        { text: PROMPT },
+                        { inlineData: { mimeType, data: imageBase64 } },
                     ],
                 },
             ],
@@ -130,7 +130,7 @@ If you are unsure about a field, make your best visual estimate rather than leav
 
     } catch (err) {
         console.error(err);
-        res.status(500).json({message: "server error", error: err.message});
+        res.status(500).json({ message: "server error", error: err.message });
     }
 })
 
@@ -160,15 +160,15 @@ router.post("/seller-upload-waste-save", localUpload.single("image"), verifyUser
         formData.image = req.file.filename
         const saved_formData = await formData.save();
 
-        const buyers = await BuyerDetails.find({interested_category: req.body.category})
+        const buyers = await BuyerDetails.find({ interested_category: req.body.category })
         buyers.forEach(buyer => {
             matchedRecommendations(saved_formData.location, buyer.address, saved_formData.quantity, buyer.minqty, buyer.maxqty, saved_formData._id, buyer.user_id)
         })
 
-        res.json({message: "data was saved", formData})
+        res.json({ message: "data was saved", formData })
 
     } catch (err) {
-        res.json({message: "server error", error: err.message});
+        res.json({ message: "server error", error: err.message });
     }
 })
 
@@ -176,9 +176,9 @@ router.post("/seller-upload-waste-save", localUpload.single("image"), verifyUser
 //put
 router.put("/update-listing-status", verifyUser, async (req, res) => {
     try {
-        const {listing_id, status, suspend_message} = req.body;
+        const { listing_id, status, suspend_message } = req.body;
         const updatedListing = await WasteListings.updateOne(
-            {_id: listing_id},
+            { _id: listing_id },
             {
                 status: status,
                 suspend_message: status === "Rejected" ? suspend_message : null
@@ -186,7 +186,7 @@ router.put("/update-listing-status", verifyUser, async (req, res) => {
         );
         res.json(updatedListing)
     } catch (err) {
-        res.status(500).json({message: err.message})
+        res.status(500).json({ message: err.message })
     }
 })
 
@@ -212,7 +212,7 @@ router.put("/update-listing/:id", localUpload.single("image"), verifyUser, async
         };
 
         if (req.file) {
-            const existingListing = await WasteListings.findOne({_id: req.params.id});
+            const existingListing = await WasteListings.findOne({ _id: req.params.id });
             if (existingListing && existingListing.image) {
                 const oldImagePath = path.join(__dirname, "../uploads", existingListing.image);
                 if (fs.existsSync(oldImagePath)) {
@@ -223,25 +223,25 @@ router.put("/update-listing/:id", localUpload.single("image"), verifyUser, async
         }
 
         await WasteListings.updateOne(
-            {_id: req.params.id},
-            {$set: updateData}
+            { _id: req.params.id },
+            { $set: updateData }
         );
-        const updatedListing = await WasteListings.findOne({_id: req.params.id});
+        const updatedListing = await WasteListings.findOne({ _id: req.params.id });
 
         if (req.body.status === "Active") {
-            await Matches.deleteMany({wasteListings_id: updatedListing._id});
-            const buyers = await BuyerDetails.find({interested_category: req.body.category})
+            await Matches.deleteMany({ wasteListings_id: updatedListing._id });
+            const buyers = await BuyerDetails.find({ interested_category: req.body.category })
             buyers.forEach(buyer => {
                 matchedRecommendations(updatedListing.location, buyer.address, updatedListing.quantity, buyer.minqty, buyer.maxqty, updatedListing._id, buyer.user_id)
             })
         } else {
-            await Matches.deleteMany({wasteListings_id: updatedListing._id})
+            await Matches.deleteMany({ wasteListings_id: updatedListing._id })
         }
 
-        res.status(200).json({message: "Listing updated successfully", formData: updatedListing});
+        res.status(200).json({ message: "Listing updated successfully", formData: updatedListing });
 
     } catch (err) {
-        res.status(500).json({message: "server error", error: err.message});
+        res.status(500).json({ message: "server error", error: err.message });
     }
 });
 
@@ -251,9 +251,9 @@ router.delete("/delete-listing/:id", verifyUser, async (req, res) => {
     try {
         const listingId = req.params.id;
 
-        const existingListing = await WasteListings.findOne({_id: listingId, seller_id: req.token.user_id});
+        const existingListing = await WasteListings.findOne({ _id: listingId, seller_id: req.token.user_id });
         if (!existingListing) {
-            return res.status(404).json({message: "Listing not found or not authorized"});
+            return res.status(404).json({ message: "Listing not found or not authorized" });
         }
 
         if (existingListing.image) {
@@ -263,13 +263,13 @@ router.delete("/delete-listing/:id", verifyUser, async (req, res) => {
             }
         }
 
-        await WasteListings.deleteOne({_id: listingId, seller_id: req.token.user_id});
-        await Matches.deleteMany({wasteListings_id: listingId});
+        await WasteListings.deleteOne({ _id: listingId, seller_id: req.token.user_id });
+        await Matches.deleteMany({ wasteListings_id: listingId });
 
-        res.status(200).json({message: "Listing deleted successfully", id: listingId});
+        res.status(200).json({ message: "Listing deleted successfully", id: listingId });
 
     } catch (err) {
-        res.status(500).json({message: "server error", error: err.message});
+        res.status(500).json({ message: "server error", error: err.message });
     }
 });
 

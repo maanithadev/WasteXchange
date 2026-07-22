@@ -23,6 +23,7 @@ const SellerOrdersReceived = () => {
 
         loadOrders()
     }, []);
+    console.log(selectedItem)
 
     const handleUpdateStatus = async () => {
         try {
@@ -61,28 +62,12 @@ const SellerOrdersReceived = () => {
         setSelectedItem({});
     };
 
-    const renderDynamicFields = (obj, parentKey = '') => {
-        if (!obj) return null;
-
-        return Object.entries(obj).map(([key, value]) => {
-            let label = key;
-
-            if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-                return renderDynamicFields(value, key);
-            }
-
-            if (Array.isArray(value)) {
-                value = value.join(', ');
-            }
-
-            return (
-                <div key={`${parentKey}-${key}`} className="">
-                    <label className="block text-sm font-medium text-slate-700 mb-1 capitalize text-nowrap truncate">{label.replace(/_/g, ' ')}</label>
-                    <input type="text" readOnly value={value || ""} className="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-600 focus:outline-none" />
-                </div>
-            )
-        });
-    }
+    const renderField = (label, value) => (
+        <div className="">
+            <label className="block text-sm font-medium text-slate-700 mb-1 capitalize text-nowrap truncate">{label}</label>
+            <input type="text" readOnly value={value || ""} className="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-600 focus:outline-none" />
+        </div>
+    );
 
     return (
         <>
@@ -184,7 +169,29 @@ const SellerOrdersReceived = () => {
                                     <>
                                         <div className="mb-8">
                                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                                {renderDynamicFields(selectedItem)}
+                                                {renderField("Order Reference Number", selectedItem.order_reference_number)}
+                                                {renderField("Company Name", selectedItem.company_name)}
+                                                {renderField("Forename", selectedItem.forename)}
+                                                {renderField("Surname", selectedItem.surname)}
+                                                {renderField("Phone", selectedItem.phone)}
+                                                
+                                                {renderField("Address Line 1", selectedItem.address?.address_line1)}
+                                                {renderField("Address Line 2", selectedItem.address?.address_line2)}
+                                                {renderField("City", selectedItem.address?.city)}
+                                                {renderField("State", selectedItem.address?.state)}
+                                                {renderField("Postal Code", selectedItem.address?.postal_code)}
+                                                {renderField("Country", selectedItem.address?.country)}
+
+                                                {renderField("Waste Title", selectedItem.wasteListings_id?.title)}
+                                                {renderField("Quantity", selectedItem.quantity)}
+                                                {renderField("Unit", selectedItem.unit)}
+                                                
+                                                {renderField("Total Price", selectedItem.total_price)}
+                                                {renderField("Currency", selectedItem.currency)}
+                                                
+                                                {renderField("Status", selectedItem.status)}
+                                                {renderField("Ordered Date", selectedItem.ordered_date)}
+                                                {renderField("Collected Date", selectedItem.collected_date)}
                                             </div>
                                         </div>
                                     </>

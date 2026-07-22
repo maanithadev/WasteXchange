@@ -23,6 +23,7 @@ const AdminListingModeration = () => {
         }
         fetchData()
     }, [refresh])
+    console.log(data)
 
     const handleView = (item) => {
         setSelectedItem(item)
@@ -95,7 +96,7 @@ const AdminListingModeration = () => {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="px-6 py-3.5 text-slate-600">{item.seller_id?.company_name}</td>
+                                        <td class="px-6 py-3.5 text-slate-600">{item.sellerDetails?.company_name}</td>
                                         <td class="px-6 py-3.5"><span class="text-xs font-semibold bg-green-200 text-red-700 px-2 py-0.5 rounded-full">{item.currency === "LKR" ? "RS." : "$"}{item.price}</span></td>
                                         <td class="px-6 py-3.5"><span class="text-xs font-semibold bg-green-200 text-red-700 px-2 py-0.5 rounded-full">{item.status}</span></td>
                                         <td class="px-6 py-3.5 text-slate-500">{item.created_at}</td>

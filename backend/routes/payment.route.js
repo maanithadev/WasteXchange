@@ -9,6 +9,9 @@ const Payments = require("../models/payments.model.js")
 const Cybersource_Transactions = require("../models/cybersourceTransactions.model.js")
 const Orders = require("../models/orders.model.js")
 const WasteListings = require("../models/wasteListings.model.js")
+const BuyerDetails = require("../models/buyerDetails.model.js")
+const Matches = require("../models/matches.model.js")
+const matchedRecommendations = require("../helpers/matchedRecommendations.helper")
 
 // get
 router.get("/get-all-payments", verifyUser, async (req, res) => {
@@ -246,6 +249,8 @@ router.post('/payment/response', async (req, res) => {
                 )
 
                 await calculateAndSaveCarbonRecord(saved_Order._id)
+
+                await Matches.deleteMany({ wasteListings_id: transaction_Data._id })
 
                 // buyer notification
                 createNotifications({
