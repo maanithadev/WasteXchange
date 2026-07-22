@@ -1,9 +1,16 @@
 import { Link, Outlet, useLocation } from "react-router-dom"
 import { useSidebarContext } from "../../contexts/SidebarContext.jsx"
+import { useEffect } from "react";
 
 const AdminSidebar = () => {
     const location = useLocation();
-    const { isSidebarOpen } = useSidebarContext();
+    const { isSidebarOpen, setIsSidebarOpen } = useSidebarContext();
+
+    useEffect(() => {
+        if (window.innerWidth <= 768) {
+            setIsSidebarOpen(false);
+        }
+    }, [location.pathname, setIsSidebarOpen]);
 
     function logOut() {
         localStorage.clear()

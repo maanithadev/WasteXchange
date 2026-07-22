@@ -1,10 +1,18 @@
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useSidebarContext } from "../../contexts/SidebarContext.jsx";
+import { useEffect } from "react";
 
 const SellerSidebar = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { isSidebarOpen } = useSidebarContext();
+    const { isSidebarOpen, setIsSidebarOpen } = useSidebarContext();
+
+    // Automatically collapse sidebar on small screens (e.g. mobile)
+    useEffect(() => {
+        if (window.innerWidth <= 768) {
+            setIsSidebarOpen(false);
+        }
+    }, [location.pathname, setIsSidebarOpen]);
 
     function logOut() {
         localStorage.clear()
