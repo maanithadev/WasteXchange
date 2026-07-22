@@ -94,6 +94,7 @@ router.post("/admin-announcement", verifyUser, async (req, res) => {
         }
         const adminAnnouncements = await new AdminAnnouncements({
             title: title,
+            message: message,
             audience: target_audience,
             send_date: new Date()
         })

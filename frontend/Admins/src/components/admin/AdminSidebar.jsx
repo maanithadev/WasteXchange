@@ -1,6 +1,7 @@
 import { Link, Outlet, useLocation } from "react-router-dom"
 import { useSidebarContext } from "../../contexts/SidebarContext.jsx"
 import { useEffect } from "react";
+import toast from "react-hot-toast";
 
 const AdminSidebar = () => {
     const location = useLocation();
@@ -15,6 +16,7 @@ const AdminSidebar = () => {
     function logOut() {
         localStorage.clear()
         window.location.href = import.meta.env.VITE_USERS_URL + import.meta.env.VITE_LOGIN_REDIRECT_URL + "?logout=true"
+        toast.success("Logged out successfully!")
     }
 
     const navItems = [

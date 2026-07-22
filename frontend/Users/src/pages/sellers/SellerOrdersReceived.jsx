@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const SellerOrdersReceived = () => {
     const [data, setData] = useState([]);
@@ -42,8 +43,9 @@ const SellerOrdersReceived = () => {
 
             setIsStatusModalOpen(false);
             setOrderToUpdate(null);
+            toast.success('Order status updated successfully!')
         } catch (err) {
-            console.error(err);
+            toast.error('Something went wrong! Please try again later.')
         }
     };
 
@@ -174,7 +176,7 @@ const SellerOrdersReceived = () => {
                                                 {renderField("Forename", selectedItem.forename)}
                                                 {renderField("Surname", selectedItem.surname)}
                                                 {renderField("Phone", selectedItem.phone)}
-                                                
+
                                                 {renderField("Address Line 1", selectedItem.address?.address_line1)}
                                                 {renderField("Address Line 2", selectedItem.address?.address_line2)}
                                                 {renderField("City", selectedItem.address?.city)}
@@ -185,10 +187,10 @@ const SellerOrdersReceived = () => {
                                                 {renderField("Waste Title", selectedItem.wasteListings_id?.title)}
                                                 {renderField("Quantity", selectedItem.quantity)}
                                                 {renderField("Unit", selectedItem.unit)}
-                                                
+
                                                 {renderField("Total Price", selectedItem.total_price)}
                                                 {renderField("Currency", selectedItem.currency)}
-                                                
+
                                                 {renderField("Status", selectedItem.status)}
                                                 {renderField("Ordered Date", selectedItem.ordered_date)}
                                                 {renderField("Collected Date", selectedItem.collected_date)}

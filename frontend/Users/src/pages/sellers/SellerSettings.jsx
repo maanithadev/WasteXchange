@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import toast from 'react-hot-toast';
 
 const SellerSettings = () => {
     const [data, setData] = useState([]);
@@ -47,8 +48,9 @@ const SellerSettings = () => {
                         "Authorization": `Bearer ${localStorage.getItem("token")}`,
                     }
                 })
+            toast.success('Profile updated successfully!')
         } catch (err) {
-            console.log(err.message)
+            toast.error('Something went wrong! Please try again later.')
         }
     }
 

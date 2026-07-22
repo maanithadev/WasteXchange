@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import toast from 'react-hot-toast';
 
 const BuyerMyOrders = () => {
     const [data, setData] = useState([]);
@@ -35,8 +36,9 @@ const BuyerMyOrders = () => {
                     ? { ...order, status: "collected" }
                     : order
             ));
+            toast.success('Order marked as collected successfully!')
         } catch (err) {
-            console.error("Failed to mark order as collected:", err);
+            toast.error('Something went wrong! Please try again later.')
         } finally {
             setIsUpdating(false);
             setConfirmOrder(null);

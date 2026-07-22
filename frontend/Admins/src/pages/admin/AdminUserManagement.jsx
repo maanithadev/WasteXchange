@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
 import Loading from "../../components/Loading"
+import toast from "react-hot-toast"
 
 const AdminUserManagement = () => {
     const [data, setData] = useState([])
@@ -55,9 +56,10 @@ const AdminUserManagement = () => {
                     }
                 })
             setRefresh(!refresh)
+            toast.success('Status updated successful!')
             if (selectedUser) setSelectedUser(null)
         } catch (err) {
-            console.log(err.message)
+            toast.error('Something went wrong! Please try again later.')
         }
     }
 

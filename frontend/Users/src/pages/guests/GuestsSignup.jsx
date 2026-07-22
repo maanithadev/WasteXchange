@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import toast from 'react-hot-toast';
 
 const GuestsSignup = () => {
     const wasteCategories = ["Construction", "Metals", "Wood"]
@@ -21,22 +22,24 @@ const GuestsSignup = () => {
                 localStorage.clear()
                 localStorage.setItem("token", res.data.token);
             } else {
-                console.log(res.data.message);
+                toast.error(res.data.message)
             }
 
             switch (res.data.role) {
                 case "seller":
                     navigate("/seller/dashboard")
+                    toast.success('Registration successful as Seller!')
                     break
                 case "buyer":
                     navigate("/buyer/dashboard");
+                    toast.success('Registration successful as Buyer!')
                     break
                 default:
                     navigate("/login");
                     break
             }
         } catch (err) {
-            console.log(err.message)
+            toast.error('Something went wrong! Please try again later.')
         }
     }
 

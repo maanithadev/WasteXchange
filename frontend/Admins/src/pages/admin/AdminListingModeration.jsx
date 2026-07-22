@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
+import toast from "react-hot-toast"
 
 const AdminListingModeration = () => {
     const [data, setData] = useState([])
@@ -57,8 +58,9 @@ const AdminListingModeration = () => {
             setIsRejectModalOpen(false)
             setSelectedItem(null)
             setRejectMessage("")
+            toast.success('Status updated successful!')
         } catch (err) {
-            console.log(err.message)
+            toast.error('Something went wrong! Please try again later.')
         }
     }
 

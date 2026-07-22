@@ -2,6 +2,7 @@ import { lazy } from "react"
 import { Route, Routes } from "react-router-dom"
 import ProtectedAdminRoutes from "./auth/ProtectedAdminRoutes"
 import { SidebarProvider } from "./contexts/SidebarContext"
+import { Toaster } from 'react-hot-toast';
 
 const AdminSidebar = lazy(() => import("./components/admin/AdminSidebar"))
 const AdminNavbar = lazy(() => import("./components/admin/AdminNavbar"))
@@ -39,6 +40,7 @@ const App = () => {
           </Route>
         </Route>
       </Routes>
+      <Toaster position="bottom-right" reverseOrder={true} />
     </>
   )
 }

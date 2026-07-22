@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 const SellerMyListings = () => {
     const wasteCategories = ["Construction", "Metals", "Wood"]
@@ -129,8 +130,9 @@ const SellerMyListings = () => {
 
             setIsEditModalOpen(false);
             setEditData({});
+            toast.success('Waste updated successfully!')
         } catch (err) {
-            console.error("Error:", err);
+            toast.error('Something went wrong! Please try again later.')
         }
     }
 
@@ -147,8 +149,9 @@ const SellerMyListings = () => {
 
             setIsDeleteModalOpen(false);
             setSelectedItem(null);
+            toast.success('Waste deleted successfully!')
         } catch (err) {
-            console.error("Error deleting item:", err);
+            toast.error('Something went wrong! Please try again later.')
         }
     };
 
@@ -167,8 +170,9 @@ const SellerMyListings = () => {
             setSelectedItem(null)
             setFilterData(prevData => prevData.map(item => item._id === editData._id ? { ...item, status: "Review" } : item))
             setIsEditModalOpen(false)
+            toast.success('Request for edit access has been granted!')
         } catch (err) {
-            console.log(err.message)
+            toast.error('Something went wrong! Please try again later.')
         }
     }
 

@@ -1,6 +1,7 @@
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useSidebarContext } from "../../contexts/SidebarContext.jsx";
 import { useEffect } from "react";
+import toast from 'react-hot-toast';
 
 const SellerSidebar = () => {
     const navigate = useNavigate();
@@ -17,6 +18,7 @@ const SellerSidebar = () => {
     function logOut() {
         localStorage.clear()
         navigate("/login")
+        toast.success('Logged out successfully!')
     }
 
     const navItems = [
@@ -46,14 +48,14 @@ const SellerSidebar = () => {
                         {navItems.map((item) => {
                             const isActive = location.pathname === item.path;
                             return (
-                                <Link 
+                                <Link
                                     key={item.path}
                                     to={item.path}
                                     className={`flex items-center rounded-lg font-medium text-sm transition-all duration-300 ${isSidebarOpen ? "gap-3 px-3 py-2.5" : "justify-center py-2.5"} ${isActive ? "bg-emerald-50 text-emerald-700" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
                                     title={!isSidebarOpen ? item.label : ""}
                                 >
                                     <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={item.icon}/>
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={item.icon} />
                                     </svg>
                                     <span className={`transition-all duration-300 whitespace-nowrap overflow-hidden ${isSidebarOpen ? "opacity-100 w-auto" : "opacity-0 w-0"}`}>
                                         {item.label}
@@ -65,12 +67,12 @@ const SellerSidebar = () => {
 
                     <div className="border-t border-slate-200 p-3">
                         <button onClick={logOut}
-                                className={`w-full flex items-center rounded-lg font-medium text-sm transition-all duration-300 text-slate-600 hover:bg-red-50 hover:text-red-600 ${isSidebarOpen ? "gap-3 px-3 py-2.5" : "justify-center py-2.5"}`}
-                                title={!isSidebarOpen ? "Logout" : ""}
+                            className={`w-full flex items-center rounded-lg font-medium text-sm transition-all duration-300 text-slate-600 hover:bg-red-50 hover:text-red-600 ${isSidebarOpen ? "gap-3 px-3 py-2.5" : "justify-center py-2.5"}`}
+                            title={!isSidebarOpen ? "Logout" : ""}
                         >
                             <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                             </svg>
                             <span className={`transition-all duration-300 whitespace-nowrap overflow-hidden ${isSidebarOpen ? "opacity-100 w-auto" : "opacity-0 w-0"}`}>
                                 Logout

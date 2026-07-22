@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import toast from 'react-hot-toast';
 
 const GuestsLogin = () => {
     useEffect(() => {
@@ -29,26 +30,28 @@ const GuestsLogin = () => {
                 localStorage.clear()
                 localStorage.setItem("token", res.data.token);
             } else {
-                console.log(res.data.message);
+                toast.error(res.data.message)
             }
 
             switch (res.data.role) {
                 case "seller":
                     navigate("/seller/dashboard")
+                    toast.success('Login successful!')
                     break
                 case "buyer":
                     navigate("/buyer/dashboard");
+                    toast.success('Login successful!')
                     break
                 case "admin":
                     window.location.href = `http://localhost:5174/admin/dashboard?token=${res.data.token}`;
+                    toast.success('Login successful!')
                     break
                 default:
                     navigate("/login");
                     break
             }
-        } catch
-        (err) {
-            console.log(err.message);
+        } catch (err) {
+            toast.error('Something went wrong! Please try again later.')
         }
     }
 

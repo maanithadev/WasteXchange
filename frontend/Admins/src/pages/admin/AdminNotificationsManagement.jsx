@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form"
 import axios from "axios"
 import { useEffect, useState } from "react"
+import toast from "react-hot-toast"
 
 const AdminNotificationsManagement = () => {
     const { register, handleSubmit } = useForm()
@@ -30,6 +31,7 @@ const AdminNotificationsManagement = () => {
             }
         )
         setRefresh(!refresh)
+        toast.success("Announcement sent successfully!")
     }
 
 
@@ -78,6 +80,7 @@ const AdminNotificationsManagement = () => {
                             <thead>
                                 <tr class="bg-slate-50 border-b border-slate-200">
                                     <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Title</th>
+                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Message</th>
                                     <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Audience</th>
                                     <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Sent Date</th>
                                 </tr>
@@ -86,6 +89,7 @@ const AdminNotificationsManagement = () => {
                                 {data.map((item, index) => (
                                     <tr key={index}>
                                         <td class="px-6 py-3.5 font-medium text-slate-800 capitalize">{item.title}</td>
+                                        <td class="px-6 py-3.5 font-medium text-slate-800 capitalize">{item.message}</td>
                                         <td class="px-6 py-3.5"><span class="text-xs font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full capitalize">{item.audience}</span></td>
                                         <td class="px-6 py-3.5 text-slate-500">{item.send_date}</td>
                                     </tr>

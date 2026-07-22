@@ -4,6 +4,9 @@ const adminAnnouncementsSchema = mongoose.Schema({
     title: {
         type: String
     },
+    message: {
+        type: String
+    },
     audience: {
         type: String
     },

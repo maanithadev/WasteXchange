@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import toast from 'react-hot-toast';
 import { useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading";
 
@@ -100,9 +101,11 @@ const SellerUploadWaste = () => {
 
             await response.json();
             setLoading(false)
+            toast.success('Waste uploaded successfully!')
             navigate("/seller/my-listings")
         } catch (err) {
-            console.error("Error:", err);
+            setLoading(false)
+            toast.error('Something went wrong! Please try again later.')
         }
     }
 
