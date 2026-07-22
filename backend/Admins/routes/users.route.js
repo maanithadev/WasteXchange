@@ -65,15 +65,23 @@ router.post("/login", async (req, res) => {
         const passwordMatch = await bcrypt.compare(password, userExists.password)
         if (!passwordMatch) return res.json({ message: "password wrong" })
 
-        if (userExists.status === "suspended") return res.json({ message: 'User Account is Suspended' })
+        if (userExists.status === "suspended") {
+            res.json({ message: 'User Account is Suspended' })
+        } else if (userExists.status === "pending") {
+            res.json({ status: "pending" })
+        } else if (userExists.role === null) {
+            res.json({ role: null })
+        } else {
+            const token = jwt.sign({
+                user_id: userExists._id,
+                role: userExists.role
+            }, process.env.JWT_SECRET, { expiresIn: "7d" })
 
-        const token = jwt.sign({
-            user_id: userExists._id,
-            role: userExists.role
-        }, process.env.JWT_SECRET, { expiresIn: "7d" })
-        res.status(200).json({ message: 'User logged in successfully.', token, role: userExists.role })
+            res.json({ token })
+        }
+
     } catch (err) {
-        res.send({ message: "server error" })
+        res.json({ message: "server error" })
     }
 })
 

@@ -3,6 +3,7 @@ import {Route, Routes} from "react-router-dom"
 import ProtectedAdminRoutes from "./auth/ProtectedAdminRoutes"
 import {SidebarProvider} from "./contexts/SidebarContext"
 import {Toaster} from 'react-hot-toast';
+import NotFoundPage from "./pages/NotFoundPage.jsx";
 
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin.jsx"));
 const AdminSignup = lazy(() => import("./pages/admin/AdminSignup.jsx"));

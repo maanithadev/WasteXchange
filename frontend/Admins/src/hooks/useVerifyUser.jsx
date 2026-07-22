@@ -3,7 +3,6 @@ import axios from "axios";
 
 export function useVerifyUser() {
     const [user, setUser] = useState(null)
-    const [role, setRole] = useState(null)
     const [loading, setLoading] = useState(true);
     const token = localStorage.getItem("token") || null
 
@@ -17,7 +16,6 @@ export function useVerifyUser() {
                         }
                     })
                     setUser(res.data)
-                    setRole(res.data.role)
                     setLoading(false)
                 } else {
                     setLoading(false)
@@ -31,5 +29,5 @@ export function useVerifyUser() {
         verifyUser()
     }, [token]);
 
-    return {user, role, loading, token}
+    return {user, loading, token}
 }

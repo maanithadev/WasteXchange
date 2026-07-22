@@ -24,7 +24,7 @@ const AdminSignup = () => {
                     toast.success('Login successful!')
                     break
                 default:
-                    navigate("/login");
+                    navigate("/");
                     break
             }
         } catch (err) {
@@ -72,7 +72,7 @@ const AdminSignup = () => {
                         </form>
 
                         <p class="text-center text-sm text-slate-500 mt-6">Already have an account?
-                            <Link to="/login" class="font-medium text-emerald-600 hover:text-emerald-700"> Log in</Link>
+                            <Link to="/" class="font-medium text-emerald-600 hover:text-emerald-700"> Log in</Link>
                         </p>
                     </div>
                 </div>
