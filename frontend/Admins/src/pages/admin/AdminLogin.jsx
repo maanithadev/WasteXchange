@@ -1,19 +1,9 @@
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import toast from 'react-hot-toast';
 
-const GuestsLogin = () => {
-    useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get("logout") === "true") {
-            localStorage.clear();
-            window.history.replaceState({}, document.title, window.location.pathname);
-            window.location.reload();
-        }
-    }, []);
-
+const AdminLogin = () => {
     const { register, handleSubmit } = useForm({
         defaultValues: {
             email: "",
@@ -25,7 +15,7 @@ const GuestsLogin = () => {
 
     async function onSubmit(data) {
         try {
-            const res = await axios.post(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_USER_LOGIN, data);
+            const res = await axios.post(import.meta.env.VITE_ADMIN_BACKEND_URL + import.meta.env.VITE_ADMIN_LOGIN, data);
             if (res.data.token) {
                 localStorage.clear()
                 localStorage.setItem("token", res.data.token);
@@ -34,16 +24,9 @@ const GuestsLogin = () => {
             }
 
             switch (res.data.role) {
-                case "seller":
-                    navigate("/seller/dashboard")
-                    toast.success('Login successful!')
-                    break
-                case "buyer":
-                    navigate("/buyer/dashboard");
-                    toast.success('Login successful!')
-                    break
                 case "admin":
-                    window.location.href = import.meta.env.VITE_ADMIN_FRONTEND_URL + import.meta.env.VITE_ADMIN_DASHBOARD_URL + `?token=${res.data.token}`;
+                    // window.location.href = import.meta.env.VITE_ADMIN_FRONTEND_URL + import.meta.env.VITE_ADMIN_DASHBOARD_URL + `?token=${res.data.token}`;
+                    navigate("/admin/dashboard")
                     toast.success('Login successful!')
                     break
                 default:
@@ -100,4 +83,4 @@ const GuestsLogin = () => {
     )
 }
 
-export default GuestsLogin
+export default AdminLogin

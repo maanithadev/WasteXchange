@@ -14,7 +14,7 @@ const SellerOrdersReceived = () => {
 
     useEffect(() => {
         async function loadOrders() {
-            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_SELLER_ORDER_INFO_URL, {
+            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_SELLER_ORDER_INFO_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }
@@ -28,7 +28,7 @@ const SellerOrdersReceived = () => {
 
     const handleUpdateStatus = async () => {
         try {
-            await axios.post(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_UPDATE_SELLER_ORDER_STATUS_URL, {
+            await axios.post(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_UPDATE_SELLER_ORDER_STATUS_URL, {
                 order_id: orderToUpdate._id,
                 status: selectedStatus,
             }, {
@@ -50,7 +50,7 @@ const SellerOrdersReceived = () => {
     };
 
     const handleView = async (id) => {
-        const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_SELLER_ORDER_ADVANCE_INFO_URL + id, {
+        const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_SELLER_ORDER_ADVANCE_INFO_URL + id, {
             headers: {
                 "Authorization": `Bearer ${localStorage.getItem("token")}`,
             }

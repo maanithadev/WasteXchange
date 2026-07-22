@@ -28,7 +28,7 @@ const SellerSettings = () => {
 
     useEffect(() => {
         async function loadseller() {
-            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_SELLER_DETAILS_URL, {
+            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_SELLER_DETAILS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }
@@ -41,7 +41,7 @@ const SellerSettings = () => {
 
     async function onSubmit(data) {
         try {
-            await axios.put(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_UPDATE_SELLER_DETAILS_URL,
+            await axios.put(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_UPDATE_SELLER_DETAILS_URL,
                 { data },
                 {
                     headers: {
@@ -67,7 +67,7 @@ const SellerSettings = () => {
         }
 
         try {
-            const res = await axios.post(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_CHANGE_PASSWORD_URL, {
+            const res = await axios.post(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_CHANGE_PASSWORD_URL, {
                 currentPassword: passwordData.currentPassword,
                 newPassword: passwordData.newPassword
             }, {

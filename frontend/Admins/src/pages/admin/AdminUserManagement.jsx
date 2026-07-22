@@ -13,7 +13,7 @@ const AdminUserManagement = () => {
     useEffect(() => {
         async function fetchData() {
             setLoading(true)
-            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_ALL_USERS_URL, {
+            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_ALL_USERS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`
                 }
@@ -48,7 +48,7 @@ const AdminUserManagement = () => {
 
     async function handleUpdateStatus(id, newStatus) {
         try {
-            await axios.put(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_UPDATE_USER_STATUS_URL,
+            await axios.put(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_UPDATE_USER_STATUS_URL,
                 { user_id: id, status: newStatus },
                 {
                     headers: {
@@ -63,7 +63,8 @@ const AdminUserManagement = () => {
         }
     }
 
-    return loading ? <Loading /> : (
+    // return loading ? <Loading /> : (
+    return (
         <>
             {/* <!-- USER MANAGEMENT PAGE --> */}
             <main class="flex-1 p-8 bg-slate-50 min-h-screen">

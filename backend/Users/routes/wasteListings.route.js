@@ -9,6 +9,7 @@ const WasteListings = require("../models/wasteListings.model.js")
 const BuyerDetails = require("../models/buyerDetails.model.js")
 const Matches = require("../models/matches.model.js")
 const matchedRecommendations = require("../helpers/matchedRecommendations.helper")
+const createNotifications = require("../helpers/createNotifications.helper.js")
 
 // get
 router.get("/get-all-wastelistings", verifyUser, async (req, res) => {
@@ -177,13 +178,42 @@ router.post("/seller-upload-waste-save", localUpload.single("image"), verifyUser
 router.put("/update-listing-status", verifyUser, async (req, res) => {
     try {
         const { listing_id, status, suspend_message } = req.body;
-        const updatedListing = await WasteListings.updateOne(
+        await WasteListings.updateOne(
             { _id: listing_id },
             {
                 status: status,
                 suspend_message: status === "Rejected" ? suspend_message : null
             }
         );
+
+        const listingSeller = await WasteListings.findOne({ _id: listing_id });
+        const updatedListing = listingSeller
+
+        if (status === "Active") {
+            await Matches.deleteMany({ wasteListings_id: listing_id });
+            const buyers = await BuyerDetails.find({ interested_category: updatedListing.category })
+            buyers.forEach(buyer => {
+                matchedRecommendations(updatedListing.location, buyer.address, updatedListing.quantity, buyer.minqty, buyer.maxqty, updatedListing._id, buyer.user_id)
+            })
+
+            createNotifications({
+                user_id: listingSeller.seller_id,
+                type: "wasteListing",
+                title: "Waste Active",
+                message: `Your waste listing (${listingSeller.title}) has been Activated`,
+                created_at: new Date().toISOString()
+            })
+        } else if (status === "Rejected") {
+            await Matches.deleteMany({ wasteListings_id: listing_id });
+
+            createNotifications({
+                user_id: listingSeller.seller_id,
+                type: "wasteListing",
+                title: "Waste Rejected",
+                message: `Your waste listing (${listingSeller.title}) has been Rejected, reason: ${suspend_message}`,
+                created_at: new Date().toISOString()
+            })
+        }
         res.json(updatedListing)
     } catch (err) {
         res.status(500).json({ message: err.message })

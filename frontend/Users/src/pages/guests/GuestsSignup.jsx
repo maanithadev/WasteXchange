@@ -17,7 +17,7 @@ const GuestsSignup = () => {
 
     async function onSubmit(data) {
         try {
-            const res = await axios.post("http://localhost:3000/api/users/signup", data);
+            const res = await axios.post(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_USER_SIGNUP, data);
             if (res.data.token) {
                 localStorage.clear()
                 localStorage.setItem("token", res.data.token);

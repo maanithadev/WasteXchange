@@ -52,7 +52,7 @@ const SellerUploadWaste = () => {
 
         try {
             setLoading(true)
-            const response = await fetch(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_SELLER_UPLOAD_WASTE_URL, {
+            const response = await fetch(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_SELLER_UPLOAD_WASTE_URL, {
                 method: "POST",
                 body: imageData,
                 headers: {
@@ -91,7 +91,7 @@ const SellerUploadWaste = () => {
 
         try {
             setLoading(true)
-            const response = await fetch(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_SELLER_UPLOAD_WASTE_SAVE_URL, {
+            const response = await fetch(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_SELLER_UPLOAD_WASTE_SAVE_URL, {
                 method: "POST",
                 body: saveFormData,
                 headers: {

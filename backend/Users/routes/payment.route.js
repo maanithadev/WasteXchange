@@ -9,9 +9,7 @@ const Payments = require("../models/payments.model.js")
 const Cybersource_Transactions = require("../models/cybersourceTransactions.model.js")
 const Orders = require("../models/orders.model.js")
 const WasteListings = require("../models/wasteListings.model.js")
-const BuyerDetails = require("../models/buyerDetails.model.js")
 const Matches = require("../models/matches.model.js")
-const matchedRecommendations = require("../helpers/matchedRecommendations.helper")
 
 // get
 router.get("/get-all-payments", verifyUser, async (req, res) => {
@@ -255,47 +253,44 @@ router.post('/payment/response', async (req, res) => {
                 // buyer notification
                 createNotifications({
                     user_id: transaction_Data.buyer_id,
-                    reference_id: saved_Order._id,
-                    type: "order",
-                    title: "order pending",
-                    message: "your order has been placed successfully",
-                    created_at: data.signed_date_time
+                    type: "payment",
+                    title: "Payment Success",
+                    message: "Your payment has been successful",
+                    created_at: new Date().toISOString()
                 })
+
                 createNotifications({
                     user_id: transaction_Data.buyer_id,
-                    reference_id: saved_payment_id,
-                    type: "payment",
-                    title: "payment success",
-                    message: "your payment has been successfull",
-                    created_at: data.signed_date_time
+                    type: "order",
+                    title: "Order Pending",
+                    message: `Your order(${saved_Order.order_reference_number}) has been placed successfully`,
+                    created_at: new Date().toISOString()
                 })
 
                 // seller notification
                 createNotifications({
                     user_id: transaction_Data.seller_id,
-                    reference_id: saved_Order._id,
                     type: "order",
-                    title: "order pending",
-                    message: "you have a new order",
-                    created_at: data.signed_date_time
+                    title: "New Order",
+                    message: `You have a new order (${saved_Order.order_reference_number})`,
+                    created_at: new Date().toISOString()
                 })
 
-                return res.redirect(process.env.PAYMENT_SUCCESS_REDIRECT_URL);
+                return res.redirect(process.env.USERS_FRONTEND_URL + process.env.PAYMENT_SUCCESS_REDIRECT_URL);
             case "CANCEL":
                 const payment_data = payment_Status_Save(decision)
 
                 // buyer notification
                 createNotifications({
                     user_id: transaction_Data.buyer_id,
-                    reference_id: payment_data._id,
                     type: "payment",
-                    title: "payment cancelled",
-                    message: "your payment has been cancelled",
-                    created_at: data.signed_date_time
+                    title: "Payment Cancelled",
+                    message: `Your payment for (${transaction_Data.title}) has been cancelled`,
+                    created_at: new Date().toISOString()
                 })
-                return res.redirect(process.env.PAYMENT_FAILED_REDIRECT_URL);
+                return res.redirect(process.env.USERS_FRONTEND_URL + process.env.PAYMENT_FAILED_REDIRECT_URL);
             default:
-                return res.redirect(process.env.BUYER_DASHBOARD_REDIRECT_URL);
+                return res.redirect(process.env.USERS_FRONTEND_URL + process.env.BUYER_DASHBOARD_REDIRECT_URL);
         }
     } catch (err) {
         res.status(500).json({ message: err.message || 'Unknown error' });
@@ -345,7 +340,7 @@ function verifySignature(responseData) {
  * then signs them and returns the complete set ready for the form.
  */
 function buildCyberSourceParams({ amount, currency, referenceNumber }) {
-    const responseUrl = process.env.CYBERSOURCE_CUSTOM_RESPONSE_URL;
+    const responseUrl = process.env.USERS_BACKEND_URL + process.env.CYBERSOURCE_CUSTOM_RESPONSE_URL;
 
     // All the fields we're sending to CyberSource
     const params = {

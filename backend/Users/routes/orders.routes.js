@@ -4,6 +4,7 @@ const verifyUser = require("../middleware/verifyUser.middleware.js")
 const Orders = require("../models/orders.model.js")
 const Payments = require("../models/payments.model.js")
 const WasteListings = require("../models/wasteListings.model.js")
+const createNotifications = require("../helpers/createNotifications.helper.js")
 
 // get
 router.get("/buyer-simple-info", verifyUser, async (req, res) => {
@@ -72,8 +73,8 @@ module.exports = router
 router.post("/update-status", verifyUser, async (req, res) => {
     try {
         const { order_id, status } = req.body;
+        const order = await Orders.findOne({ _id: order_id })
         if (status === "cancelled") {
-            const order = await Orders.findOne({ _id: order_id })
             await WasteListings.updateOne(
                 { _id: order.wasteListings_id },
                 { status: "Active" }
@@ -86,11 +87,47 @@ router.post("/update-status", verifyUser, async (req, res) => {
                 { _id: order_id },
                 { status }
             )
+
+            // seller
+            createNotifications({
+                user_id: req.token.user_id,
+                type: "order",
+                title: "Order Cancelled",
+                message: `Your order(${order.order_reference_number}) has been cancelled successfully`,
+                created_at: new Date().toISOString()
+            })
+
+            // buyer
+            createNotifications({
+                user_id: order.buyer_id,
+                type: "order",
+                title: "Order Cancelled",
+                message: `Your order(${order.order_reference_number}) has been cancelled successfully`,
+                created_at: new Date().toISOString()
+            })
         } else {
             await Orders.updateOne(
                 { _id: order_id },
                 { status }
             );
+
+            // seller
+            createNotifications({
+                user_id: req.token.user_id,
+                type: "order",
+                title: `Order ${status}`,
+                message: `Your order(${order.order_reference_number}) has been ${status} successfully`,
+                created_at: new Date().toISOString()
+            })
+
+            // buyer
+            createNotifications({
+                user_id: order.buyer_id,
+                type: "order",
+                title: `Order ${status}`,
+                message: `Your order(${order.order_reference_number}) has been ${status} successfully`,
+                created_at: new Date().toISOString()
+            })
         }
         res.json({ message: "Order status updated successfully", status });
     } catch (err) {

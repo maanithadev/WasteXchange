@@ -15,7 +15,7 @@ const SellerListingStatusDetails = () => {
     useEffect(() => {
         async function fetchData() {
             setLoading(true)
-            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_SELLER_WASTE_MATCHES_URL + id, {
+            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_SELLER_WASTE_MATCHES_URL + id, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`
                 }
@@ -27,7 +27,7 @@ const SellerListingStatusDetails = () => {
     }, [])
 
     async function startMessaging(buyer_id, seller_id) {
-        const res = await axios.post(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_START_CHAT_URL, {
+        const res = await axios.post(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_START_CHAT_URL, {
             buyer_id,
             seller_id
         })

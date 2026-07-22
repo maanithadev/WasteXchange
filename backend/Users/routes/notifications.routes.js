@@ -63,7 +63,7 @@ router.post("/admin-announcement", verifyUser, async (req, res) => {
                     type: "admin_announcement",
                     title: title,
                     message: message,
-                    created_at: new Date()
+                    created_at: new Date().toISOString()
                 })
                 notification.save()
             })
@@ -75,7 +75,7 @@ router.post("/admin-announcement", verifyUser, async (req, res) => {
                     type: "admin_announcement",
                     title: title,
                     message: message,
-                    created_at: new Date()
+                    created_at: new Date().toISOString()
                 })
                 notification.save()
             })
@@ -87,7 +87,7 @@ router.post("/admin-announcement", verifyUser, async (req, res) => {
                     type: "admin_announcement",
                     title: title,
                     message: message,
-                    created_at: new Date()
+                    created_at: new Date().toISOString()
                 })
                 notification.save()
             })
@@ -96,7 +96,7 @@ router.post("/admin-announcement", verifyUser, async (req, res) => {
             title: title,
             message: message,
             audience: target_audience,
-            send_date: new Date()
+            send_date: new Date().toISOString()
         })
         const saved_admin_Announcement = await adminAnnouncements.save()
         res.json(saved_admin_Announcement)

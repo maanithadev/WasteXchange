@@ -8,7 +8,7 @@ const SellerEarnings = () => {
 
     useEffect(() => {
         async function loadProducts() {
-            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_SELLER_PAYMENTS_INFO_URL, {
+            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_SELLER_PAYMENTS_INFO_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }

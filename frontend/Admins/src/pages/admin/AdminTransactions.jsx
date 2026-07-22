@@ -16,7 +16,7 @@ const AdminTransactions = () => {
 
     useEffect(() => {
         async function loadPayments() {
-            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_ALL_PAYMENTS_URL, {
+            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_ALL_PAYMENTS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }
@@ -25,7 +25,7 @@ const AdminTransactions = () => {
         }
 
         async function loadCards() {
-            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_ADMIN_TRANSACTIONS_CARDS_URL, {
+            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_ADMIN_TRANSACTIONS_CARDS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }

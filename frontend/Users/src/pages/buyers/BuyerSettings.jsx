@@ -28,7 +28,7 @@ const BuyerSettings = () => {
 
     useEffect(() => {
         async function loadbuyer() {
-            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_BUYER_DETAILS_URL, {
+            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_BUYER_DETAILS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }
@@ -41,7 +41,7 @@ const BuyerSettings = () => {
 
     async function onSubmit(data) {
         try {
-            await axios.put(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_UPDATE_BUYER_DETAILS_URL,
+            await axios.put(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_UPDATE_BUYER_DETAILS_URL,
                 { data },
                 {
                     headers: {
@@ -68,7 +68,7 @@ const BuyerSettings = () => {
 
         console.log(passwordData)
         try {
-            const res = await axios.post(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_CHANGE_PASSWORD_URL, {
+            const res = await axios.post(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_CHANGE_PASSWORD_URL, {
                 currentPassword: passwordData.currentPassword,
                 newPassword: passwordData.newPassword
             }, {

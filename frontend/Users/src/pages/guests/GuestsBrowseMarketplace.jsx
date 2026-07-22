@@ -7,7 +7,7 @@ const GuestsBrowseMarketplace = () => {
 
     useEffect(() => {
         async function fetchData() {
-            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_BUYERS_GET_ALL_WASTE_LISTINGS_URL)
+            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_BUYERS_GET_ALL_WASTE_LISTINGS_URL)
             setData(res.data)
         }
 

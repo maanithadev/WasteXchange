@@ -16,7 +16,7 @@ const BuyerMessages = () => {
 
     useEffect(() => {
         async function getConversations() {
-            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_ALL_BUYER_CONVERSATIONS_URL, {
+            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_ALL_BUYER_CONVERSATIONS_URL, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }
@@ -25,7 +25,7 @@ const BuyerMessages = () => {
         }
 
         async function findMessages() {
-            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_MESSAGES_URL + conversationId, {
+            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_MESSAGES_URL + conversationId, {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 }
@@ -41,7 +41,7 @@ const BuyerMessages = () => {
         async function checkOnlineStatus() {
             if (activeConversation && activeConversation.seller_id) {
                 try {
-                    const res = await axios.get(import.meta.env.VITE_BACKEND_URL + "/api/messages/check-online-status/" + activeConversation.seller_id);
+                    const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + "/api/messages/check-online-status/" + activeConversation.seller_id);
                     setIsOnline(res.data.isOnline);
                 } catch (err) {
                     console.error(err);
@@ -49,10 +49,10 @@ const BuyerMessages = () => {
             }
         }
         checkOnlineStatus();
-        
+
         // Mark as read when opened
         if (conversationId) {
-            setConversations(prev => prev.map(c => 
+            setConversations(prev => prev.map(c =>
                 c._id === conversationId ? { ...c, hasUnread: false } : c
             ));
         }
@@ -61,7 +61,7 @@ const BuyerMessages = () => {
     useEffect(() => {
         if (!user || !user.user_id) return;
 
-        const socket = io(import.meta.env.VITE_BACKEND_URL);
+        const socket = io(import.meta.env.VITE_USERS_BACKEND_URL);
 
         socket.on("connect", () => {
             socket.emit("register", user.user_id);
@@ -78,10 +78,10 @@ const BuyerMessages = () => {
             // Update conversations list latest message / unread count
             setConversations(prev => prev.map(c => {
                 if (c._id === newMessage.conversation_id) {
-                    return { 
-                        ...c, 
-                        last_message: newMessage.message, 
-                        hasUnread: conversationId !== newMessage.conversation_id 
+                    return {
+                        ...c,
+                        last_message: newMessage.message,
+                        hasUnread: conversationId !== newMessage.conversation_id
                     };
                 }
                 return c;
@@ -95,7 +95,7 @@ const BuyerMessages = () => {
     console.log(conversations)
 
     async function sendMessage() {
-        const res = await axios.post(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_SEND_MESSAGE_URL + conversationId,
+        const res = await axios.post(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_SEND_MESSAGE_URL + conversationId,
             { message: typedMessage },
             {
                 headers: {
@@ -103,7 +103,7 @@ const BuyerMessages = () => {
                 }
             })
         setMessages((prev) => [...prev, res.data])
-        setConversations(prev => prev.map(c => 
+        setConversations(prev => prev.map(c =>
             c._id === conversationId ? { ...c, last_message: typedMessage } : c
         ));
         setTypedMessage("")

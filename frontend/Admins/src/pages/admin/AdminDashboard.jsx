@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
-import { ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Line } from "recharts";
+import {ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Line} from "recharts";
 
 function timeAgo(dateString) {
     if (!dateString) return "Just now";
@@ -36,7 +36,7 @@ const AdminDashboard = () => {
     useEffect(() => {
         async function fetchSummary() {
             try {
-                const res = await axios.get(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_GET_ADMIN_DASHBOARD_SUMMARY_URL, {
+                const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_ADMIN_DASHBOARD_SUMMARY_URL, {
                     headers: {
                         "Authorization": `Bearer ${localStorage.getItem("token")}`
                     }
@@ -46,16 +46,23 @@ const AdminDashboard = () => {
                 console.error("Error fetching admin dashboard summary", err);
             }
         }
+
         fetchSummary();
     }, []);
+    console.log(summary)
 
     const getColorForType = (type) => {
         switch (type) {
-            case "order": return "bg-emerald-500";
-            case "match": return "bg-indigo-500";
-            case "system": return "bg-slate-400";
-            case "admin_announcement": return "bg-amber-500";
-            default: return "bg-indigo-500";
+            case "order":
+                return "bg-emerald-500";
+            case "match":
+                return "bg-indigo-500";
+            case "system":
+                return "bg-slate-400";
+            case "admin_announcement":
+                return "bg-amber-500";
+            default:
+                return "bg-indigo-500";
         }
     };
 
@@ -99,21 +106,32 @@ const AdminDashboard = () => {
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* <!-- Chart --> */}
                     <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-6">
-                        <h2 class="text-sm font-semibold text-slate-900 mb-4">Platform Growth Over Time (Current Year)</h2>
-                        <div class="w-full h-72 rounded-lg border border-slate-100 bg-white flex items-center justify-center p-2 shadow-inner">
+                        <h2 class="text-sm font-semibold text-slate-900 mb-4">Platform Growth Over Time (Current
+                            Year)</h2>
+                        <div
+                            class="w-full h-72 rounded-lg border border-slate-100 bg-white flex items-center justify-center p-2 shadow-inner">
                             {summary.chartData.length > 0 ? (
                                 <ResponsiveContainer width="100%" height="100%">
-                                    <LineChart data={summary.chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dy={10} />
-                                        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dx={-10} allowDecimals={false} />
+                                    <LineChart data={summary.chartData}
+                                               margin={{top: 10, right: 30, left: 0, bottom: 0}}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0"/>
+                                        <XAxis dataKey="name" axisLine={false} tickLine={false}
+                                               tick={{fontSize: 12, fill: '#64748b'}} dy={10}/>
+                                        <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#64748b'}}
+                                               dx={-10} allowDecimals={false}/>
                                         <Tooltip
-                                            contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' }}
-                                            labelStyle={{ color: '#0F172A', fontWeight: 'bold', marginBottom: '4px' }}
-                                            itemStyle={{ color: '#0ea5e9' }}
+                                            contentStyle={{
+                                                borderRadius: '8px',
+                                                border: 'none',
+                                                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
+                                            }}
+                                            labelStyle={{color: '#0F172A', fontWeight: 'bold', marginBottom: '4px'}}
+                                            itemStyle={{color: '#0ea5e9'}}
                                             formatter={(value) => [value, 'New Users']}
                                         />
-                                        <Line type="monotone" dataKey="value" stroke="#0ea5e9" strokeWidth={3} dot={{ r: 4, fill: '#0ea5e9', strokeWidth: 2, stroke: '#FFF' }} activeDot={{ r: 6, fill: '#0ea5e9', stroke: '#FFF', strokeWidth: 2 }} />
+                                        <Line type="monotone" dataKey="value" stroke="#0ea5e9" strokeWidth={3}
+                                              dot={{r: 4, fill: '#0ea5e9', strokeWidth: 2, stroke: '#FFF'}}
+                                              activeDot={{r: 6, fill: '#0ea5e9', stroke: '#FFF', strokeWidth: 2}}/>
                                     </LineChart>
                                 </ResponsiveContainer>
                             ) : (
@@ -129,7 +147,8 @@ const AdminDashboard = () => {
                             <ul class="divide-y divide-slate-100">
                                 {summary.recentActivity.map((activity, index) => (
                                     <li key={index} class="py-3 flex items-start gap-3">
-                                        <span class={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${getColorForType(activity.type)}`}></span>
+                                        <span
+                                            class={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${getColorForType(activity.type)}`}></span>
                                         <div>
                                             <p class="text-xs text-slate-800 font-medium">{activity.title}</p>
                                             <p class="text-xs text-slate-600 line-clamp-2 mt-0.5">{activity.message}</p>
