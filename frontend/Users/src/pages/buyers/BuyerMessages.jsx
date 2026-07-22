@@ -1,7 +1,8 @@
 import { useConversationsContext } from "../../contexts/ConversationsContext"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import axios from "axios"
 import { useVerifyUser } from "../../hooks/useVerifyUser"
+import { io } from "socket.io-client"
 
 const BuyerMessages = () => {
     const { user } = useVerifyUser()
@@ -9,6 +10,9 @@ const BuyerMessages = () => {
     const [conversations, setConversations] = useState([])
     const [messages, setMessages] = useState([])
     const [typedMessage, setTypedMessage] = useState("")
+    const [isOnline, setIsOnline] = useState(false)
+
+    const activeConversation = conversations.find(c => c._id === conversationId);
 
     useEffect(() => {
         async function getConversations() {
@@ -32,6 +36,62 @@ const BuyerMessages = () => {
         getConversations()
         if (conversationId !== "") findMessages()
     }, [conversationId])
+
+    useEffect(() => {
+        async function checkOnlineStatus() {
+            if (activeConversation && activeConversation.seller_id) {
+                try {
+                    const res = await axios.get(import.meta.env.VITE_BACKEND_URL + "/api/messages/check-online-status/" + activeConversation.seller_id);
+                    setIsOnline(res.data.isOnline);
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+        }
+        checkOnlineStatus();
+        
+        // Mark as read when opened
+        if (conversationId) {
+            setConversations(prev => prev.map(c => 
+                c._id === conversationId ? { ...c, hasUnread: false } : c
+            ));
+        }
+    }, [conversationId, activeConversation?.seller_id]);
+
+    useEffect(() => {
+        if (!user || !user.user_id) return;
+
+        const socket = io(import.meta.env.VITE_BACKEND_URL);
+
+        socket.on("connect", () => {
+            socket.emit("register", user.user_id);
+        });
+
+        socket.on("receive_message", (newMessage) => {
+            // Append message if it belongs to the active conversation
+            setMessages((prev) => {
+                if (newMessage.conversation_id === conversationId) {
+                    return [...prev, newMessage];
+                }
+                return prev;
+            });
+            // Update conversations list latest message / unread count
+            setConversations(prev => prev.map(c => {
+                if (c._id === newMessage.conversation_id) {
+                    return { 
+                        ...c, 
+                        last_message: newMessage.message, 
+                        hasUnread: conversationId !== newMessage.conversation_id 
+                    };
+                }
+                return c;
+            }));
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, [user, conversationId]);
     console.log(conversations)
 
     async function sendMessage() {
@@ -43,6 +103,9 @@ const BuyerMessages = () => {
                 }
             })
         setMessages((prev) => [...prev, res.data])
+        setConversations(prev => prev.map(c => 
+            c._id === conversationId ? { ...c, last_message: typedMessage } : c
+        ));
         setTypedMessage("")
     }
 
@@ -62,7 +125,8 @@ const BuyerMessages = () => {
                                 <img src="https://placehold.co/40x40" class="w-10 h-10 rounded-full object-cover" alt="Green Metals Co." />
                                 <div class="flex-1 min-w-0">
                                     <p class="text-sm font-semibold text-slate-900 truncate">{item.sellerDetails?.company_name}</p>
-                                    <p class="text-xs text-slate-500 truncate">{item.last_message}</p>
+                                    {/* last message */}
+                                    <p className={`text-xs truncate ${item.hasUnread ? "font-bold text-slate-900" : "text-slate-500"}`}>{item.last_message}</p>
                                 </div>
                                 <span class="text-xs text-slate-400 shrink-0">2m</span>
                             </li>
@@ -79,8 +143,9 @@ const BuyerMessages = () => {
                                 <img src="https://placehold.co/36x36" class="w-9 h-9 rounded-full object-cover"
                                     alt="Green Metals Co." />
                                 <div>
-                                    <p class="text-sm font-semibold text-slate-900">Green Metals Co.</p>
-                                    <p class="text-xs text-emerald-600">Online</p>
+                                    {/* company name */}
+                                    <p class="text-sm font-semibold text-slate-900">{activeConversation?.sellerDetails?.company_name}</p>
+                                    <p class={`text-xs ${isOnline ? "text-emerald-600" : "text-slate-400"}`}>{isOnline ? "Online" : "Offline"}</p>
                                 </div>
                             </div>
 

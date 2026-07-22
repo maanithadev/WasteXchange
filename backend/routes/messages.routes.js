@@ -58,15 +58,44 @@ router.post("/start-chat", async (req, res) => {
 
 router.post("/send-message/:conversationId", verifyUser, async (req, res) => {
     try {
-        const messages = await Messages.create({
+        const message = await Messages.create({
             conversation_id: req.params.conversationId,
             sender_id: req.token.user_id,
             message: req.body.message,
             create_at: new Date()
         })
-        res.json(messages)
+
+        const conversation = await Conversations.findByIdAndUpdate(req.params.conversationId, {
+            last_message: req.body.message
+        }, { new: true });
+        
+        if (conversation) {
+            const recipient_id = conversation.buyer_id.toString() === req.token.user_id 
+                ? conversation.seller_id.toString() 
+                : conversation.buyer_id.toString();
+            
+            const io = req.app.get('io');
+            const userSockets = req.app.get('userSockets');
+            
+            if (io && userSockets && userSockets.has(recipient_id)) {
+                const socket_id = userSockets.get(recipient_id);
+                io.to(socket_id).emit('receive_message', message);
+            }
+        }
+
+        res.json(message)
     } catch (err) {
         res.json({ message: err.message })
+    }
+})
+
+router.get("/check-online-status/:userId", async (req, res) => {
+    try {
+        const userSockets = req.app.get('userSockets');
+        const isOnline = userSockets && userSockets.has(req.params.userId);
+        res.json({ isOnline });
+    } catch (err) {
+        res.json({ message: err.message });
     }
 })
 

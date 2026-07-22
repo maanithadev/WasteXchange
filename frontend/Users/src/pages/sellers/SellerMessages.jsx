@@ -1,7 +1,8 @@
 import { useConversationsContext } from "../../contexts/ConversationsContext"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import axios from "axios"
 import { useVerifyUser } from "../../hooks/useVerifyUser"
+import { io } from "socket.io-client"
 
 const SellerMessages = () => {
     const { user } = useVerifyUser()
@@ -9,6 +10,9 @@ const SellerMessages = () => {
     const [conversations, setConversations] = useState([])
     const [messages, setMessages] = useState([])
     const [typedMessage, setTypedMessage] = useState("")
+    const [isOnline, setIsOnline] = useState(false)
+
+    const activeConversation = conversations.find(c => c._id === conversationId);
 
     useEffect(() => {
         async function getConversations() {
@@ -33,6 +37,62 @@ const SellerMessages = () => {
         if (conversationId !== "") findMessages()
     }, [conversationId])
 
+    useEffect(() => {
+        async function checkOnlineStatus() {
+            if (activeConversation && activeConversation.buyer_id) {
+                try {
+                    const res = await axios.get(import.meta.env.VITE_BACKEND_URL + "/api/messages/check-online-status/" + activeConversation.buyer_id);
+                    setIsOnline(res.data.isOnline);
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+        }
+        checkOnlineStatus();
+        
+        // Mark as read when opened
+        if (conversationId) {
+            setConversations(prev => prev.map(c => 
+                c._id === conversationId ? { ...c, hasUnread: false } : c
+            ));
+        }
+    }, [conversationId, activeConversation?.buyer_id]);
+
+    useEffect(() => {
+        if (!user || !user.user_id) return;
+
+        const socket = io(import.meta.env.VITE_BACKEND_URL);
+
+        socket.on("connect", () => {
+            socket.emit("register", user.user_id);
+        });
+
+        socket.on("receive_message", (newMessage) => {
+            // Append message if it belongs to the active conversation
+            setMessages((prev) => {
+                if (newMessage.conversation_id === conversationId) {
+                    return [...prev, newMessage];
+                }
+                return prev;
+            });
+            // Update conversations list latest message / unread count
+            setConversations(prev => prev.map(c => {
+                if (c._id === newMessage.conversation_id) {
+                    return { 
+                        ...c, 
+                        last_message: newMessage.message, 
+                        hasUnread: conversationId !== newMessage.conversation_id 
+                    };
+                }
+                return c;
+            }));
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, [user, conversationId]);
+
     async function sendMessage() {
         const res = await axios.post(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_SEND_MESSAGE_URL + conversationId,
             { message: typedMessage },
@@ -42,6 +102,9 @@ const SellerMessages = () => {
                 }
             })
         setMessages((prev) => [...prev, res.data])
+        setConversations(prev => prev.map(c => 
+            c._id === conversationId ? { ...c, last_message: typedMessage } : c
+        ));
         setTypedMessage("")
     }
 
@@ -60,8 +123,9 @@ const SellerMessages = () => {
                             <li key={index} class={`flex items-center gap-3 px-4 py-3 bg-blue-50 border-l-4 ${conversationId === item._id ? "border-blue-600" : "border-transparent"} cursor-pointer`} onClick={() => setConversationId(item._id)}>
                                 <img src="https://placehold.co/40x40" class="w-10 h-10 rounded-full object-cover" alt="Green Metals Co." />
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-semibold text-slate-900 truncate">{item.buyer_id?.company_name}</p>
-                                    <p class="text-xs text-slate-500 truncate">{item.last_message}</p>
+                                    <p class="text-sm font-semibold text-slate-900 truncate">{item.buyerDetails?.company_name}</p>
+                                    {/* last message */}
+                                    <p className={`text-xs truncate ${item.hasUnread ? "font-bold text-slate-900" : "text-slate-500"}`}>{item.last_message}</p>
                                 </div>
                                 <span class="text-xs text-slate-400 shrink-0">2m</span>
                             </li>
@@ -77,8 +141,9 @@ const SellerMessages = () => {
                             <div class="h-16 flex items-center gap-3 px-6 border-b border-slate-200 bg-white">
                                 <img src="https://placehold.co/36x36" class="w-9 h-9 rounded-full object-cover" alt="EcoPlast Industries" />
                                 <div>
-                                    <p class="text-sm font-semibold text-slate-900">EcoPlast Industries</p>
-                                    <p class="text-xs text-emerald-600">Online</p>
+                                    {/* company name */}
+                                    <p class="text-sm font-semibold text-slate-900">{activeConversation?.buyerDetails?.company_name}</p>
+                                    <p class={`text-xs ${isOnline ? "text-emerald-600" : "text-slate-400"}`}>{isOnline ? "Online" : "Offline"}</p>
                                 </div>
                             </div>
 

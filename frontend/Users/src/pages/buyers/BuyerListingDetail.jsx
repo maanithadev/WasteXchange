@@ -36,7 +36,7 @@ const BuyerListingDetail = () => {
     async function startMessaging() {
         const res = await axios.post(import.meta.env.VITE_BACKEND_URL + import.meta.env.VITE_START_CHAT_URL, {
             buyer_id: user.user_id,
-            seller_id: data.sellerDetails?._id
+            seller_id: data.seller_id
         })
         setConversationId(res.data.conversation_id)
         navigate("/buyer/messages")
