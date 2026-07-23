@@ -25,6 +25,15 @@ router.get("/verifyUser", async (req, res) => {
     }
 })
 
+router.get("/get-all-users", verifyUser, async (req, res) => {
+    try {
+        const users = await Users.find({}, "-password")
+        res.json(users)
+    } catch (err) {
+        res.json({ message: err.mess })
+    }
+})
+
 
 // post
 router.post("/signup", async (req, res) => {
@@ -35,7 +44,7 @@ router.post("/signup", async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
         const userData = new Users({
-            role: null,
+            role: "need to assign",
             email: req.body.email,
             password: hashedPassword,
             status: "pending",
@@ -69,8 +78,8 @@ router.post("/login", async (req, res) => {
             res.json({ message: 'User Account is Suspended' })
         } else if (userExists.status === "pending") {
             res.json({ status: "pending" })
-        } else if (userExists.role === null) {
-            res.json({ role: null })
+        } else if (userExists.role === "need to assign") {
+            res.json({ role: "need to assign" })
         } else {
             const token = jwt.sign({
                 user_id: userExists._id,
@@ -108,11 +117,11 @@ router.post("/change-password", verifyUser, async (req, res) => {
 
 
 //put
-router.put("/update-user-status", verifyUser, async (req, res) => {
+router.put("/update-user-roleandstatus", verifyUser, async (req, res) => {
     try {
         const users = await Users.updateOne(
             { _id: req.body.user_id },
-            { status: req.body.status || "suspended" }
+            { role: req.body.role, status: req.body.status }
         );
         res.json(users)
     } catch (err) {

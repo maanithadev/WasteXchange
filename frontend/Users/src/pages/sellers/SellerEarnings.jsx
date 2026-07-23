@@ -6,6 +6,21 @@ const SellerEarnings = () => {
     const [totalEarnings, setTotalEarnings] = useState(0);
     const [currentMonthEarnings, setCurrentMonthEarnings] = useState(0);
 
+    const statusColor = (status) => {
+        switch (status) {
+            case "completed":
+                return "bg-emerald-200"
+            case "pending":
+                return "bg-yellow-200"
+            case "failed":
+                return "bg-red-200"
+            case "refunded":
+                return "bg-red-200"
+            default:
+                return null
+        }
+    }
+
     useEffect(() => {
         async function loadProducts() {
             const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_SELLER_PAYMENTS_INFO_URL, {
@@ -67,7 +82,7 @@ const SellerEarnings = () => {
                                         <td className="px-6 py-4 font-medium text-slate-800">{item.buyerDetails?.company_name}</td>
                                         <td className="px-6 py-4 text-slate-600">{item.currency === "LKR" ? "RS." : "$"}{item.total_price}</td>
                                         <td className="px-6 py-4"><span
-                                            className="text-xs font-semibold bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full">{item.payment_status}</span>
+                                            className={`text-xs font-semibold text-black px-2.5 py-1 rounded-full capitalize ${statusColor(item.payment_status)}`}>{item.payment_status}</span>
                                         </td>
                                     </tr>
                                 ))}

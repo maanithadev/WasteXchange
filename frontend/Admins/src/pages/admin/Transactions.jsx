@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import axios from "axios"
 
-const AdminTransactions = () => {
+const Transactions = () => {
     const [data, setData] = useState([]);
     const [cardData, setCardData] = useState({});
     const [selectedItem, setSelectedItem] = useState(null);
@@ -9,6 +9,21 @@ const AdminTransactions = () => {
     const [filter, setFilter] = useState("all");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+
+    const statusColor = (status) => {
+        switch (status) {
+            case "completed":
+                return "bg-emerald-200"
+            case "pending":
+                return "bg-yellow-200"
+            case "failed":
+                return "bg-red-200"
+            case "refunded":
+                return "bg-red-200"
+            default:
+                return null
+        }
+    }
 
     useEffect(() => {
         setCurrentPage(1);
@@ -36,7 +51,6 @@ const AdminTransactions = () => {
         loadPayments()
         loadCards()
     }, []);
-    console.log(data)
 
     const handleView = (item) => {
         setSelectedItem(item);
@@ -52,8 +66,10 @@ const AdminTransactions = () => {
         if (value === undefined || value === null) return null;
         return (
             <div className="">
-                <label className="block text-sm font-medium text-slate-700 mb-1 capitalize text-nowrap truncate">{label}</label>
-                <input type="text" readOnly value={value || ""} className="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-600 focus:outline-none" />
+                <label
+                    className="block text-sm font-medium text-slate-700 mb-1 capitalize text-nowrap truncate">{label}</label>
+                <input type="text" readOnly value={value || ""}
+                       className="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-600 focus:outline-none"/>
             </div>
         );
     };
@@ -97,7 +113,8 @@ const AdminTransactions = () => {
                         <p class="text-2xl font-bold text-slate-900">RS. {cardData.pendingPayouts || 0}</p>
                     </div>
                     <div class="bg-white rounded-lg border border-slate-200 p-4">
-                        <p class="text-xs font-medium text-slate-500 mb-1">Disputed Transactions (Failed Current Month)</p>
+                        <p class="text-xs font-medium text-slate-500 mb-1">Disputed Transactions (Failed Current
+                            Month)</p>
                         <p class="text-2xl font-bold text-red-600">RS. {cardData.disputedTransactions || 0}</p>
                     </div>
                 </div>
@@ -105,9 +122,17 @@ const AdminTransactions = () => {
                 {/* Filter Controls */}
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
                     <div class="flex items-center gap-1 bg-white border border-slate-200 rounded-lg p-1 w-fit">
-                        <button onClick={() => setFilter("all")} class={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'all' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>All</button>
-                        <button onClick={() => setFilter("month")} class={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'month' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>Current Month</button>
-                        <button onClick={() => setFilter("year")} class={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'year' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>Current Year</button>
+                        <button onClick={() => setFilter("all")}
+                                class={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'all' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>All
+                        </button>
+                        <button onClick={() => setFilter("month")}
+                                class={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'month' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>Current
+                            Month
+                        </button>
+                        <button onClick={() => setFilter("year")}
+                                class={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'year' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>Current
+                            Year
+                        </button>
                     </div>
                 </div>
 
@@ -115,30 +140,41 @@ const AdminTransactions = () => {
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <thead>
-                                <tr class="bg-slate-50 border-b border-slate-200">
-                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Transaction ID</th>
-                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Order Reference</th>
-                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Buyer</th>
-                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Seller</th>
-                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Amount</th>
-                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Status</th>
-                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Date</th>
-                                    <th class="text-right font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Actions</th>
-                                </tr>
+                            <tr class="bg-slate-50 border-b border-slate-200">
+                                <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Transaction
+                                    ID
+                                </th>
+                                <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Order
+                                    Reference
+                                </th>
+                                <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Buyer</th>
+                                <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Seller</th>
+                                <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Amount</th>
+                                <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Status</th>
+                                <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Date</th>
+                                <th class="text-right font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Actions</th>
+                            </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
-                                {currentItems.map((item, index) => (
-                                    <tr key={index}>
-                                        <td class="px-6 py-3.5 font-mono text-xs text-slate-600">{item.transaction_id}</td>
-                                        <td class="px-6 py-3.5 font-mono text-xs text-slate-600">{item.order_id?.order_reference_number}</td>
-                                        <td class="px-6 py-3.5 text-slate-700">{item.buyerDetails?.company_name}</td>
-                                        <td class="px-6 py-3.5 text-slate-700">{item.sellerDetails?.company_name}</td>
-                                        <td class="px-6 py-3.5 text-slate-700">{item.order_id?.currency}{item.order_id?.total_price}</td>
-                                        <td class="px-6 py-3.5"><span class="text-xs font-semibold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">{item.payment_status}</span></td>
-                                        <td class="px-6 py-3.5 text-slate-500">{new Date(item.created_at).toLocaleDateString()}</td>
-                                        <td class="px-6 py-3.5 text-right"><button onClick={() => handleView(item)} class="text-xs font-medium border border-slate-300 text-slate-600 rounded-md px-2.5 py-1 hover:bg-slate-50">View Details</button></td>
-                                    </tr>
-                                ))}
+                            {currentItems.map((item, index) => (
+                                <tr key={index}>
+                                    <td class="px-6 py-3.5 font-mono text-xs text-slate-600">{item.transaction_id}</td>
+                                    <td class="px-6 py-3.5 font-mono text-xs text-slate-600">{item.order_id?.order_reference_number}</td>
+                                    <td class="px-6 py-3.5 text-slate-700">{item.buyerDetails?.company_name}</td>
+                                    <td class="px-6 py-3.5 text-slate-700">{item.sellerDetails?.company_name}</td>
+                                    <td class="px-6 py-3.5 text-slate-700">{item.order_id?.currency}{item.order_id?.total_price}</td>
+                                    <td class="px-6 py-3.5"><span
+                                        class={`text-xs font-semibold text-black px-2 py-0.5 rounded-full ${statusColor(item.payment_status)}`}>{item.payment_status}</span>
+                                    </td>
+                                    <td class="px-6 py-3.5 text-slate-500">{new Date(item.created_at).toLocaleDateString()}</td>
+                                    <td class="px-6 py-3.5 text-right">
+                                        <button onClick={() => handleView(item)}
+                                                class="text-xs font-medium border border-slate-300 text-slate-600 rounded-md px-2.5 py-1 hover:bg-slate-50">View
+                                            Details
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
                             </tbody>
                         </table>
                     </div>
@@ -146,7 +182,9 @@ const AdminTransactions = () => {
                     {totalPages > 1 && (
                         <div className="px-6 py-4 border-t border-slate-200 flex items-center justify-between">
                             <p className="text-sm text-slate-500">
-                                Showing <span className="font-medium">{indexOfFirstItem + 1}</span> to <span className="font-medium">{Math.min(indexOfLastItem, filteredData.length)}</span> of <span className="font-medium">{filteredData.length}</span> results
+                                Showing <span className="font-medium">{indexOfFirstItem + 1}</span> to <span
+                                className="font-medium">{Math.min(indexOfLastItem, filteredData.length)}</span> of <span
+                                className="font-medium">{filteredData.length}</span> results
                             </p>
                             <div className="flex space-x-1">
                                 <button
@@ -156,7 +194,7 @@ const AdminTransactions = () => {
                                 >
                                     Previous
                                 </button>
-                                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                                {Array.from({length: totalPages}, (_, i) => i + 1).map(page => (
                                     <button
                                         key={page}
                                         onClick={() => setCurrentPage(page)}
@@ -179,19 +217,25 @@ const AdminTransactions = () => {
 
                 {/* <!-- MODAL --> */}
                 {isModalOpen && selectedItem && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+                    <div
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
                         <div className="bg-white rounded-xl shadow-xl w-full max-w-5xl max-h-[90vh] flex flex-col">
                             <div className="flex items-center justify-between p-6 border-b border-slate-200">
                                 <h2 className="text-xl font-bold text-slate-800">Payment Details</h2>
-                                <button onClick={closeModal} className="text-slate-400 hover:text-slate-600 focus:outline-none">
-                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                <button onClick={closeModal}
+                                        className="text-slate-400 hover:text-slate-600 focus:outline-none">
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                              d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
                                 </button>
                             </div>
                             <div className="p-6 overflow-y-auto flex-1">
                                 {selectedItem && (
                                     <>
                                         <div className="mb-8">
-                                            <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-200 pb-2">Payment Details</h3>
+                                            <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-200 pb-2">Payment
+                                                Details</h3>
                                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                                                 {renderField("Transaction ID", selectedItem.transaction_id)}
                                                 {renderField("Total Price", selectedItem.total_price)}
@@ -205,7 +249,8 @@ const AdminTransactions = () => {
                                         </div>
 
                                         <div className="mb-8">
-                                            <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-200 pb-2">Order Details</h3>
+                                            <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-200 pb-2">Order
+                                                Details</h3>
                                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                                                 {renderField("Order Reference Number", selectedItem.order_id?.order_reference_number)}
                                                 {renderField("Company Name", selectedItem.order_id?.company_name)}
@@ -229,7 +274,8 @@ const AdminTransactions = () => {
                                         </div>
 
                                         <div className="mb-8">
-                                            <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-200 pb-2">Seller Details</h3>
+                                            <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-200 pb-2">Seller
+                                                Details</h3>
                                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                                                 {renderField("Company Name", selectedItem.sellerDetails?.company_name)}
                                                 {renderField("Role", selectedItem.seller_id?.role)}
@@ -245,7 +291,8 @@ const AdminTransactions = () => {
                                         </div>
 
                                         <div className="mb-4">
-                                            <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-200 pb-2">Buyer Details</h3>
+                                            <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-200 pb-2">Buyer
+                                                Details</h3>
                                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                                                 {renderField("Company Name", selectedItem.buyerDetails?.company_name)}
                                                 {renderField("Role", selectedItem.buyer_id?.role)}
@@ -273,4 +320,4 @@ const AdminTransactions = () => {
     )
 }
 
-export default AdminTransactions
+export default Transactions

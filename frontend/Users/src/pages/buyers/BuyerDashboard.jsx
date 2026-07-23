@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { Dot } from 'lucide-react';
 
 const BuyerDashboard = () => {
     const [data, setData] = useState([]);
@@ -119,12 +120,8 @@ const BuyerDashboard = () => {
                         {data.map((item, index) => (
                             <li key={index} className="flex items-start gap-4 py-4">
                                 <div
-                                    className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                                    <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M5 13l4 4L19 7" />
-                                    </svg>
+                                    className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
+                                    <Dot size={50} color="#009966"/>
                                 </div>
                                 <div className="flex-1">
                                     <p className="text-sm text-slate-800">{item.message}</p>

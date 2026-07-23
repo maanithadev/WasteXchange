@@ -69,7 +69,7 @@ const ordersSchema = mongoose.Schema({
     currency: {
         type: String
     },
-    status: {       // "pending" | "confirmed" | "collected" | "cancelled"
+    status: {       // "pending" | "confirmed" | "shipped" | "collected" | "cancelled"
         type: String
     },
     ordered_date: {

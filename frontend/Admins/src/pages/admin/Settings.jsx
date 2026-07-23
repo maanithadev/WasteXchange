@@ -1,7 +1,7 @@
 import {useState} from "react";
 import axios from "axios";
 
-const AdminSettings = () => {
+const Settings = () => {
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [message, setMessage] = useState("");
@@ -89,4 +89,4 @@ const AdminSettings = () => {
     );
 };
 
-export default AdminSettings;
+export default Settings;

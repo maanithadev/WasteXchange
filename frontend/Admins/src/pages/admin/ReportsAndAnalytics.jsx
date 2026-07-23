@@ -2,7 +2,7 @@ import {useState, useEffect} from "react";
 import axios from "axios";
 import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer} from "recharts";
 
-const AdminReportsAndAnalytics = () => {
+const ReportsAndAnalytics = () => {
     const [filter, setFilter] = useState("Year to Date");
     const [chartData, setChartData] = useState({wasteData: [], carbonData: [], userData: []});
 
@@ -147,4 +147,4 @@ const AdminReportsAndAnalytics = () => {
     )
 }
 
-export default AdminReportsAndAnalytics
+export default ReportsAndAnalytics

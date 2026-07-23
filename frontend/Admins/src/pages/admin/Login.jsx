@@ -3,7 +3,7 @@ import axios from "axios";
 import {Link, useNavigate} from "react-router-dom";
 import toast from 'react-hot-toast';
 
-const AdminLogin = () => {
+const Login = () => {
     const {register, handleSubmit} = useForm({
         defaultValues: {
             email: "",
@@ -17,7 +17,7 @@ const AdminLogin = () => {
         try {
             const res = await axios.post(import.meta.env.VITE_ADMIN_BACKEND_URL + import.meta.env.VITE_ADMIN_LOGIN, data);
 
-            if(res.data?.message){
+            if (res.data?.message) {
                 toast.error(res.data?.message);
             }
 
@@ -25,14 +25,14 @@ const AdminLogin = () => {
                 toast.error('Your Account is still Pending for Approve');
             }
 
-            if (res.data?.role === null) {
+            if (res.data?.role === "need to assign") {
                 toast.error("Your Account haven't assigned a role yet");
             }
 
             if (res.data?.token) {
                 localStorage.clear()
                 localStorage.setItem("token", res.data.token);
-                navigate("/admin/dashboard")
+                navigate("/dashboard")
                 toast.success('Login successful!')
             }
 
@@ -87,4 +87,4 @@ const AdminLogin = () => {
     )
 }
 
-export default AdminLogin
+export default Login

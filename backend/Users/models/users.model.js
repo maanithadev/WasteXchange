@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const userSchema = mongoose.Schema({
-    role: {
+    role: {                  // buyer | seller
         type: String,
         required: true,
     },
@@ -11,7 +11,7 @@ const userSchema = mongoose.Schema({
     password: {
         type: String,
     },
-    status: {
+    status: {                  // active | suspended
         type: String,
     },
     created_at: {

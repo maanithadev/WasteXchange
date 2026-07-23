@@ -3,7 +3,7 @@ import axios from "axios"
 import {useEffect, useState} from "react"
 import toast from "react-hot-toast"
 
-const AdminNotificationsManagement = () => {
+const NotificationsManagement = () => {
     const {register, handleSubmit} = useForm()
     const [data, setData] = useState([])
     const [refresh, setRefresh] = useState(false)
@@ -113,4 +113,4 @@ const AdminNotificationsManagement = () => {
     )
 }
 
-export default AdminNotificationsManagement
+export default NotificationsManagement

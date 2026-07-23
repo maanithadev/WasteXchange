@@ -8,6 +8,23 @@ const BuyerMyOrders = () => {
     const [confirmOrder, setConfirmOrder] = useState(null);
     const [isUpdating, setIsUpdating] = useState(false);
 
+    const statusColor = (status) => {
+        switch (status) {
+            case "pending":
+                return "bg-emerald-200"
+            case "confirmed":
+                return "bg-yellow-200"
+            case "shipped":
+                return "bg-blue-200"
+            case "collected":
+                return "bg-emerald-200"
+            case "cancelled":
+                return "bg-red-200"
+            default:
+                return null
+        }
+    }
+
     useEffect(() => {
         async function loadOrders() {
             const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_BUYER_ORDER_INFO_URL, {
@@ -79,7 +96,7 @@ const BuyerMyOrders = () => {
                                         <td className="px-6 py-4 text-slate-600">{item.quantity} {item.unit}</td>
                                         <td className="px-6 py-4 text-slate-600">{item.ordered_date}</td>
                                         <td className="px-6 py-4"><span
-                                            className="text-xs font-semibold bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full">{item.status.toUpperCase()}</span>
+                                            className={`text-xs font-semibold text-black px-2.5 py-1 rounded-full capitalize ${statusColor(item.status)}`}>{item.status}</span>
                                         </td>
                                         <td className="px-6 py-4 text-right flex gap-2">
                                             {item.status.toLowerCase() === "cancelled" || item.status.toLowerCase() === "collected"

@@ -21,7 +21,7 @@ function timeAgo(dateString) {
     return Math.floor(seconds) + " seconds ago";
 }
 
-const AdminDashboard = () => {
+const Dashboard = () => {
     const [summary, setSummary] = useState({
         totalUsers: 0,
         totalSellers: 0,
@@ -168,4 +168,4 @@ const AdminDashboard = () => {
     )
 }
 
-export default AdminDashboard;
+export default Dashboard;

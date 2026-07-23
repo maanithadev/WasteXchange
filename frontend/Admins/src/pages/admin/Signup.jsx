@@ -3,7 +3,7 @@ import axios from "axios";
 import {Link, useNavigate} from "react-router-dom";
 import toast from 'react-hot-toast';
 
-const AdminSignup = () => {
+const Signup = () => {
     const {register, handleSubmit} = useForm()
 
     const navigate = useNavigate()
@@ -20,7 +20,7 @@ const AdminSignup = () => {
 
             switch (res.data.role) {
                 case "admin":
-                    navigate("/admin/dashboard")
+                    navigate("/dashboard")
                     toast.success('Login successful!')
                     break
                 default:
@@ -81,4 +81,4 @@ const AdminSignup = () => {
     )
 }
 
-export default AdminSignup
+export default Signup

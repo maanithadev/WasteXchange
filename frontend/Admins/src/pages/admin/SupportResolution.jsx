@@ -1,4 +1,4 @@
-const AdminSupportResolution = () => {
+const SupportResolution = () => {
     return (
         <>
             {/* <!-- SUPPORT / DISPUTE RESOLUTION PAGE --> */}
@@ -104,4 +104,4 @@ const AdminSupportResolution = () => {
     )
 }
 
-export default AdminSupportResolution
+export default SupportResolution

@@ -46,7 +46,7 @@ const paymentsSchema = mongoose.Schema({
     card_type_name: {
         type: String
     },
-    payment_status: {       // "completed" | "pending" | "failed" | "refunded" | "disputed"
+    payment_status: {       // "completed" | "pending" | "failed" | "refunded"
         type: String
     },
     created_at: {

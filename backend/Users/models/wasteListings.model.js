@@ -46,7 +46,7 @@ const wasteListingsSchema = mongoose.Schema({
             type: String
         },
     },
-    status: {       // "active" | "pending" | "sold" | "removed" | "flagged"
+    status: {       // "active" | "pending" | "draft" | "reject" | "review" | "send for review" | "sold"
         type: String
     },
     suspend_message: {

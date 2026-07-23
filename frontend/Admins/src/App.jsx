@@ -4,45 +4,47 @@ import ProtectedAdminRoutes from "./auth/ProtectedAdminRoutes"
 import {SidebarProvider} from "./contexts/SidebarContext"
 import {Toaster} from 'react-hot-toast';
 import NotFoundPage from "./pages/NotFoundPage.jsx";
+import BackendUsersManagement from "./pages/admin/BackendUsersManagement.jsx";
 
-const AdminLogin = lazy(() => import("./pages/admin/AdminLogin.jsx"));
-const AdminSignup = lazy(() => import("./pages/admin/AdminSignup.jsx"));
-const AdminSidebar = lazy(() => import("./components/admin/AdminSidebar"))
-const AdminNavbar = lazy(() => import("./components/admin/AdminNavbar"))
-const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"))
-const AdminUserManagement = lazy(() => import("./pages/admin/AdminUserManagement"))
-const AdminListingModeration = lazy(() => import("./pages/admin/AdminListingModeration"))
+const Login = lazy(() => import("./pages/admin/./Login"));
+const Signup = lazy(() => import("./pages/admin/./Signup"));
+const Sidebar = lazy(() => import("./components/admin/AdminSidebar"))
+const Navbar = lazy(() => import("./components/admin/AdminNavbar"))
+const Dashboard = lazy(() => import("./pages/admin/./Dashboard"))
+const UserManagement = lazy(() => import("./pages/admin/./UserManagement"))
+const ListingModeration = lazy(() => import("./pages/admin/./ListingModeration"))
 // const AIclassNameificationReviewQueue = lazy(() => import("./pages/admin/AdminAIClassificationReviewQueue"))
-const AdminTransactions = lazy(() => import("./pages/admin/AdminTransactions"))
-const AdminReportsAndAnalytics = lazy(() => import("./pages/admin/AdminReportsAndAnalytics"))
-const AdminSupportResolution = lazy(() => import("./pages/admin/AdminSupportResolution"))
-const AdminNotificationsManagement = lazy(() => import("./pages/admin/AdminNotificationsManagement"))
-const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"))
+const Transactions = lazy(() => import("./pages/admin/./Transactions"))
+const ReportsAndAnalytics = lazy(() => import("./pages/admin/./ReportsAndAnalytics"))
+const SupportResolution = lazy(() => import("./pages/admin/./SupportResolution"))
+const NotificationsManagement = lazy(() => import("./pages/admin/./NotificationsManagement"))
+const Settings = lazy(() => import("./pages/admin/./Settings"))
 
 const App = () => {
     return (
         <>
             <Routes>
-                <Route path="/" element={<AdminLogin/>}/>
-                <Route path="/signup" element={<AdminSignup/>}/>
+                <Route path="/" element={<Login/>}/>
+                <Route path="/signup" element={<Signup/>}/>
                 <Route path="*" element={<NotFoundPage/>}/>
 
                 <Route element={<ProtectedAdminRoutes/>}>
                     <Route element={
                         <SidebarProvider>
-                            <AdminSidebar/>
+                            <Sidebar/>
                         </SidebarProvider>
                     }>
-                        <Route element={<AdminNavbar/>}>
-                            <Route path="/admin/dashboard" element={<AdminDashboard/>}/>
-                            <Route path="/admin/user-management" element={<AdminUserManagement/>}/>
-                            <Route path="/admin/listing-moderation" element={<AdminListingModeration/>}/>
-                            {/* <Route path="/admin/ai-classification-review-queue" element={<AIclassNameificationReviewQueue />} /> */}
-                            <Route path="/admin/transactions" element={<AdminTransactions/>}/>
-                            <Route path="/admin/reports-and-analytics" element={<AdminReportsAndAnalytics/>}/>
-                            <Route path="/admin/support-resolution" element={<AdminSupportResolution/>}/>
-                            <Route path="/admin/notifications" element={<AdminNotificationsManagement/>}/>
-                            <Route path="/admin/settings" element={<AdminSettings/>}/>
+                        <Route element={<Navbar/>}>
+                            <Route path="/dashboard" element={<Dashboard/>}/>
+                            <Route path="/user-management" element={<UserManagement/>}/>
+                            <Route path="/backend-users-management" element={<BackendUsersManagement/>}/>
+                            <Route path="/listing-moderation" element={<ListingModeration/>}/>
+                            {/* <Route path="/ai-classification-review-queue" element={<AIclassNameificationReviewQueue />} /> */}
+                            <Route path="/transactions" element={<Transactions/>}/>
+                            <Route path="/reports-and-analytics" element={<ReportsAndAnalytics/>}/>
+                            <Route path="/support-resolution" element={<SupportResolution/>}/>
+                            <Route path="/notifications" element={<NotificationsManagement/>}/>
+                            <Route path="/settings" element={<Settings/>}/>
                         </Route>
                     </Route>
                 </Route>
