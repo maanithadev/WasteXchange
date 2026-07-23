@@ -3,14 +3,17 @@ const mongoose = require("mongoose");
 const matchesSchema = mongoose.Schema({
     wasteListings_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "wasteListings"
+        ref: "wasteListings",
+        required: true
     },
     buyer_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "users"
+        ref: "users",
+        required: true
     },
     matchScore: {
-        type: Number
+        type: Number,
+        required: true
     },
     created_at: {
         type: String

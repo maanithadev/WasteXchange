@@ -3,17 +3,21 @@ const mongoose = require('mongoose')
 const sellerDetailsSchema = mongoose.Schema({
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "users"
+        ref: "users",
+        required: true
     },
     company_name: {
         type: String,
+        required: true
     },
     phone_number: {
         type: String,
+        required: true
     },
     address: {
         street: {
             type: String,
+            required: true
         },
         city: {
             type: String,

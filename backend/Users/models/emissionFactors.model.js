@@ -3,10 +3,12 @@ const mongoose = require("mongoose");
 const emissionFactorsSchema = mongoose.Schema({
     category: {
         type: String,
-        unique: true
+        unique: true,
+        required: true
     },
     co2FactorPerKg: {
-        type: Number
+        type: Number,
+        required: true
     },
     source: {
         type: String

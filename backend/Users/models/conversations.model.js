@@ -3,11 +3,13 @@ const mongoose = require("mongoose");
 const conversationsSchema = mongoose.Schema({
     buyer_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "users"
+        ref: "users",
+        required: true
     },
     seller_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "users"
+        ref: "users",
+        required: true
     },
     last_message: {
         type: String,

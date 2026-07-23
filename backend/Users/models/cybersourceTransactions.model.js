@@ -6,7 +6,8 @@ const mongoose = require("mongoose");
 // if-condition branches on ("ACCEPT" | "FAILED" | others per CyberSource docs).
 const cybersourceTransactionsSchema = mongoose.Schema({
     decision: {
-        type: String // "ACCEPT" | "FAILED" (and any other CyberSource decision values)
+        type: String, // "ACCEPT" | "FAILED" (and any other CyberSource decision values)
+        required: true
     },
     processed: {
         // Marks whether reponse is not empty

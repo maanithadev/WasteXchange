@@ -2,13 +2,16 @@ const mongoose = require("mongoose")
 
 const adminAnnouncementsSchema = mongoose.Schema({
     title: {
-        type: String
+        type: String,
+        required: true
     },
     message: {
-        type: String
+        type: String,
+        required: true
     },
     audience: {
-        type: String
+        type: String,
+        required: true
     },
     send_date: {
         type: String

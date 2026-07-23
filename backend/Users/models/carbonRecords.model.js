@@ -3,18 +3,22 @@ const mongoose = require("mongoose");
 const carbonRecordsSchema = mongoose.Schema({
     order_id: {     // through this order_id i can get the wasteListing_id, seller_id, buyer_id
         type: mongoose.Schema.Types.ObjectId,
-        ref: "orders"
+        ref: "orders",
+        required: true
     },
     seller_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "users"
+        ref: "users",
+        required: true
     },
     buyer_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "users"
+        ref: "users",
+        required: true
     },
     co2SavedKg: {
-        type: Number
+        type: Number,
+        required: true
     },
     created_at: {
         type: String

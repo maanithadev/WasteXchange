@@ -5,7 +5,8 @@ const notificationsSchema = mongoose.Schema({
         // Was type: String — fixed to ObjectId so it actually populate()s
         // and Mongoose can validate it against a real user.
         type: mongoose.Schema.Types.ObjectId,
-        ref: "users"
+        ref: "users",
+        required: true
     },
     // reference_id: {
     // New field. Points at whatever triggered this notification — most
@@ -19,13 +20,17 @@ const notificationsSchema = mongoose.Schema({
     // type: mongoose.Schema.Types.ObjectId
     // },
     type: {     // "order" | "payment" | "wasteListing" | "admin_announcement"
-        type: String
+        type: String,
+        required: true,
+        enum: ["order", "payment", "wasteListing", "admin_announcement"]
     },
     title: {
-        type: String
+        type: String,
+        required: true
     },
     message: {
-        type: String
+        type: String,
+        required: true
     },
     isRead: {
         type: Boolean,

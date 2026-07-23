@@ -3,19 +3,23 @@ const mongoose = require("mongoose");
 const wasteListingsSchema = mongoose.Schema({
     seller_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "users"
+        ref: "users",
+        required: true
     },
     image: {
         type: String,
     },
     title: {
-        type: String
+        type: String,
+        required: true
     },
     category: {
-        type: String
+        type: String,
+        required: true
     },
     quantity: {
-        type: Number
+        type: Number,
+        required: true
     },
     unit: {     // "kg" | "tons" | "liters" etc.
         type: String
@@ -47,7 +51,9 @@ const wasteListingsSchema = mongoose.Schema({
         },
     },
     status: {       // "active" | "pending" | "draft" | "reject" | "review" | "send for review" | "sold"
-        type: String
+        type: String,
+        required: true,
+        enum: ["active", "pending", "draft", "reject", "review", "send for review", "sold"]
     },
     suspend_message: {
         type: String

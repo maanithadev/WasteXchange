@@ -3,15 +3,18 @@ const mongoose = require("mongoose");
 const ordersSchema = mongoose.Schema({
     wasteListings_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "wasteListings"
+        ref: "wasteListings",
+        required: true
     },
     seller_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "users"
+        ref: "users",
+        required: true
     },
     buyer_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "users"
+        ref: "users",
+        required: true
     },
     cyberSourceTransaction_id: {
         // Traces this order back to the accepted CyberSource response it was
@@ -70,7 +73,9 @@ const ordersSchema = mongoose.Schema({
         type: String
     },
     status: {       // "pending" | "confirmed" | "shipped" | "collected" | "cancelled"
-        type: String
+        type: String,
+        required: true,
+        enum: ["pending", "confirmed", "shipped", "collected", "cancelled"]
     },
     ordered_date: {
         type: String

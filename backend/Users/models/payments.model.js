@@ -5,7 +5,8 @@ const paymentsSchema = mongoose.Schema({
         // Was type: String — fixed to ObjectId so this actually populate()s
         // and Mongoose can validate it points at a real order.
         type: mongoose.Schema.Types.ObjectId,
-        ref: "orders"
+        ref: "orders",
+        required: true
     },
     seller_id: {
         type: mongoose.Schema.Types.ObjectId,
@@ -47,7 +48,9 @@ const paymentsSchema = mongoose.Schema({
         type: String
     },
     payment_status: {       // "completed" | "pending" | "failed" | "refunded"
-        type: String
+        type: String,
+        required: true,
+        enum: ["completed", "pending", "failed", "refunded"]
     },
     created_at: {
         type: String
