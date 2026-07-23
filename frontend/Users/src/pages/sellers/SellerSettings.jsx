@@ -12,7 +12,7 @@ const SellerSettings = () => {
     });
     const [passwordMessage, setPasswordMessage] = useState({ type: '', text: '' });
 
-    const { register, handleSubmit } = useForm({
+    const { register, handleSubmit, formState: { errors } } = useForm({
         values: {
             company_name: data.company_name,
             phone_number: data.phone_number,
@@ -100,14 +100,16 @@ const SellerSettings = () => {
                         onSubmit={handleSubmit(onSubmit)}>
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-2">Company Name</label>
-                            <input type="text" placeholder="Your company name"
-                                className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("company_name")} />
+                            <input type="text" placeholder="Your company name" {...register("company_name", { required: "Company Name is Required" })}
+                                className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                            {errors.company_name && <p className="text-red-600 font-medium">{errors.company_name?.message}</p>}
                         </div>
 
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-2">Phone Number</label>
-                            <input type="tel" placeholder="+1 (555) 000-0000"
-                                className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("phone_number")} />
+                            <input type="tel" placeholder="+1 (555) 000-0000" {...register("phone_number", { required: "Phone Number is Required" })}
+                                className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                            {errors.phone_number && <p className="text-red-600 font-medium">{errors.phone_number?.message}</p>}
                         </div>
 
                         <hr />
@@ -117,31 +119,36 @@ const SellerSettings = () => {
                             {/* <input type="text" placeholder="e.g. 1200 Industrial Way, Newark, NJ" className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" /> */}
                             <div className="flex justify-start items-center gap-3">
                                 <label className="block text-sm font-medium text-slate-700">Street</label>
-                                <input type="text"
-                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("address.street")} />
+                                <input type="text" {...register("address.street", { required: "Street is Required" })}
+                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                {errors.address?.street && <p className="text-red-600 font-medium">{errors.address?.street?.message}</p>}
                             </div>
                             <div className="flex justify-start items-center gap-3">
                                 <label className="block text-sm font-medium text-slate-700">City</label>
-                                <input type="text"
-                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("address.city")} />
+                                <input type="text" {...register("address.city", { required: "City is Required" })}
+                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                {errors.address?.city && <p className="text-red-600 font-medium">{errors.address?.city?.message}</p>}
                             </div>
                             <div className="flex justify-start items-center gap-3">
                                 <label className="block text-sm font-medium text-slate-700">State</label>
-                                <input type="text"
-                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("address.state")} />
+                                <input type="text" {...register("address.state", { required: "State is Required" })}
+                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                {errors.address?.state && <p className="text-red-600 font-medium">{errors.address?.state?.message}</p>}
                             </div>
                             <div className="flex justify-start items-center gap-3 w-full">
                                 <label className="block min-w-19 text-sm font-medium text-slate-700">Postal
                                     Code</label>
-                                <input type="text"
-                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("address.postal_code")} />
+                                <input type="text" {...register("address.postal_code", { required: "Postal Code is Required" })}
+                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                {errors.address?.postal_code && <p className="text-red-600 font-medium">{errors.address?.postal_code?.message}</p>}
                             </div>
                             <div className="flex justify-start items-center gap-3 w-full">
                                 <label className="block text-sm font-medium text-slate-700 mb-2">Country</label>
-                                <select
-                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("address.country")}>
+                                <select {...register("address.country", { required: "Country is Required" })}
+                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" >
                                     <option>Sri Lanka</option>
                                 </select>
+                                {errors.address?.country && <p className="text-red-600 font-medium">{errors.address?.country?.message}</p>}
                             </div>
                         </div>
 

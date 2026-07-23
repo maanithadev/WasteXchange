@@ -4,7 +4,7 @@ import {useEffect, useState} from "react"
 import toast from "react-hot-toast"
 
 const NotificationsManagement = () => {
-    const {register, handleSubmit} = useForm()
+    const {register, handleSubmit, formState: { errors }} = useForm()
     const [data, setData] = useState([])
     const [refresh, setRefresh] = useState(false)
 
@@ -50,24 +50,27 @@ const NotificationsManagement = () => {
 
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-2">Title</label>
-                        <input type="text" {...register("title")} placeholder="Announcement title"
+                        <input type="text" {...register("title", { required: "Title is Required" })} placeholder="Announcement title"
                                class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
+                        {errors.title && <p className="text-red-600 font-medium">{errors.title?.message}</p>}
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-2">Message</label>
-                        <textarea rows="4" {...register("message")} placeholder="Write your announcement..."
+                        <textarea rows="4" {...register("message", { required: "Message is Required" })} placeholder="Write your announcement..."
                                   class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                        {errors.message && <p className="text-red-600 font-medium">{errors.message?.message}</p>}
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-2">Target Audience</label>
-                        <select {...register("target_audience")}
+                        <select {...register("target_audience", { required: "Target Audience is Required" })}
                                 class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                             <option value="all">All Users</option>
                             <option value="sellers">Sellers Only</option>
                             <option value="buyers">Buyers Only</option>
                         </select>
+                        {errors.target_audience && <p className="text-red-600 font-medium">{errors.target_audience?.message}</p>}
                     </div>
 
                     <button type="button" onClick={handleSubmit(onsubmit)}

@@ -17,7 +17,7 @@ const SellerUploadWaste = () => {
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
 
-    const { register, handleSubmit } = useForm({
+    const { register, handleSubmit, formState } = useForm({
         values: {
             image: image || "",
             title: data.title,
@@ -37,6 +37,7 @@ const SellerUploadWaste = () => {
             status: "Active"
         }
     })
+    const { errors } = formState
 
     function handleChange(e) {
         setCurrentStep("step1")
@@ -147,18 +148,20 @@ const SellerUploadWaste = () => {
                             </label>
                             <input type="file" id="image" hidden onChange={handleChange} />
                         </div>
-                        <button type="button"
+                        {image !== null && <button type="button"
                             className="px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700"
                             onClick={handleClick}>Submit
-                        </button>
+                        </button>}
 
                         {currentStep === "step2" && <>
 
                             {/* <!-- Title --> */}
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">Waste Title</label>
-                                <input type="text" placeholder="e.g. Shredded HDPE Plastic Pellets"
-                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("title")} />
+                                <input type="text"
+                                    placeholder="e.g. Shredded HDPE Plastic Pellets" {...register("title", { required: "Title is Required" })}
+                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                {errors.title && <p className="text-red-600 font-medium">{errors.title.message}</p>}
                             </div>
 
                             {/* <!-- Category + Quantity/Unit --> */}
@@ -166,59 +169,69 @@ const SellerUploadWaste = () => {
                                 <div className="sm:col-span-1">
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Waste
                                         Category</label>
-                                    <select
-                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("category")}>
+                                    <select {...register("category", { required: "Category is Required" })}
+                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                                         {wasteCategories.map((item, index) => (
                                             <option key={index} value={item}>{item}</option>
                                         ))}
                                     </select>
+                                    {errors.category && <p className="text-red-600 font-medium">{errors.category.message}</p>}
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Quantity</label>
-                                    <input type="number" placeholder="e.g. 500"
-                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("quantity")} />
+                                    <input type="number"
+                                        placeholder="e.g. 500" {...register("quantity", { valueAsNumber: true, required: "Quantity is Required" })}
+                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                    {errors.quantity && <p className="text-red-600 font-medium">{errors.quantity.message}</p>}
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Unit</label>
-                                    <select
-                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("unit")}>
+                                    <select {...register("unit", { required: "Unit is Required" })}
+                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                                         {units.map((item, index) => (
                                             <option key={index} value={item}>{item}</option>
                                         ))}
                                     </select>
+                                    {errors.unit && <p className="text-red-600 font-medium">{errors.unit.message}</p>}
                                 </div>
                             </div>
 
                             {/* <!-- Colour --> */}
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">Waste Colour</label>
-                                <input type="text" placeholder="e.g. Shredded HDPE Plastic Pellets"
-                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("colour")} />
+                                <input type="text"
+                                    placeholder="e.g. Shredded HDPE Plastic Pellets" {...register("colour", { required: "Colour is Required" })}
+                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                {errors.colour && <p className="text-red-600 font-medium">{errors.colour.message}</p>}
                             </div>
 
                             {/* <!-- Description --> */}
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">Description</label>
                                 <textarea
-                                    placeholder="Describe the material condition, contamination level, packaging, etc."
-                                    className="w-full min-h-50 rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("description")}></textarea>
+                                    placeholder="Describe the material condition, contamination level, packaging, etc." {...register("description", { required: "Description is Required" })}
+                                    className="w-full min-h-50 rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                                {errors.description && <p className="text-red-600 font-medium">{errors.description.message}</p>}
                             </div>
 
                             {/* <!-- Pricing + Currency --> */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Price</label>
-                                    <input type="number" placeholder="e.g. 500"
-                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("price")} />
+                                    <input type="number"
+                                        placeholder="e.g. 500" {...register("price", { valueAsNumber: true, required: "Price is Required" })}
+                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                    {errors.price && <p className="text-red-600 font-medium">{errors.price.message}</p>}
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Currency</label>
-                                    <select
-                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("currency")}>
+                                    <select {...register("currency", { required: "Currency is Required" })}
+                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                                         {currencyList.map((item, index) => (
                                             <option key={index} value={item}>{item}</option>
                                         ))}
                                     </select>
+                                    {errors.currency && <p className="text-red-600 font-medium">{errors.currency.message}</p>}
                                 </div>
                             </div>
 
@@ -230,24 +243,30 @@ const SellerUploadWaste = () => {
                                 {/* <input type="text" placeholder="e.g. 1200 Industrial Way, Newark, NJ" className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" /> */}
                                 <div className="flex justify-start items-center gap-3">
                                     <label className="block text-sm font-medium text-slate-700">Street</label>
-                                    <input type="text"
-                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("location.street")} />
+                                    <input
+                                        type="text" {...register("location.street", { required: "Street is Required" })}
+                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                    {errors.location?.street && <p className="text-red-600 font-medium">{errors.location?.street?.message}</p>}
                                 </div>
                                 <div className="flex justify-start items-center gap-3">
                                     <label className="block text-sm font-medium text-slate-700">City</label>
-                                    <input type="text"
-                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("location.city")} />
+                                    <input type="text" {...register("location.city", { required: "City is Required" })}
+                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                    {errors.location?.city && <p className="text-red-600 font-medium">{errors.location?.city?.message}</p>}
                                 </div>
                                 <div className="flex justify-start items-center gap-3">
                                     <label className="block text-sm font-medium text-slate-700">State</label>
-                                    <input type="text"
-                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("location.state")} />
+                                    <input type="text" {...register("location.state", { required: "State is Required" })}
+                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                    {errors.location?.state && <p className="text-red-600 font-medium">{errors.location?.state?.message}</p>}
                                 </div>
                                 <div className="flex justify-start items-center gap-3 w-full">
                                     <label className="block min-w-19 text-sm font-medium text-slate-700">Postal
                                         Code</label>
-                                    <input type="text"
-                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("location.postal_code")} />
+                                    <input
+                                        type="text" {...register("location.postal_code", { required: "Postal Code is Required" })}
+                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                    {errors.location?.postal_code && <p className="text-red-600 font-medium">{errors.location?.postal_code?.message}</p>}
                                 </div>
                             </div>
 
@@ -255,12 +274,13 @@ const SellerUploadWaste = () => {
                             <div>
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Status</label>
-                                    <select
-                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("status")}>
+                                    <select {...register("status", { required: "Status is Required" })}
+                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                                         {statusList.map((item, index) => (
                                             <option key={index} value={item}>{item}</option>
                                         ))}
                                     </select>
+                                    {errors.status && <p className="text-red-600 font-medium">{errors.status?.message}</p>}
                                 </div>
                             </div>
 
@@ -281,9 +301,10 @@ const SellerUploadWaste = () => {
                                 <div className="flex items-center gap-2 mb-3">
                                     <span
                                         className="inline-flex items-center gap-1.5 bg-emerald-600 text-white text-xs font-semibold px-2.5 py-1 rounded-full">
-                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path
-                                            strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                            d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24"><path
+                                                strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                                d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                                         {data.category}
                                     </span>
                                 </div>

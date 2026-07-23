@@ -1,7 +1,7 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import {Link} from "react-router-dom";
-import {useForm} from "react-hook-form";
+import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 const SellerMyListings = () => {
@@ -38,7 +38,7 @@ const SellerMyListings = () => {
         }
     }
 
-    const {register, handleSubmit} = useForm({
+    const { register, handleSubmit, formState: { errors } } = useForm({
         values: {
             image: editData.image,
             title: editData.title,
@@ -213,7 +213,7 @@ const SellerMyListings = () => {
                         <button
                             className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"/>
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
                             </svg>
                             New Listing
                         </button>
@@ -222,7 +222,7 @@ const SellerMyListings = () => {
 
                 <div className="mb-5">
                     <select onChange={handleFilterChange}
-                            className="rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        className="rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="all">All</option>
                         <option value="active">Active</option>
                         <option value="sold">Sold</option>
@@ -237,8 +237,8 @@ const SellerMyListings = () => {
                     {filterData.map((item, index) => (
                         <div key={index} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
                             <img src={`http://localhost:3000/uploads/${item.image}`}
-                                 className="w-full h-40 object-cover"
-                                 alt={item.title}/>
+                                className="w-full h-40 object-cover"
+                                alt={item.title} />
                             <div className="p-4">
                                 <div className="flex items-center justify-between mb-2">
                                     <h3 className="font-semibold text-slate-900 text-sm">{item.title}</h3>
@@ -275,10 +275,10 @@ const SellerMyListings = () => {
                             <div className="flex justify-between items-center mb-6">
                                 <h2 className="text-xl font-bold text-slate-900">Edit Listing</h2>
                                 <button onClick={() => setIsEditModalOpen(false)}
-                                        className="text-slate-400 hover:text-slate-600">
+                                    className="text-slate-400 hover:text-slate-600">
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                              d="M6 18L18 6M6 6l12 12"></path>
+                                            d="M6 18L18 6M6 6l12 12"></path>
                                     </svg>
                                 </button>
                             </div>
@@ -288,21 +288,21 @@ const SellerMyListings = () => {
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 mb-2">Status</label>
                                         <input type="text" value={editData.status} readOnly
-                                               className={`w-full text-sm border-2 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none ${editData.status === "Rejected" ? "border-red-500" : "border-slate-200"}`}/>
+                                            className={`w-full text-sm border-2 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none ${editData.status === "Rejected" ? "border-red-500" : "border-slate-200"}`} />
                                         {editData.suspend_message !== null && <div className="mt-5">
                                             <label className="block text-sm font-medium text-slate-700 mb-2">Reason for
                                                 Rejection</label>
                                             <textarea value={editData.suspend_message} rows="5" readOnly
-                                                      className={`w-full text-sm border-2 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none ${editData.status === "Rejected" ? "border-red-500" : "border-slate-200"}`}/>
+                                                className={`w-full text-sm border-2 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none ${editData.status === "Rejected" ? "border-red-500" : "border-slate-200"}`} />
                                         </div>}
                                     </div>
                                     <div className="flex justify-end gap-3 pt-4">
                                         <button type="button" onClick={handleUpdateStatus}
-                                                className="px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700">Request
+                                            className="px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700">Request
                                             Editing Access
                                         </button>
                                         <button type="button" onClick={() => setIsEditModalOpen(false)}
-                                                className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50">Cancel
+                                            className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50">Cancel
                                         </button>
                                     </div>
                                 </div>
@@ -312,16 +312,16 @@ const SellerMyListings = () => {
                                         <label className="block text-sm font-medium text-slate-700 mb-2">Waste
                                             Image</label>
                                         <input type="file" {...register("image")}
-                                               className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"/>
+                                            className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
                                     </div>
 
                                     {/* Title */}
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 mb-2">Waste
                                             Title</label>
-                                        <input type="text" {...register("title")}
-                                               className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                               required/>
+                                        <input type="text" {...register("title", { required: "Title is Required" })}
+                                            className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                        {errors.title && <p className="text-red-600 font-medium">{errors.title?.message}</p>}
                                     </div>
 
                                     {/* Category + Quantity/Unit */}
@@ -329,28 +329,31 @@ const SellerMyListings = () => {
                                         <div className="sm:col-span-1">
                                             <label className="block text-sm font-medium text-slate-700 mb-2">Waste
                                                 Category</label>
-                                            <select {...register("category")}
-                                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                            <select {...register("category", { required: "Category is Required" })}
+                                                className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                                                 {wasteCategories.map((item, index) => (
                                                     <option key={index} value={item}>{item}</option>
                                                 ))}
                                             </select>
+                                            {errors.category && <p className="text-red-600 font-medium">{errors.category?.message}</p>}
                                         </div>
                                         <div>
                                             <label
                                                 className="block text-sm font-medium text-slate-700 mb-2">Quantity</label>
-                                            <input type="number" {...register("quantity")}
-                                                   className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"/>
+                                            <input type="number" {...register("quantity", { valueAsNumber: true, required: "Quantity is Required" })}
+                                                className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                            {errors.quantity && <p className="text-red-600 font-medium">{errors.quantity?.message}</p>}
                                         </div>
                                         <div>
                                             <label
                                                 className="block text-sm font-medium text-slate-700 mb-2">Unit</label>
-                                            <select {...register("unit")}
-                                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                            <select {...register("unit", { required: "Unit is Required" })}
+                                                className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                                                 {units.map((item, index) => (
                                                     <option key={index} value={item}>{item}</option>
                                                 ))}
                                             </select>
+                                            {errors.unit && <p className="text-red-600 font-medium">{errors.unit?.message}</p>}
                                         </div>
                                     </div>
 
@@ -358,16 +361,18 @@ const SellerMyListings = () => {
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 mb-2">Waste
                                             Colour</label>
-                                        <input type="text" {...register("colour")}
-                                               className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"/>
+                                        <input type="text" {...register("colour", { required: "Colour is Required" })}
+                                            className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                        {errors.colour && <p className="text-red-600 font-medium">{errors.colour?.message}</p>}
                                     </div>
 
                                     {/* Description */}
                                     <div>
                                         <label
                                             className="block text-sm font-medium text-slate-700 mb-2">Description</label>
-                                        <textarea {...register("description")}
-                                                  className="w-full min-h-[100px] rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                                        <textarea {...register("description", { required: "Description is Required" })}
+                                            className="w-full min-h-[100px] rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                                        {errors.description && <p className="text-red-600 font-medium">{errors.description?.message}</p>}
                                     </div>
 
                                     {/* Pricing + Currency */}
@@ -375,22 +380,24 @@ const SellerMyListings = () => {
                                         <div>
                                             <label
                                                 className="block text-sm font-medium text-slate-700 mb-2">Price</label>
-                                            <input type="number" {...register("price")}
-                                                   className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"/>
+                                            <input type="number" {...register("price", { valueAsNumber: true, required: "Price is Required" })}
+                                                className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                            {errors.price && <p className="text-red-600 font-medium">{errors.price?.message}</p>}
                                         </div>
                                         <div>
                                             <label
                                                 className="block text-sm font-medium text-slate-700 mb-2">Currency</label>
-                                            <select {...register("currency")}
-                                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                            <select {...register("currency", { required: "Currency is Required" })}
+                                                className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                                                 {currencyList.map((item, index) => (
                                                     <option key={index} value={item}>{item}</option>
                                                 ))}
                                             </select>
+                                            {errors.currency && <p className="text-red-600 font-medium">{errors.currency?.message}</p>}
                                         </div>
                                     </div>
 
-                                    <hr className="border-slate-200"/>
+                                    <hr className="border-slate-200" />
 
                                     {/* Location */}
                                     <div className="flex flex-col gap-3">
@@ -399,26 +406,30 @@ const SellerMyListings = () => {
                                             <div>
                                                 <label
                                                     className="block text-sm font-medium text-slate-700 mb-2">Street</label>
-                                                <input type="text" {...register("location.street")}
-                                                       className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"/>
+                                                <input type="text" {...register("location.street", { required: "Street is Required" })}
+                                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                                {errors.location?.street && <p className="text-red-600 font-medium">{errors.location?.street?.message}</p>}
                                             </div>
                                             <div>
                                                 <label
                                                     className="block text-sm font-medium text-slate-700 mb-2">City</label>
-                                                <input type="text" {...register("location.city")}
-                                                       className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"/>
+                                                <input type="text" {...register("location.city", { required: "City is Required" })}
+                                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                                {errors.location?.city && <p className="text-red-600 font-medium">{errors.location?.city?.message}</p>}
                                             </div>
                                             <div>
                                                 <label
                                                     className="block text-sm font-medium text-slate-700 mb-2">State</label>
-                                                <input type="text" {...register("location.state")}
-                                                       className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"/>
+                                                <input type="text" {...register("location.state", { required: "State is Required" })}
+                                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                                {errors.location?.state && <p className="text-red-600 font-medium">{errors.location?.state?.message}</p>}
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-medium text-slate-700 mb-2">Postal
                                                     Code</label>
-                                                <input type="text" {...register("location.postal_code")}
-                                                       className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"/>
+                                                <input type="text" {...register("location.postal_code", { required: "Postal Code is Required" })}
+                                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                                {errors.location?.postal_code && <p className="text-red-600 font-medium">{errors.location?.postal_code?.message}</p>}
                                             </div>
                                         </div>
                                     </div>
@@ -426,22 +437,23 @@ const SellerMyListings = () => {
                                     {/* Status */}
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 mb-2">Status</label>
-                                        <select {...register("status", {required: true})}
-                                                className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                        <select {...register("status", { required: "Status is Required" })}
+                                            className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                                             {editData.status === "Review"
                                                 ? <option value="Send for Review">Send for Review</option>
                                                 : statusList.map((item, index) => (
                                                     <option key={index} value={item}>{item}</option>
                                                 ))}
                                         </select>
+                                        {errors.status && <p className="text-red-600 font-medium">{errors.status?.message}</p>}
                                     </div>
 
                                     <div className="flex justify-end gap-3 pt-4">
                                         <button type="button" onClick={() => setIsEditModalOpen(false)}
-                                                className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50">Cancel
+                                            className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50">Cancel
                                         </button>
                                         <button type="submit"
-                                                className="px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700">Save
+                                            className="px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700">Save
                                             Changes
                                         </button>
                                     </div>
@@ -459,10 +471,10 @@ const SellerMyListings = () => {
                                 cannot be undone.</p>
                             <div className="flex justify-end gap-3">
                                 <button onClick={() => setIsDeleteModalOpen(false)}
-                                        className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50">Cancel
+                                    className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50">Cancel
                                 </button>
                                 <button onClick={handleDeleteConfirm}
-                                        className="px-5 py-2.5 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-700">Continue
+                                    className="px-5 py-2.5 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-700">Continue
                                 </button>
                             </div>
                         </div>
