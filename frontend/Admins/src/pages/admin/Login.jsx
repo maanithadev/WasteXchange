@@ -1,10 +1,10 @@
-import {useForm} from "react-hook-form";
+import { useForm } from "react-hook-form";
 import axios from "axios";
-import {Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
 
 const Login = () => {
-    const {register, handleSubmit} = useForm({
+    const { register, handleSubmit } = useForm({
         defaultValues: {
             email: "",
             password: "",
@@ -35,9 +35,12 @@ const Login = () => {
                 navigate("/dashboard")
                 toast.success('Login successful!')
             }
-
         } catch (err) {
-            toast.error('Something went wrong! Please try again later.')
+            if (err.message === "Request failed with status code 429") {
+                toast.error("Too many requests, please try again later.")
+            } else {
+                toast.error('Something went wrong! Please try again later.')
+            }
         }
     }
 
@@ -57,21 +60,21 @@ const Login = () => {
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
                                 <input type="email" placeholder="you@company.com"
-                                       class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register('email')} />
+                                    class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register('email')} />
                             </div>
 
                             <div>
                                 <div class="flex items-center justify-between mb-2">
                                     <label class="block text-sm font-medium text-slate-700">Password</label>
-                                    <a href="#" class="text-xs font-medium text-emerald-600 hover:text-emerald-700">Forgot
-                                        Password?</a>
+                                    <Link to="/forgot-password" class="text-xs font-medium text-emerald-600 hover:text-emerald-700">Forgot
+                                        Password?</Link>
                                 </div>
                                 <input type="password" placeholder="••••••••"
-                                       class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register('password')} />
+                                    class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register('password')} />
                             </div>
 
                             <button type="submit"
-                                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold py-2.5 rounded-lg">Log
+                                class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold py-2.5 rounded-lg">Log
                                 In
                             </button>
                         </form>

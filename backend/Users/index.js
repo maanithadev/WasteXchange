@@ -4,6 +4,8 @@ const cors = require('cors');
 const connectDB = require("./config/database");
 const path = require("path");
 const multer = require("multer");
+const rateLimit = require("express-rate-limit");
+const helmet = require("helmet");
 const http = require('http');
 const { Server } = require("socket.io");
 
@@ -21,7 +23,7 @@ const userSockets = new Map();
 
 io.on('connection', (socket) => {
     socket.on("register", (user_id) => {
-        if(user_id) {
+        if (user_id) {
             userSockets.set(user_id, socket.id);
         }
     });
@@ -56,6 +58,14 @@ app.use(express.urlencoded({ extended: true }))
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use("/images", express.static(path.join(__dirname, "uploads")))
 
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+    message: "Too many requests, please try again later",
+});
+
+app.use(helmet());
+app.use(limiter);
 app.use("/api/users", userRoutes)
 app.use("/api/sellers", sellerRoutes)
 app.use("/api/buyers", buyerRoutes)

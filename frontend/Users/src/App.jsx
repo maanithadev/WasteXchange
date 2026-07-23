@@ -9,6 +9,7 @@ const GuestsAbout = lazy(() => import("./pages/guests/GuestsAbout.jsx"));
 const GuestsBrowseMarketplace = lazy(() => import("./pages/guests/GuestsBrowseMarketplace.jsx"));
 const GuestsListingDetail = lazy(() => import("./pages/guests/GuestsListingDetail.jsx"));
 const GuestsLogin = lazy(() => import("./pages/guests/GuestsLogin.jsx"));
+const ForgotPassword = lazy(() => import("./pages/guests/ForgotPassword.jsx"));
 const GuestsSignup = lazy(() => import("./pages/guests/GuestsSignup.jsx"));
 const GuestsContact = lazy(() => import("./pages/guests/GuestsContact.jsx"));
 const SellerSidebar = lazy(() => import("./components/sellers/SellerSidebar.jsx"));
@@ -59,6 +60,7 @@ const App = () => {
                             <Route path="/listing-detail" element={<GuestsListingDetail />} />
                             <Route path="/about" element={<GuestsAbout />} />
                             <Route path="/login" element={<GuestsLogin />} />
+                            <Route path="/forgot-password" element={<ForgotPassword />} />
                             <Route path="/signup" element={<GuestsSignup />} />
                             <Route path="/contact" element={<GuestsContact />} />
                             <Route path="*" element={<NotFoundPage />} />

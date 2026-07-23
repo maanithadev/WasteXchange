@@ -366,6 +366,24 @@ router.post("/change-password", verifyUser, async (req, res) => {
     }
 })
 
+router.post("/forgot-password", async (req, res) => {
+    try {
+        const {email, newPassword} = req.body;
+        const user = await Users.findOne({email});
+        if (!user) return res.status(404).json({message: "User not found"});
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        await Users.updateOne(
+            {email},
+            {password: hashedPassword}
+        );
+
+        res.json({message: "Password reset successfully"});
+    } catch (err) {
+        res.status(500).json({message: err.message});
+    }
+})
+
 
 //put
 router.put("/update-user-status", verifyUser, async (req, res) => {

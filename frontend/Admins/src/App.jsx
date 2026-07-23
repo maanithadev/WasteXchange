@@ -7,6 +7,7 @@ import NotFoundPage from "./pages/NotFoundPage.jsx";
 import BackendUsersManagement from "./pages/admin/BackendUsersManagement.jsx";
 
 const Login = lazy(() => import("./pages/admin/./Login"));
+const ForgotPassword = lazy(() => import("./pages/admin/./ForgotPassword"));
 const Signup = lazy(() => import("./pages/admin/./Signup"));
 const Sidebar = lazy(() => import("./components/admin/AdminSidebar"))
 const Navbar = lazy(() => import("./components/admin/AdminNavbar"))
@@ -26,6 +27,7 @@ const App = () => {
             <Routes>
                 <Route path="/" element={<Login/>}/>
                 <Route path="/signup" element={<Signup/>}/>
+                <Route path="/forgot-password" element={<ForgotPassword/>}/>
                 <Route path="*" element={<NotFoundPage/>}/>
 
                 <Route element={<ProtectedAdminRoutes/>}>
