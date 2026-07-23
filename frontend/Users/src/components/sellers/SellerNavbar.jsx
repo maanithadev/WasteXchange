@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import { useSidebarContext } from "../../contexts/SidebarContext.jsx";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import {Bell} from 'lucide-react';
+import { Bell } from 'lucide-react';
 
 const SellerNavbar = () => {
     const { isSidebarOpen, setIsSidebarOpen } = useSidebarContext();
@@ -20,7 +20,11 @@ const SellerNavbar = () => {
                 });
                 setNotifications(response.data);
             } catch (err) {
-                console.error("Failed to fetch notifications:", err);
+                if (err.message === "Request failed with status code 429") {
+                    toast.error("Too many requests, please try again later.")
+                } else {
+                    toast.error('Something went wrong! Please try again later.')
+                }
             }
         };
 
@@ -51,7 +55,11 @@ const SellerNavbar = () => {
             });
             setNotifications(notifications.map(n => n._id === id ? { ...n, isRead: true } : n));
         } catch (err) {
-            console.error("Failed to mark notification as read:", err);
+            if (err.message === "Request failed with status code 429") {
+                toast.error("Too many requests, please try again later.")
+            } else {
+                toast.error('Something went wrong! Please try again later.')
+            }
         }
     };
 
@@ -64,7 +72,11 @@ const SellerNavbar = () => {
             });
             setNotifications(notifications.map(n => ({ ...n, isRead: true })));
         } catch (err) {
-            console.error("Failed to mark all notifications as read:", err);
+            if (err.message === "Request failed with status code 429") {
+                toast.error("Too many requests, please try again later.")
+            } else {
+                toast.error('Something went wrong! Please try again later.')
+            }
         }
     };
 

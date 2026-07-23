@@ -50,7 +50,11 @@ const BuyerSettings = () => {
                 })
             toast.success('Profile updated successfully!')
         } catch (err) {
-            toast.error('Something went wrong! Please try again later.')
+            if (err.message === "Request failed with status code 429") {
+                toast.error("Too many requests, please try again later.")
+            } else {
+                toast.error('Something went wrong! Please try again later.')
+            }
         }
     }
 
@@ -66,7 +70,6 @@ const BuyerSettings = () => {
             return setPasswordMessage({ type: 'error', text: 'Password must be at least 6 characters' });
         }
 
-        console.log(passwordData)
         try {
             const res = await axios.post(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_CHANGE_PASSWORD_URL, {
                 currentPassword: passwordData.currentPassword,
@@ -79,23 +82,27 @@ const BuyerSettings = () => {
             setPasswordMessage({ type: 'success', text: res.data.message });
             setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
         } catch (err) {
-            setPasswordMessage({
-                type: 'error',
-                text: err.response?.data?.message || 'Failed to update password'
-            });
+            if (err.message === "Request failed with status code 429") {
+                toast.error("Too many requests, please try again later.")
+            } else {
+                setPasswordMessage({
+                    type: 'error',
+                    text: err.response?.data?.message || 'Failed to update password'
+                });
+            }
         }
     };
 
     return (
         <>
             {/* <!-- PROFILE / ACCOUNT SETTINGS PAGE (BUYER) --> */}
-            <main class="flex-1 p-8 bg-slate-50 min-h-screen">
-                <div class="mb-8">
-                    <h1 class="text-2xl font-bold text-slate-900">Profile &amp; Account Settings</h1>
-                    <p class="text-sm text-slate-500 mt-1">Manage your company profile and account preferences</p>
+            <main className="flex-1 p-8 bg-slate-50 min-h-screen">
+                <div className="mb-8">
+                    <h1 className="text-2xl font-bold text-slate-900">Profile &amp; Account Settings</h1>
+                    <p className="text-sm text-slate-500 mt-1">Manage your company profile and account preferences</p>
                 </div>
 
-                <div class="max-w-2xl space-y-6">
+                <div className="max-w-2xl space-y-6">
                     <form className="bg-white rounded-xl border border-slate-200 p-6 space-y-5"
                         onSubmit={handleSubmit(onSubmit)}>
                         <div>
@@ -160,8 +167,8 @@ const BuyerSettings = () => {
                         </div>
                     </form>
 
-                    <form class="bg-white rounded-xl border border-slate-200 p-6 space-y-5" onSubmit={handlePasswordSubmit}>
-                        <h2 class="text-lg font-semibold text-slate-900">Change Password</h2>
+                    <form className="bg-white rounded-xl border border-slate-200 p-6 space-y-5" onSubmit={handlePasswordSubmit}>
+                        <h2 className="text-lg font-semibold text-slate-900">Change Password</h2>
 
                         {passwordMessage.text && (
                             <div className={`p-3 rounded-lg text-sm ${passwordMessage.type === 'error' ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-emerald-50 text-emerald-600 border border-emerald-200'}`}>
@@ -170,32 +177,32 @@ const BuyerSettings = () => {
                         )}
 
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Current Password</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-2">Current Password</label>
                             <input type="password" placeholder="••••••••" required
                                 value={passwordData.currentPassword}
                                 onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                                class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                                className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">New Password</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-2">New Password</label>
                             <input type="password" placeholder="••••••••" required
                                 value={passwordData.newPassword}
                                 onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                                class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                                className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Confirm New Password</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-2">Confirm New Password</label>
                             <input type="password" placeholder="••••••••" required
                                 value={passwordData.confirmPassword}
                                 onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                                class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                                className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                         </div>
 
-                        <div class="flex justify-end pt-2">
+                        <div className="flex justify-end pt-2">
                             <button type="submit"
-                                class="px-5 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700">Update
+                                className="px-5 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700">Update
                                 Password
                             </button>
                         </div>

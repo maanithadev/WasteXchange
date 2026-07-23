@@ -243,7 +243,7 @@ router.post('/payment/response', async (req, res) => {
 
                 await WasteListings.updateOne(
                     { _id: transaction_Data._id },
-                    { status: "Sold" }
+                    { status: "sold" }
                 )
 
                 await calculateAndSaveCarbonRecord(saved_Order._id)

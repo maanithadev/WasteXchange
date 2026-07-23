@@ -34,10 +34,14 @@ const ForgotPassword = () => {
             toast.success(res.data.message || 'Password reset successful!');
             navigate("/");
         } catch (err) {
-            setMessage({
-                type: 'error',
-                text: err.response?.data?.message || 'Something went wrong! Please try again later.'
-            });
+            if (err.message === "Request failed with status code 429") {
+                toast.error("Too many requests, please try again later.")
+            } else {
+                setMessage({
+                    type: 'error',
+                    text: err.response?.data?.message || 'Something went wrong! Please try again later.'
+                });
+            }
         }
     };
 

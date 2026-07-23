@@ -30,16 +30,20 @@ const ForgotPassword = () => {
                 email: passwordData.email,
                 newPassword: passwordData.newPassword
             });
-            
+
             toast.success(res.data.message || 'Password reset successful!');
             navigate("/login");
         } catch (err) {
-            setMessage({ 
-                type: 'error', 
-                text: err.response?.data?.message || 'Something went wrong! Please try again later.' 
-            });
-        }
-    };
+            if (err.message === "Request failed with status code 429") {
+                toast.error("Too many requests, please try again later.")
+            } else {
+                setMessage({
+                    type: 'error',
+                    text: err.response?.data?.message || 'Something went wrong! Please try again later.'
+                })
+            }
+        };
+    }
 
     return (
         <main className="min-h-screen bg-slate-50 flex items-center justify-center px-6 py-16">

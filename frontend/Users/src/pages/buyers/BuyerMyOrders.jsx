@@ -55,7 +55,11 @@ const BuyerMyOrders = () => {
             ));
             toast.success('Order marked as collected successfully!')
         } catch (err) {
-            toast.error('Something went wrong! Please try again later.')
+            if (err.message === "Request failed with status code 429") {
+                toast.error("Too many requests, please try again later.")
+            } else {
+                toast.error('Something went wrong! Please try again later.')
+            }
         } finally {
             setIsUpdating(false);
             setConfirmOrder(null);
@@ -65,30 +69,30 @@ const BuyerMyOrders = () => {
     return (
         <>
             {/* <!-- MY ORDERS PAGE --> */}
-            <main class="flex-1 p-8 bg-slate-50 min-h-screen">
-                <div class="mb-8">
-                    <h1 class="text-2xl font-bold text-slate-900">My Orders</h1>
-                    <p class="text-sm text-slate-500 mt-1">Track your order history and delivery status</p>
+            <main className="flex-1 p-8 bg-slate-50 min-h-screen">
+                <div className="mb-8">
+                    <h1 className="text-2xl font-bold text-slate-900">My Orders</h1>
+                    <p className="text-sm text-slate-500 mt-1">Track your order history and delivery status</p>
                 </div>
 
-                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
+                <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
                             <thead>
-                                <tr class="bg-slate-50 border-b border-slate-200">
-                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Seller</th>
-                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Waste
+                                <tr className="bg-slate-50 border-b border-slate-200">
+                                    <th className="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Seller</th>
+                                    <th className="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Waste
                                         Item
                                     </th>
-                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Quantity</th>
-                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Order
+                                    <th className="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Quantity</th>
+                                    <th className="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Order
                                         Date
                                     </th>
-                                    <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Status</th>
-                                    <th class="text-right font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Actions</th>
+                                    <th className="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Status</th>
+                                    <th className="text-right font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-100">
+                            <tbody className="divide-y divide-slate-100">
                                 {data.map((item, index) => (
                                     <tr key={index}>
                                         <td className="px-6 py-4 font-medium text-slate-800">{item.sellerDetails?.company_name}</td>

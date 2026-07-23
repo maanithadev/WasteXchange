@@ -21,8 +21,12 @@ export function useVerifyUser() {
                     setLoading(false)
                 }
             } catch (err) {
-                console.log(err.message)
                 setLoading(false)
+                if (err.message === "Request failed with status code 429") {
+                    toast.error("Too many requests, please try again later.")
+                } else {
+                    toast.error('Something went wrong! Please try again later.')
+                }
             }
         }
 

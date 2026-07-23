@@ -8,7 +8,7 @@ const SellerUploadWaste = () => {
     const wasteCategories = ["Construction", "Metals", "Wood"]
     const units = ["kg", "tons"]
     const currencyList = ["LKR"]
-    const statusList = ["Active", "Pending", "Draft"]
+    const statusList = ["active", "pending", "draft"]
 
     const [data, setData] = useState({})
     const [image, setImage] = useState(null)
@@ -34,7 +34,7 @@ const SellerUploadWaste = () => {
                 state: "state",
                 postal_code: "postal_code"
             },
-            status: "Active"
+            status: "active"
         }
     })
     const { errors } = formState
@@ -69,7 +69,11 @@ const SellerUploadWaste = () => {
             setCurrentStep("step2")
             setLoading(false)
         } catch (err) {
-            console.error("Error:", err);
+            if (err.message === "Request failed with status code 429") {
+                toast.error("Too many requests, please try again later.")
+            } else {
+                toast.error('Something went wrong! Please try again later.')
+            }
         }
     }
 
@@ -105,8 +109,12 @@ const SellerUploadWaste = () => {
             toast.success('Waste uploaded successfully!')
             navigate("/seller/my-listings")
         } catch (err) {
-            setLoading(false)
-            toast.error('Something went wrong! Please try again later.')
+            if (err.message === "Request failed with status code 429") {
+                toast.error("Too many requests, please try again later.")
+            } else {
+                setLoading(false)
+                toast.error('Something went wrong! Please try again later.')
+            }
         }
     }
 

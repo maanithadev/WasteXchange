@@ -13,7 +13,7 @@ const mongoose = require("mongoose");
 // get
 router.get("/seller-dashboard-cards", verifyUser, async (req, res) => {
     try {
-        const wasteListings = await WasteListings.countDocuments({ seller_id: req.token.user_id, status: "Active" })
+        const wasteListings = await WasteListings.countDocuments({ seller_id: req.token.user_id, status: "active" })
         const orders = await Orders.countDocuments({ seller_id: req.token.user_id, status: "pending" })
         const notifications = await Notifications.countDocuments({ user_id: req.token.user_id, isRead: false })
         const currentYear = new Date().getFullYear().toString();

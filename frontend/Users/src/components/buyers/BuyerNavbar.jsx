@@ -19,7 +19,11 @@ const BuyerNavbar = () => {
                 });
                 setNotifications(response.data);
             } catch (err) {
-                console.error("Failed to fetch notifications:", err);
+                if (err.message === "Request failed with status code 429") {
+                    toast.error("Too many requests, please try again later.")
+                } else {
+                    toast.error('Something went wrong! Please try again later.')
+                }
             }
         };
 
@@ -51,7 +55,11 @@ const BuyerNavbar = () => {
             });
             setNotifications(notifications.map(n => n._id === id ? { ...n, isRead: true } : n));
         } catch (err) {
-            console.error("Failed to mark notification as read:", err);
+            if (err.message === "Request failed with status code 429") {
+                toast.error("Too many requests, please try again later.")
+            } else {
+                toast.error('Something went wrong! Please try again later.')
+            }
         }
     };
 
@@ -64,7 +72,11 @@ const BuyerNavbar = () => {
             });
             setNotifications(notifications.map(n => ({ ...n, isRead: true })));
         } catch (err) {
-            console.error("Failed to mark all notifications as read:", err);
+            if (err.message === "Request failed with status code 429") {
+                toast.error("Too many requests, please try again later.")
+            } else {
+                toast.error('Something went wrong! Please try again later.')
+            }
         }
     };
 

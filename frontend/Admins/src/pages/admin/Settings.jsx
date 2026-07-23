@@ -1,4 +1,4 @@
-import {useState} from "react";
+import { useState } from "react";
 import axios from "axios";
 
 const Settings = () => {
@@ -15,7 +15,7 @@ const Settings = () => {
 
         try {
             const res = await axios.post(import.meta.env.VITE_ADMIN_BACKEND_URL + import.meta.env.VITE_CHANGE_PASSWORD_URL,
-                {currentPassword, newPassword},
+                { currentPassword, newPassword },
                 {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -28,8 +28,12 @@ const Settings = () => {
             setCurrentPassword("");
             setNewPassword("");
         } catch (err) {
-            setIsError(true);
-            setMessage(err.response?.data?.message || "Failed to update password");
+            if (err.message === "Request failed with status code 429") {
+                toast.error("Too many requests, please try again later.")
+            } else {
+                setIsError(true);
+                setMessage(err.response?.data?.message || "Failed to update password");
+            }
         } finally {
             setLoading(false);
         }

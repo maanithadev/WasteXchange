@@ -44,7 +44,11 @@ const BuyerMessages = () => {
                     const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + "/api/messages/check-online-status/" + activeConversation.seller_id);
                     setIsOnline(res.data.isOnline);
                 } catch (err) {
-                    console.error(err);
+                    if (err.message === "Request failed with status code 429") {
+                        toast.error("Too many requests, please try again later.")
+                    } else {
+                        toast.error('Something went wrong! Please try again later.')
+                    }
                 }
             }
         }
@@ -92,7 +96,6 @@ const BuyerMessages = () => {
             socket.disconnect();
         };
     }, [user, conversationId]);
-    console.log(conversations)
 
     async function sendMessage() {
         const res = await axios.post(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_SEND_MESSAGE_URL + conversationId,
@@ -115,20 +118,20 @@ const BuyerMessages = () => {
             <main className="flex-1 bg-slate-50 h-[calc(100vh-4rem)] flex overflow-hidden">
                 {/* <!-- Conversation list --> */}
                 <div className={`${conversationId !== "" ? "hidden md:flex" : "flex"} w-full md:w-80 bg-white border-r border-slate-200 flex-col shrink-0`}>
-                    <div class="p-4 border-b border-slate-200">
-                        <h2 class="text-lg font-bold text-slate-900">Messages</h2>
-                        <input type="text" placeholder="Search conversations..." class="mt-3 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    <div className="p-4 border-b border-slate-200">
+                        <h2 className="text-lg font-bold text-slate-900">Messages</h2>
+                        <input type="text" placeholder="Search conversations..." className="mt-3 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                     </div>
-                    <ul class="flex-1 overflow-y-auto divide-y divide-slate-100">
+                    <ul className="flex-1 overflow-y-auto divide-y divide-slate-100">
                         {conversations.map((item, index) => (
-                            <li key={index} class={`flex items-center gap-3 px-4 py-3 bg-blue-50 border-l-4 ${conversationId === item._id ? "border-blue-600" : "border-transparent"} cursor-pointer`} onClick={() => setConversationId(item._id)}>
-                                <img src="https://placehold.co/40x40" class="w-10 h-10 rounded-full object-cover" alt="Green Metals Co." />
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-semibold text-slate-900 truncate">{item.sellerDetails?.company_name}</p>
+                            <li key={index} className={`flex items-center gap-3 px-4 py-3 bg-blue-50 border-l-4 ${conversationId === item._id ? "border-blue-600" : "border-transparent"} cursor-pointer`} onClick={() => setConversationId(item._id)}>
+                                <img src="https://placehold.co/40x40" className="w-10 h-10 rounded-full object-cover" alt="Green Metals Co." />
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-semibold text-slate-900 truncate">{item.sellerDetails?.company_name}</p>
                                     {/* last message */}
                                     <p className={`text-xs truncate ${item.hasUnread ? "font-bold text-slate-900" : "text-slate-500"}`}>{item.last_message}</p>
                                 </div>
-                                <span class="text-xs text-slate-400 shrink-0">2m</span>
+                                <span className="text-xs text-slate-400 shrink-0">2m</span>
                             </li>
                         ))}
                     </ul>
@@ -143,12 +146,12 @@ const BuyerMessages = () => {
                                 <button onClick={() => setConversationId("")} className="md:hidden text-slate-500 hover:text-slate-700 mr-1">
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
                                 </button>
-                                <img src="https://placehold.co/36x36" class="w-9 h-9 rounded-full object-cover"
+                                <img src="https://placehold.co/36x36" className="w-9 h-9 rounded-full object-cover"
                                     alt="Green Metals Co." />
                                 <div>
                                     {/* company name */}
-                                    <p class="text-sm font-semibold text-slate-900">{activeConversation?.sellerDetails?.company_name}</p>
-                                    <p class={`text-xs ${isOnline ? "text-emerald-600" : "text-slate-400"}`}>{isOnline ? "Online" : "Offline"}</p>
+                                    <p className="text-sm font-semibold text-slate-900">{activeConversation?.sellerDetails?.company_name}</p>
+                                    <p className={`text-xs ${isOnline ? "text-emerald-600" : "text-slate-400"}`}>{isOnline ? "Online" : "Offline"}</p>
                                 </div>
                             </div>
 
@@ -157,8 +160,8 @@ const BuyerMessages = () => {
                                 {messages.map((item, index) => (
                                     <div key={index} className={`flex ${user.user_id === item.sender_id ? 'justify-end' : 'justify-start'}`}>
                                         <div className={`max-w-xs px-4 py-2.5 rounded-2xl ${user.user_id === item.sender_id ? 'bg-blue-600 rounded-br-sm' : 'bg-white border border-slate-200 rounded-bl-sm'}`}>
-                                            <p class={`text-sm ${user.user_id === item.sender_id ? 'text-white' : 'text-slate-800'}`}>{item.message}</p>
-                                            <p class={`text-[10px] mt-1 ${user.user_id === item.sender_id ? 'text-blue-100' : 'text-slate-400'}`}>{item.create_at}</p>
+                                            <p className={`text-sm ${user.user_id === item.sender_id ? 'text-white' : 'text-slate-800'}`}>{item.message}</p>
+                                            <p className={`text-[10px] mt-1 ${user.user_id === item.sender_id ? 'text-blue-100' : 'text-slate-400'}`}>{item.create_at}</p>
                                         </div>
                                     </div>
                                 ))}

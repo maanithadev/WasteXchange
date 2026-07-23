@@ -77,7 +77,7 @@ router.post("/update-status", verifyUser, async (req, res) => {
         if (status === "cancelled") {
             await WasteListings.updateOne(
                 { _id: order.wasteListings_id },
-                { status: "Active" }
+                { status: "active" }
             )
             await Payments.updateOne(
                 { order_id: order_id },

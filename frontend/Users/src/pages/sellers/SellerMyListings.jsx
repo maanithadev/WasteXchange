@@ -8,7 +8,7 @@ const SellerMyListings = () => {
     const wasteCategories = ["Construction", "Metals", "Wood"]
     const units = ["kg", "tons"]
     const currencyList = ["LKR"]
-    const statusList = ["Active", "Pending", "Draft"]
+    const statusList = ["active", "pending", "draft"]
 
     const [data, setData] = useState([])
     const [filterData, setFilterData] = useState([])
@@ -19,19 +19,19 @@ const SellerMyListings = () => {
 
     const statusColor = (status) => {
         switch (status) {
-            case "Active":
+            case "active":
                 return "bg-emerald-200"
-            case "Pending":
+            case "pending":
                 return "bg-red-200"
-            case "Draft":
+            case "draft":
                 return "bg-yellow-200"
-            case "Rejected":
+            case "rejected":
                 return "bg-red-200"
-            case "Review":
+            case "review":
                 return "bg-yellow-200"
-            case "Send for Review":
+            case "send for review":
                 return "bg-red-200"
-            case "Sold":
+            case "sold":
                 return "bg-emerald-200"
             default:
                 return null
@@ -55,7 +55,7 @@ const SellerMyListings = () => {
                 state: editData.location?.state,
                 postal_code: editData.location?.postal_code
             },
-            status: editData.status === "Review" ? "Send for Review" : editData.status
+            status: editData.status === "review" ? "send for review" : editData.status
         }
     })
 
@@ -77,23 +77,23 @@ const SellerMyListings = () => {
         switch (e.target.value) {
             case "active":
                 return setFilterData(data.filter(item => {
-                    return item.status === "Active"
+                    return item.status === "active"
                 }))
             case "sold":
                 return setFilterData(data.filter(item => {
-                    return item.status === "Sold"
+                    return item.status === "sold"
                 }))
             case "pending":
                 return setFilterData(data.filter(item => {
-                    return item.status === "Pending"
+                    return item.status === "pending"
                 }))
             case "draft":
                 return setFilterData(data.filter(item => {
-                    return item.status === "Draft"
+                    return item.status === "draft"
                 }))
             case "rejected":
                 return setFilterData(data.filter(item => {
-                    return item.status === "Rejected"
+                    return item.status === "rejected"
                 }))
             default:
                 return setFilterData(data)
@@ -153,7 +153,11 @@ const SellerMyListings = () => {
             setEditData({});
             toast.success('Waste updated successfully!')
         } catch (err) {
-            toast.error('Something went wrong! Please try again later.')
+            if (err.message === "Request failed with status code 429") {
+                toast.error("Too many requests, please try again later.")
+            } else {
+                toast.error('Something went wrong! Please try again later.')
+            }
         }
     }
 
@@ -172,7 +176,11 @@ const SellerMyListings = () => {
             setSelectedItem(null);
             toast.success('Waste deleted successfully!')
         } catch (err) {
-            toast.error('Something went wrong! Please try again later.')
+            if (err.message === "Request failed with status code 429") {
+                toast.error("Too many requests, please try again later.")
+            } else {
+                toast.error('Something went wrong! Please try again later.')
+            }
         }
     };
 
@@ -181,7 +189,7 @@ const SellerMyListings = () => {
             await axios.put(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_UPDATE_LISTING_STATUS_URL,
                 {
                     listing_id: editData._id,
-                    status: "Review",
+                    status: "review",
                 },
                 {
                     headers: {
@@ -191,12 +199,16 @@ const SellerMyListings = () => {
             setSelectedItem(null)
             setFilterData(prevData => prevData.map(item => item._id === editData._id ? {
                 ...item,
-                status: "Review"
+                status: "review"
             } : item))
             setIsEditModalOpen(false)
             toast.success('Request for edit access has been granted!')
         } catch (err) {
-            toast.error('Something went wrong! Please try again later.')
+            if (err.message === "Request failed with status code 429") {
+                toast.error("Too many requests, please try again later.")
+            } else {
+                toast.error('Something went wrong! Please try again later.')
+            }
         }
     }
 
@@ -283,17 +295,17 @@ const SellerMyListings = () => {
                                 </button>
                             </div>
 
-                            {editData.status === "Rejected"
+                            {editData.status === "rejected"
                                 ? <div className="w-full">
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 mb-2">Status</label>
                                         <input type="text" value={editData.status} readOnly
-                                            className={`w-full text-sm border-2 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none ${editData.status === "Rejected" ? "border-red-500" : "border-slate-200"}`} />
+                                            className={`w-full text-sm border-2 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none ${editData.status === "rejected" ? "border-red-500" : "border-slate-200"}`} />
                                         {editData.suspend_message !== null && <div className="mt-5">
                                             <label className="block text-sm font-medium text-slate-700 mb-2">Reason for
                                                 Rejection</label>
                                             <textarea value={editData.suspend_message} rows="5" readOnly
-                                                className={`w-full text-sm border-2 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none ${editData.status === "Rejected" ? "border-red-500" : "border-slate-200"}`} />
+                                                className={`w-full text-sm border-2 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none ${editData.status === "rejected" ? "border-red-500" : "border-slate-200"}`} />
                                         </div>}
                                     </div>
                                     <div className="flex justify-end gap-3 pt-4">
@@ -439,8 +451,8 @@ const SellerMyListings = () => {
                                         <label className="block text-sm font-medium text-slate-700 mb-2">Status</label>
                                         <select {...register("status", { required: "Status is Required" })}
                                             className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                            {editData.status === "Review"
-                                                ? <option value="Send for Review">Send for Review</option>
+                                            {editData.status === "review"
+                                                ? <option value="send for review">Send for Review</option>
                                                 : statusList.map((item, index) => (
                                                     <option key={index} value={item}>{item}</option>
                                                 ))}

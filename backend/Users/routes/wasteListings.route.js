@@ -23,7 +23,7 @@ router.get("/get-all-wastelistings", verifyUser, async (req, res) => {
 
 router.get("/get-all-active-wastelistings", verifyUser, async (req, res) => {
     try {
-        const wastelistings = await WasteListings.find({ status: "Active" })
+        const wastelistings = await WasteListings.find({ status: "active" })
         res.json(wastelistings)
     } catch (err) {
         res.json({ message: err.message })
@@ -182,14 +182,14 @@ router.put("/update-listing-status", verifyUser, async (req, res) => {
             { _id: listing_id },
             {
                 status: status,
-                suspend_message: status === "Rejected" ? suspend_message : null
+                suspend_message: status === "rejected" ? suspend_message : null
             }
         );
 
         const listingSeller = await WasteListings.findOne({ _id: listing_id });
         const updatedListing = listingSeller
 
-        if (status === "Active") {
+        if (status === "active") {
             await Matches.deleteMany({ wasteListings_id: listing_id });
             const buyers = await BuyerDetails.find({ interested_category: updatedListing.category })
             buyers.forEach(buyer => {
@@ -203,7 +203,7 @@ router.put("/update-listing-status", verifyUser, async (req, res) => {
                 message: `Your waste listing (${listingSeller.title}) has been Activated`,
                 created_at: new Date().toISOString()
             })
-        } else if (status === "Rejected") {
+        } else if (status === "rejected") {
             await Matches.deleteMany({ wasteListings_id: listing_id });
 
             createNotifications({
@@ -258,7 +258,7 @@ router.put("/update-listing/:id", localUpload.single("image"), verifyUser, async
         );
         const updatedListing = await WasteListings.findOne({ _id: req.params.id });
 
-        if (req.body.status === "Active") {
+        if (req.body.status === "active") {
             await Matches.deleteMany({ wasteListings_id: updatedListing._id });
             const buyers = await BuyerDetails.find({ interested_category: req.body.category })
             buyers.forEach(buyer => {

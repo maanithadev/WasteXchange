@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react"
+import { useEffect, useState } from "react"
 import axios from "axios"
 import toast from "react-hot-toast"
 
@@ -11,13 +11,23 @@ const ListingModeration = () => {
     const [rejectMessage, setRejectMessage] = useState("")
     const [statusValue, setStatusValue] = useState(null)
 
-    const statusList = ["Active", "Rejected"]
+    const statusList = ["active", "rejected"]
     const statusColor = (status) => {
         switch (status) {
-            case "Active":
+            case "active":
                 return "bg-emerald-200"
-            case "Rejected":
+            case "pending":
                 return "bg-red-200"
+            case "draft":
+                return "bg-yellow-200"
+            case "rejected":
+                return "bg-red-200"
+            case "review":
+                return "bg-yellow-200"
+            case "send for review":
+                return "bg-red-200"
+            case "sold":
+                return "bg-emerald-200"
             default:
                 return null
         }
@@ -35,7 +45,6 @@ const ListingModeration = () => {
 
         fetchData()
     }, [refresh])
-    console.log(data)
 
     const handleView = (item) => {
         setSelectedItem(item)
@@ -71,71 +80,75 @@ const ListingModeration = () => {
             setRejectMessage("")
             toast.success('Status updated successful!')
         } catch (err) {
-            toast.error('Something went wrong! Please try again later.')
+            if (err.message === "Request failed with status code 429") {
+                toast.error("Too many requests, please try again later.")
+            } else {
+                toast.error('Something went wrong! Please try again later.')
+            }
         }
     }
 
     return (
         <>
             {/* <!-- LISTING MODERATION PAGE --> */}
-            <main class="flex-1 p-8 bg-slate-50 min-h-screen">
-                <div class="mb-6">
-                    <h1 class="text-2xl font-bold text-slate-900">Listing Moderation</h1>
-                    <p class="text-sm text-slate-500 mt-1">Review listings pending approval or flagged by users</p>
+            <main className="flex-1 p-8 bg-slate-50 min-h-screen">
+                <div className="mb-6">
+                    <h1 className="text-2xl font-bold text-slate-900">Listing Moderation</h1>
+                    <p className="text-sm text-slate-500 mt-1">Review listings pending approval or flagged by users</p>
                 </div>
 
-                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
+                <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
                             <thead>
-                            <tr class="bg-slate-50 border-b border-slate-200">
-                                <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Listing</th>
-                                <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Seller</th>
-                                <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Price</th>
-                                <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Status</th>
-                                <th class="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Submitted</th>
-                                <th class="text-right font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Actions</th>
-                            </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100">
-                            {data.map((item, index) => (
-                                <tr key={index}>
-                                    <td class="px-6 py-3.5">
-                                        <div class="flex items-center gap-3">
-                                            <img src={`http://localhost:3000/images/${item.image}`}
-                                                 class="w-10 h-10 rounded-lg object-cover"
-                                                 alt="Industrial Solvent Drums"/>
-                                            <div>
-                                                <p class="font-medium text-slate-800">{item.title}</p>
-                                                <p class="text-xs text-slate-400">{item.category}</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-3.5 text-slate-600">{item.sellerDetails?.company_name}</td>
-                                    <td class="px-6 py-3.5"><span
-                                        class="text-xs font-semibold bg-green-200 text-black px-2 py-0.5 rounded-full">{item.currency === "LKR" ? "RS." : "$"}{item.price}</span>
-                                    </td>
-                                    <td class="px-6 py-3.5">
-                                        <span
-                                            className={`text-center text-xs font-semibold text-black px-2 py-0.5 rounded-full ${statusColor(item.status)}`}>{item.status}</span>
-                                    </td>
-                                    <td class="px-6 py-3.5 text-slate-500">{item.created_at}</td>
-                                    <td class="px-6 py-3.5 text-right space-x-1 whitespace-nowrap">
-                                        {/* <button class="text-xs font-medium bg-emerald-600 text-white rounded-md px-2.5 py-1 hover:bg-emerald-700">Approve</button> */}
-                                        <button type="button" onClick={() => {
-                                            setStatusValue("Rejected")
-                                            setSelectedItem(item);
-                                            setIsRejectModalOpen(true);
-                                            setRejectMessage("");
-                                        }}
-                                                class="text-xs font-medium bg-red-600 text-white rounded-md px-2.5 py-1 hover:bg-red-700">Reject
-                                        </button>
-                                        <button onClick={() => handleView(item)}
-                                                class="text-xs font-medium border border-slate-300 text-slate-600 rounded-md px-2.5 py-1 hover:bg-slate-50">View
-                                        </button>
-                                    </td>
+                                <tr className="bg-slate-50 border-b border-slate-200">
+                                    <th className="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Listing</th>
+                                    <th className="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Seller</th>
+                                    <th className="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Price</th>
+                                    <th className="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Status</th>
+                                    <th className="text-left font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Submitted</th>
+                                    <th className="text-right font-semibold text-slate-500 px-6 py-3 text-xs uppercase tracking-wide">Actions</th>
                                 </tr>
-                            ))}
+                            </thead>
+                            <tbody className="divide-y divide-slate-100">
+                                {data.map((item, index) => (
+                                    <tr key={index}>
+                                        <td className="px-6 py-3.5">
+                                            <div className="flex items-center gap-3">
+                                                <img src={`http://localhost:3000/images/${item.image}`}
+                                                    className="w-10 h-10 rounded-lg object-cover"
+                                                    alt="Industrial Solvent Drums" />
+                                                <div>
+                                                    <p className="font-medium text-slate-800">{item.title}</p>
+                                                    <p className="text-xs text-slate-400">{item.category}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-3.5 text-slate-600">{item.sellerDetails?.company_name}</td>
+                                        <td className="px-6 py-3.5"><span
+                                            className="text-xs font-semibold bg-green-200 text-black px-2 py-0.5 rounded-full">{item.currency === "LKR" ? "RS." : "$"}{item.price}</span>
+                                        </td>
+                                        <td className="px-6 py-3.5">
+                                            <span
+                                                className={`text-center text-xs font-semibold text-black px-2 py-0.5 rounded-full ${statusColor(item.status)}`}>{item.status}</span>
+                                        </td>
+                                        <td className="px-6 py-3.5 text-slate-500">{item.created_at}</td>
+                                        <td className="px-6 py-3.5 text-right space-x-1 whitespace-nowrap">
+                                            {/* <button className="text-xs font-medium bg-emerald-600 text-white rounded-md px-2.5 py-1 hover:bg-emerald-700">Approve</button> */}
+                                            <button type="button" onClick={() => {
+                                                setStatusValue("rejected")
+                                                setSelectedItem(item);
+                                                setIsRejectModalOpen(true);
+                                                setRejectMessage("");
+                                            }}
+                                                className="text-xs font-medium bg-red-600 text-white rounded-md px-2.5 py-1 hover:bg-red-700">Reject
+                                            </button>
+                                            <button onClick={() => handleView(item)}
+                                                className="text-xs font-medium border border-slate-300 text-slate-600 rounded-md px-2.5 py-1 hover:bg-slate-50">View
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>
@@ -151,7 +164,7 @@ const ListingModeration = () => {
                                 <button onClick={closeModal} className="text-slate-400 hover:text-slate-600">
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                              d="M6 18L18 6M6 6l12 12"></path>
+                                            d="M6 18L18 6M6 6l12 12"></path>
                                     </svg>
                                 </button>
                             </div>
@@ -161,18 +174,18 @@ const ListingModeration = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Status</label>
                                     <select value={statusValue} onChange={handleStatusChange}
-                                            className={`w-full text-sm border-2 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none ${statusValue === "Rejected" ? "border-red-500" : "border-slate-200"}`}>
+                                        className={`w-full text-sm border-2 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none ${statusValue === "rejected" ? "border-red-500" : "border-slate-200"}`}>
                                         <option>Select Option</option>
                                         {statusList.map((item, index) => (
                                             <option key={index} value={item}>{item}</option>
                                         ))}
                                     </select>
 
-                                    {statusValue === "Rejected" && <div className="mt-5">
+                                    {statusValue === "rejected" && <div className="mt-5">
                                         <label className="block text-sm font-medium text-slate-700 mb-2">Suspend
                                             Message</label>
                                         <textarea value={selectedItem.suspend_message} rows="5" readOnly
-                                                  className={`w-full text-sm border-2 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none ${statusValue === "Rejected" ? "border-red-500" : "border-slate-200"}`}/>
+                                            className={`w-full text-sm border-2 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none ${statusValue === "rejected" ? "border-red-500" : "border-slate-200"}`} />
                                     </div>}
                                 </div>
 
@@ -180,7 +193,7 @@ const ListingModeration = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Waste Image</label>
                                     <div className="w-[50%]">
-                                        <img src={`http://localhost:3000/images/${selectedItem.image}`} alt=""/>
+                                        <img src={`http://localhost:3000/images/${selectedItem.image}`} alt="" />
                                     </div>
                                     {/* <input type="text" readOnly className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none" /> */}
                                 </div>
@@ -189,7 +202,7 @@ const ListingModeration = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Waste Title</label>
                                     <input type="text" value={selectedItem.title} readOnly
-                                           className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none"/>
+                                        className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none" />
                                 </div>
 
                                 {/* Category + Quantity/Unit */}
@@ -198,18 +211,18 @@ const ListingModeration = () => {
                                         <label className="block text-sm font-medium text-slate-700 mb-2">Waste
                                             Category</label>
                                         <input type="text" value={selectedItem.category} readOnly
-                                               className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none"/>
+                                            className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none" />
                                     </div>
                                     <div>
                                         <label
                                             className="block text-sm font-medium text-slate-700 mb-2">Quantity</label>
                                         <input type="number" value={selectedItem.quantity} readOnly
-                                               className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none"/>
+                                            className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none" />
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 mb-2">Unit</label>
                                         <input type="text" value={selectedItem.unit} readOnly
-                                               className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none"/>
+                                            className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none" />
                                     </div>
                                 </div>
 
@@ -218,14 +231,14 @@ const ListingModeration = () => {
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Waste
                                         Colour</label>
                                     <input type="text" value={selectedItem.colour} readOnly
-                                           className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none"/>
+                                        className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none" />
                                 </div>
 
                                 {/* Description */}
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Description</label>
                                     <textarea value={selectedItem.description} rows="10" readOnly
-                                              className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none"/>
+                                        className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none" />
                                 </div>
 
                                 {/* Pricing + Currency */}
@@ -233,17 +246,17 @@ const ListingModeration = () => {
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 mb-2">Price</label>
                                         <input type="number" value={selectedItem.price} readOnly
-                                               className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none"/>
+                                            className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none" />
                                     </div>
                                     <div>
                                         <label
                                             className="block text-sm font-medium text-slate-700 mb-2">Currency</label>
                                         <input type="text" value={selectedItem.currency} readOnly
-                                               className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none"/>
+                                            className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none" />
                                     </div>
                                 </div>
 
-                                <hr className="border-slate-200"/>
+                                <hr className="border-slate-200" />
 
                                 {/* Location */}
                                 <div className="flex flex-col gap-3">
@@ -253,35 +266,35 @@ const ListingModeration = () => {
                                             <label
                                                 className="block text-sm font-medium text-slate-700 mb-2">Street</label>
                                             <input type="text" value={selectedItem.location?.street} readOnly
-                                                   className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none"/>
+                                                className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none" />
                                         </div>
                                         <div>
                                             <label
                                                 className="block text-sm font-medium text-slate-700 mb-2">City</label>
                                             <input type="text" value={selectedItem.location?.city} readOnly
-                                                   className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none"/>
+                                                className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none" />
                                         </div>
                                         <div>
                                             <label
                                                 className="block text-sm font-medium text-slate-700 mb-2">State</label>
                                             <input type="text" value={selectedItem.location?.state} readOnly
-                                                   className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none"/>
+                                                className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none" />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-2">Postal
                                                 Code</label>
                                             <input type="text" value={selectedItem.location?.postal_code} readOnly
-                                                   className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none"/>
+                                                className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none" />
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="flex justify-end gap-3 pt-4">
                                     <button type="button" onClick={closeModal}
-                                            className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50">Cancel
+                                        className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50">Cancel
                                     </button>
                                     <button type="button" onClick={handleUpdateStatus}
-                                            className="px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700">Save
+                                        className="px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700">Save
                                         Changes
                                     </button>
                                 </div>
@@ -298,10 +311,10 @@ const ListingModeration = () => {
                             <div className="flex items-center justify-between p-6 border-b border-slate-200">
                                 <h2 className="text-xl font-bold text-slate-800">Reject Listing</h2>
                                 <button onClick={() => setIsRejectModalOpen(false)}
-                                        className="text-slate-400 hover:text-slate-600 focus:outline-none">
+                                    className="text-slate-400 hover:text-slate-600 focus:outline-none">
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                              d="M6 18L18 6M6 6l12 12"></path>
+                                            d="M6 18L18 6M6 6l12 12"></path>
                                     </svg>
                                 </button>
                             </div>
@@ -319,10 +332,10 @@ const ListingModeration = () => {
                             <div
                                 className="px-6 py-4 border-t border-slate-200 bg-slate-50 flex justify-end gap-3 rounded-b-xl">
                                 <button onClick={() => setIsRejectModalOpen(false)}
-                                        className="px-4 py-2 text-sm font-medium text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-100">Cancel
+                                    className="px-4 py-2 text-sm font-medium text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-100">Cancel
                                 </button>
                                 <button onClick={handleUpdateStatus}
-                                        className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700">Update
+                                    className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700">Update
                                 </button>
                             </div>
                         </div>

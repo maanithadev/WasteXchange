@@ -27,7 +27,6 @@ const BuyerTrackOrder = () => {
         }
         fetchData()
     }, [])
-    console.log(data)
 
     async function startMessaging() {
         const res = await axios.post(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_START_CHAT_URL, {

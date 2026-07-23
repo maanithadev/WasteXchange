@@ -90,7 +90,7 @@ router.get("/buyer-dashboard-cards", verifyUser, async (req, res) => {
 
 router.get("/get-all-waste-listings", async (req, res) => {
     try {
-        const wasteListings = await WasteListings.find({ status: "Active" }).sort({ created_at: -1 })
+        const wasteListings = await WasteListings.find({ status: "active" }).sort({ created_at: -1 })
         res.status(200).json(wasteListings)
     } catch (err) {
         res.status(500).send({ message: err.message })
