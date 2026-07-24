@@ -388,11 +388,11 @@ router.post("/forgot-password", async (req, res) => {
 //put
 router.put("/update-user-status", verifyUser, async (req, res) => {
     try {
-        const users = await Users.updateOne(
+        await Users.updateOne(
             { _id: req.body.user_id },
-            { status: req.body.status || "suspended" }
+            { status: req.body.status }
         );
-        res.json(users)
+        res.json({ message: "user updated" })
     } catch (err) {
         res.json({ message: err.message })
     }

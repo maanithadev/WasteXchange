@@ -1,4 +1,4 @@
-import {Link, Outlet, useLocation, useNavigate} from "react-router-dom"
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom"
 import { useSidebarContext } from "../../contexts/SidebarContext.jsx"
 import { useEffect } from "react";
 import toast from "react-hot-toast";

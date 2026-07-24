@@ -21,14 +21,6 @@ const Login = () => {
                 toast.error(res.data?.message);
             }
 
-            if (res.data?.status === "pending") {
-                toast.error('Your Account is still Pending for Approve');
-            }
-
-            if (res.data?.role === "need to assign") {
-                toast.error("Your Account haven't assigned a role yet");
-            }
-
             if (res.data?.token) {
                 localStorage.clear()
                 localStorage.setItem("token", res.data.token);

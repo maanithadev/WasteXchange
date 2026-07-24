@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, Link } from "react-router-dom";
 
 const GuestsFooter = () => {
     return (
@@ -17,16 +17,16 @@ const GuestsFooter = () => {
                     <div>
                         <h3 className="text-sm font-semibold text-white mb-4">Company</h3>
                         <ul className="space-y-3">
-                            <li><a href="#" className="text-sm text-slate-400 hover:text-white">About</a></li>
-                            <li><a href="#" className="text-sm text-slate-400 hover:text-white">Contact</a></li>
+                            <li><Link to="/about" className="text-sm text-slate-400 hover:text-white">About</Link></li>
+                            <li><Link to="/contact" className="text-sm text-slate-400 hover:text-white">Contact</Link></li>
                         </ul>
                     </div>
 
                     <div>
                         <h3 className="text-sm font-semibold text-white mb-4">Platform</h3>
                         <ul className="space-y-3">
-                            <li><a href="#" className="text-sm text-slate-400 hover:text-white">Browse Marketplace</a></li>
-                            <li><a href="#" className="text-sm text-slate-400 hover:text-white">How It Works</a></li>
+                            <li><Link to="/browse-marketplace" className="text-sm text-slate-400 hover:text-white">Browse Marketplace</Link></li>
+                            {/* <li><a href="#" className="text-sm text-slate-400 hover:text-white">How It Works</a></li> */}
                         </ul>
                     </div>
                 </div>

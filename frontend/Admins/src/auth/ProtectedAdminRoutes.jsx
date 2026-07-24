@@ -9,6 +9,6 @@ const ProtectedAdminRoutes = () => {
 
     if (loading) return <Loading />
 
-    return user.role !== null ? <Outlet /> : <Navigate to="/" />
+    return user?.message ? <Navigate to="/" /> : <Outlet />
 }
 export default ProtectedAdminRoutes

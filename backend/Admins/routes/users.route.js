@@ -15,10 +15,14 @@ router.get("/verifyUser", async (req, res) => {
             const user = jwt.verify(token, process.env.JWT_SECRET)
             const foundUser = await Users.findById(user.user_id)
             if (!foundUser) return res.json({ message: 'No user found' })
-            if (foundUser.status === "suspended") return res.json({ message: 'User Account is Suspended' })
+
+            if (foundUser.status === "suspend") return res.json({ message: 'User Account is Suspended' })
+
+            if (foundUser.status === "pending") return res.json({ message: "Your Account is still Pending for Approve" })
+
+            if (foundUser.role === "need to assign") return res.json({ message: "Your Account haven't assigned a Role Yet" })
+
             res.json(user)
-        } else {
-            res.json({ message: 'No token provided' })
         }
     } catch (err) {
         res.json({ message: 'Invalid or expired token' })
@@ -74,20 +78,18 @@ router.post("/login", async (req, res) => {
         const passwordMatch = await bcrypt.compare(password, userExists.password)
         if (!passwordMatch) return res.json({ message: "password wrong" })
 
-        if (userExists.status === "suspended") {
-            res.json({ message: 'User Account is Suspended' })
-        } else if (userExists.status === "pending") {
-            res.json({ status: "pending" })
-        } else if (userExists.role === "need to assign") {
-            res.json({ role: "need to assign" })
-        } else {
-            const token = jwt.sign({
-                user_id: userExists._id,
-                role: userExists.role
-            }, process.env.JWT_SECRET, { expiresIn: "7d" })
+        if (userExists.status === "suspend") return res.json({ message: 'User Account is Suspended' })
 
-            res.json({ token })
-        }
+        if (userExists.status === "pending") return res.json({ message: "Your Account is still Pending for Approve" })
+
+        if (userExists.role === "need to assign") return res.json({ message: "Your Account haven't assigned a Role Yet" })
+
+        const token = jwt.sign({
+            user_id: userExists._id,
+            role: userExists.role
+        }, process.env.JWT_SECRET, { expiresIn: "7d" })
+
+        res.json({ token })
 
     } catch (err) {
         res.json({ message: "server error" })

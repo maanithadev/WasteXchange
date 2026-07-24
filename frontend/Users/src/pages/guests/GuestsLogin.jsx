@@ -34,10 +34,6 @@ const GuestsLogin = () => {
                     navigate("/buyer/dashboard");
                     toast.success('Login successful!')
                     break
-                case "admin":
-                    window.location.href = import.meta.env.VITE_ADMIN_FRONTEND_URL + import.meta.env.VITE_ADMIN_DASHBOARD_URL + `?token=${res.data.token}`;
-                    toast.success('Login successful!')
-                    break
                 default:
                     navigate("/login");
                     break

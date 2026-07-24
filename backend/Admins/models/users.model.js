@@ -16,7 +16,8 @@ const userSchema = mongoose.Schema({
     },
     status: {
         type: String,
-        required: true
+        required: true,
+        enum: ["pending", "active", "suspend"]
     },
     created_at: {
         type: String
