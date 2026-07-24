@@ -205,7 +205,7 @@ router.get("/admin-reports-charts", verifyUser, async (req, res) => {
 router.get("/get-all-users", verifyUser, async (req, res) => {
     try {
         // Find all users whose role is NOT "admin"
-        const users = await Users.find({ role: { $ne: "admin" } }, "-__v -password");
+        const users = await Users.find({ role: { $ne: "admin" } }, "-__v -password").sort({ created_at: -1 });
 
         let combinedUsers = [];
 
@@ -390,7 +390,10 @@ router.put("/update-user-status", verifyUser, async (req, res) => {
     try {
         await Users.updateOne(
             { _id: req.body.user_id },
-            { status: req.body.status }
+            {
+                status: req.body.status,
+                updated_at: new Date()
+            }
         );
         res.json({ message: "user updated" })
     } catch (err) {

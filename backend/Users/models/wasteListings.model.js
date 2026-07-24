@@ -50,10 +50,10 @@ const wasteListingsSchema = mongoose.Schema({
             type: String
         },
     },
-    status: {       // "active" | "pending" | "draft" | "reject" | "review" | "send for review" | "sold"
+    status: {       // "active" | "pending" | "draft" | "rejected" | "review" | "send for review" | "sold"
         type: String,
         required: true,
-        enum: ["active", "pending", "draft", "reject", "review", "send for review", "sold"]
+        enum: ["active", "pending", "draft", "rejected", "review", "send for review", "sold"]
     },
     suspend_message: {
         type: String

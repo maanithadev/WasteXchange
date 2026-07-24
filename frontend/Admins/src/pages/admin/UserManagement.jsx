@@ -4,6 +4,7 @@ import toast from "react-hot-toast"
 
 const UserManagement = () => {
     const [data, setData] = useState([])
+    const [filter, setFilter] = useState("all")
     const [filteredData, setFilteredData] = useState([])
     const [refresh, setRefresh] = useState(false)
     const [selectedUser, setSelectedUser] = useState(null)
@@ -44,18 +45,23 @@ const UserManagement = () => {
     function handleUser(option) {
         switch (option) {
             case "all":
+                setFilter("all")
                 setFilteredData(data)
                 break;
             case "seller":
+                setFilter("seller")
                 setFilteredData(data.filter((user) => user.role === "seller"))
                 break;
             case "buyer":
+                setFilter("buyer")
                 setFilteredData(data.filter((user) => user.role === "buyer"))
                 break;
             case "suspended":
+                setFilter("suspended")
                 setFilteredData(data.filter((user) => user.status === "suspended"))
                 break;
             default:
+                setFilter("all")
                 setFilteredData(data)
                 break;
         }
@@ -71,6 +77,7 @@ const UserManagement = () => {
                     }
                 })
             setRefresh(!refresh)
+            handleUser("all")
             toast.success('Status updated successful!')
             if (selectedUser) setSelectedUser(null)
         } catch (err) {
@@ -95,20 +102,20 @@ const UserManagement = () => {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
                     <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-lg p-1 w-fit">
                         <button onClick={() => handleUser("all")}
-                            className="text-xs font-semibold px-3 py-1.5 rounded-md bg-indigo-600 text-white">All
+                            className={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'all' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>All
                         </button>
                         <button onClick={() => handleUser("seller")}
-                            className="text-xs font-semibold px-3 py-1.5 rounded-md text-slate-600 hover:bg-slate-50">Sellers
+                            className={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'seller' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>Sellers
                         </button>
                         <button onClick={() => handleUser("buyer")}
-                            className="text-xs font-semibold px-3 py-1.5 rounded-md text-slate-600 hover:bg-slate-50">Buyers
+                            className={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'buyer' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>Buyers
                         </button>
                         <button onClick={() => handleUser("suspended")}
-                            className="text-xs font-semibold px-3 py-1.5 rounded-md text-slate-600 hover:bg-slate-50">Suspended
+                            className={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'suspended' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>Suspended
                         </button>
                     </div>
-                    <input type="text" placeholder="Search users..."
-                        className="w-full sm:w-64 rounded-lg border border-slate-300 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                    {/* <input type="text" placeholder="Search users..."
+                        className="w-full sm:w-64 rounded-lg border border-slate-300 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500" /> */}
                 </div>
 
                 <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">

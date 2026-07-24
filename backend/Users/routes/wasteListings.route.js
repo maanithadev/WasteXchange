@@ -14,7 +14,7 @@ const createNotifications = require("../helpers/createNotifications.helper.js")
 // get
 router.get("/get-all-wastelistings", verifyUser, async (req, res) => {
     try {
-        const wastelistings = await WasteListings.find().populate("sellerDetails", "company_name")
+        const wastelistings = await WasteListings.find().populate("sellerDetails", "company_name").sort({ updated_at: -1 })
         res.json(wastelistings)
     } catch (err) {
         res.json({ message: err.message })
@@ -209,7 +209,8 @@ router.put("/update-listing-status", verifyUser, async (req, res) => {
             { _id: listing_id },
             {
                 status: status,
-                suspend_message: status === "rejected" ? suspend_message : null
+                suspend_message: status === "rejected" ? suspend_message : null,
+                updated_at: new Date()
             }
         );
 

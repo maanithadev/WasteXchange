@@ -31,7 +31,7 @@ router.get("/verifyUser", async (req, res) => {
 
 router.get("/get-all-users", verifyUser, async (req, res) => {
     try {
-        const users = await Users.find({}, "-password")
+        const users = await Users.find({}, "-password").sort({ created_at: -1 })
         res.json(users)
     } catch (err) {
         res.json({ message: err.mess })
@@ -141,7 +141,7 @@ router.put("/update-user-roleandstatus", verifyUser, async (req, res) => {
     try {
         const users = await Users.updateOne(
             { _id: req.body.user_id },
-            { role: req.body.role, status: req.body.status }
+            { role: req.body.role, status: req.body.status, updated_at: new Date() }
         );
         res.json(users)
     } catch (err) {

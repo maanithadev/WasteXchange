@@ -4,6 +4,7 @@ import toast from "react-hot-toast"
 
 const BackendUsersManagement = () => {
     const [data, setData] = useState([])
+    const [filter, setFilter] = useState("all")
     const [filteredData, setFilteredData] = useState([])
     const [refresh, setRefresh] = useState(false)
     const [selectedUser, setSelectedUser] = useState(null)
@@ -46,21 +47,27 @@ const BackendUsersManagement = () => {
     function handleUser(option) {
         switch (option) {
             case "all":
+                setFilter("all")
                 setFilteredData(data)
                 break;
             case "admin":
+                setFilter("admin")
                 setFilteredData(data.filter((user) => user.role === "admin"))
                 break;
             case "manager":
+                setFilter("manager")
                 setFilteredData(data.filter((user) => user.role === "manager"))
                 break;
             case "sales":
+                setFilter("sales")
                 setFilteredData(data.filter((user) => user.role === "sales"))
                 break;
             case "suspended":
+                setFilter("suspended")
                 setFilteredData(data.filter((user) => user.status === "suspend"))
                 break;
             default:
+                setFilter("all")
                 setFilteredData(data)
                 break;
         }
@@ -100,23 +107,23 @@ const BackendUsersManagement = () => {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
                     <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-lg p-1 w-fit">
                         <button onClick={() => handleUser("all")}
-                            className="text-xs font-semibold px-3 py-1.5 rounded-md bg-indigo-600 text-white">All
+                            className={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'all' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>All
                         </button>
                         <button onClick={() => handleUser("admin")}
-                            className="text-xs font-semibold px-3 py-1.5 rounded-md text-slate-600 hover:bg-slate-50">Admin
+                            className={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'admin' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>Admin
                         </button>
                         <button onClick={() => handleUser("manager")}
-                            className="text-xs font-semibold px-3 py-1.5 rounded-md text-slate-600 hover:bg-slate-50">Manager
+                            className={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'manager' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>Manager
                         </button>
                         <button onClick={() => handleUser("sales")}
-                            className="text-xs font-semibold px-3 py-1.5 rounded-md text-slate-600 hover:bg-slate-50">Sales
+                            className={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'sales' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>Sales
                         </button>
                         <button onClick={() => handleUser("suspended")}
-                            className="text-xs font-semibold px-3 py-1.5 rounded-md text-slate-600 hover:bg-slate-50">Suspended
+                            className={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'suspended' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>Suspended
                         </button>
                     </div>
-                    <input type="text" placeholder="Search users..."
-                        className="w-full sm:w-64 rounded-lg border border-slate-300 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                    {/* <input type="text" placeholder="Search users..."
+                        className="w-full sm:w-64 rounded-lg border border-slate-300 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500" /> */}
                 </div>
 
                 <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">

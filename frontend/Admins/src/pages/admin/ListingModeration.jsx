@@ -4,6 +4,8 @@ import toast from "react-hot-toast"
 
 const ListingModeration = () => {
     const [data, setData] = useState([])
+    const [filteredData, setFilteredData] = useState([])
+    const [filter, setFilter] = useState("all")
     const [selectedItem, setSelectedItem] = useState(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [refresh, setRefresh] = useState(false)
@@ -42,6 +44,7 @@ const ListingModeration = () => {
                     }
                 })
                 setData(res.data)
+                setFilteredData(res.data)
             } catch (err) {
                 if (err.message === "Request failed with status code 429") {
                     toast.error("Too many requests, please try again later.")
@@ -53,6 +56,48 @@ const ListingModeration = () => {
 
         fetchData()
     }, [refresh])
+
+    function handleListing(option) {
+        switch (option) {
+            case "all":
+                setFilter("all")
+                setFilteredData(data)
+                break;
+            case "active":
+                setFilter("active")
+                setFilteredData(data.filter((item) => item.status === "active"))
+                break;
+            case "pending":
+                setFilter("pending")
+                setFilteredData(data.filter((item) => item.status === "pending"))
+                break;
+            case "draft":
+                setFilter("draft")
+                setFilteredData(data.filter((item) => item.status === "draft"))
+                break;
+            case "rejected":
+                setFilter("rejected")
+                setFilteredData(data.filter((item) => item.status === "rejected"))
+                break;
+            case "review":
+                setFilter("review")
+                setFilteredData(data.filter((item) => item.status === "review"))
+                break;
+            case "send for review":
+                setFilter("send for review")
+                setFilteredData(data.filter((item) => item.status === "send for review"))
+                break;
+            case "sold":
+                setFilter("sold")
+                setFilteredData(data.filter((item) => item.status === "sold"))
+                break;
+            default:
+                setFilter("all")
+                setFilteredData(data)
+                break;
+        }
+
+    }
 
     const handleView = (item) => {
         setSelectedItem(item)
@@ -84,6 +129,7 @@ const ListingModeration = () => {
                 })
             setRefresh(!refresh)
             setIsRejectModalOpen(false)
+            handleListing("all")
             setSelectedItem(null)
             setRejectMessage("")
             toast.success('Status updated successful!')
@@ -105,6 +151,37 @@ const ListingModeration = () => {
                     <p className="text-sm text-slate-500 mt-1">Review listings pending approval or flagged by users</p>
                 </div>
 
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+                    <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-lg p-1 w-fit">
+                        <button onClick={() => handleListing("all")}
+                            className={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'all' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>All
+                        </button>
+                        <button onClick={() => handleListing("active")}
+                            className={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'active' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>Active
+                        </button>
+                        <button onClick={() => handleListing("pending")}
+                            className={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'pending' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>Pending
+                        </button>
+                        <button onClick={() => handleListing("draft")}
+                            className={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'draft' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>Draft
+                        </button>
+                        <button onClick={() => handleListing("rejected")}
+                            className={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'rejected' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>Rejected
+                        </button>
+                        <button onClick={() => handleListing("review")}
+                            className={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'review' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>Review
+                        </button>
+                        <button onClick={() => handleListing("send for review")}
+                            className={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'send for review' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>Send for review
+                        </button>
+                        <button onClick={() => handleListing("sold")}
+                            className={`text-xs font-semibold px-3 py-1.5 rounded-md ${filter === 'sold' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>Sold
+                        </button>
+                    </div>
+                    {/* <input type="text" placeholder="Search users..."
+                        className="w-full sm:w-64 rounded-lg border border-slate-300 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500" /> */}
+                </div>
+
                 <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
@@ -119,7 +196,7 @@ const ListingModeration = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
-                                {data.map((item, index) => (
+                                {filteredData.map((item, index) => (
                                     <tr key={index}>
                                         <td className="px-6 py-3.5">
                                             <div className="flex items-center gap-3">
