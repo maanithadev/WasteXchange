@@ -23,8 +23,35 @@ router.get("/get-all-wastelistings", verifyUser, async (req, res) => {
 
 router.get("/get-all-active-wastelistings", verifyUser, async (req, res) => {
     try {
-        const wastelistings = await WasteListings.find({ status: "active" })
-        res.json(wastelistings)
+        const { search, category, minQty, maxQty, minPrice, maxPrice, sort } = req.query;
+        let query = { status: "active" };
+
+        if (search) {
+            query.title = { $regex: search, $options: 'i' };
+        }
+        if (category && category !== "All Categories") {
+            query.category = category;
+        }
+        if (minQty || maxQty) {
+            query.quantity = {};
+            if (minQty) query.quantity.$gte = Number(minQty);
+            if (maxQty) query.quantity.$lte = Number(maxQty);
+        }
+        if (minPrice || maxPrice) {
+            query.price = {};
+            if (minPrice) query.price.$gte = Number(minPrice);
+            if (maxPrice) query.price.$lte = Number(maxPrice);
+        }
+
+        let sortOption = { created_at: -1 }; // Newest First default
+        if (sort === "Sort: Price Low to High") {
+            sortOption = { price: 1 };
+        } else if (sort === "Sort: Price High to Low") {
+            sortOption = { price: -1 };
+        }
+
+        const wastelistings = await WasteListings.find(query).sort(sortOption);
+        res.json(wastelistings);
     } catch (err) {
         res.json({ message: err.message })
     }

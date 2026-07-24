@@ -5,23 +5,50 @@ import toast from "react-hot-toast";
 
 const BuyerBrowseMarketplace = () => {
     const [data, setData] = useState([])
+    const [search, setSearch] = useState('');
+    const [category, setCategory] = useState('All Categories');
+    const [minQty, setMinQty] = useState('');
+    const [maxQty, setMaxQty] = useState('');
+    const [minPrice, setMinPrice] = useState('');
+    const [maxPrice, setMaxPrice] = useState('');
+    const [sort, setSort] = useState('Sort: Most Relevant');
 
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_BUYERS_GET_ALL_WASTE_LISTINGS_URL)
-                setData(res.data)
-            } catch (err) {
-                if (err.message === "Request failed with status code 429") {
-                    toast.error("Too many requests, please try again later.")
-                } else {
-                    toast.error('Something went wrong! Please try again later.')
-                }
+    const fetchListings = async (queryParams) => {
+        try {
+            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_ALL_ACTIVE_WASTELISTINGS_URL, {
+                headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` },
+                params: queryParams
+            })
+            setData(res.data)
+        } catch (err) {
+            if (err.message === "Request failed with status code 429") {
+                toast.error("Too many requests, please try again later.")
+            } else {
+                toast.error('Something went wrong! Please try again later.')
             }
         }
+    }
 
-        fetchData()
-    }, [])
+    useEffect(() => {
+        fetchListings({ search, category, minQty, maxQty, minPrice, maxPrice, sort });
+    }, [sort])
+
+    const handleApplyFilters = () => {
+        fetchListings({ search, category, minQty, maxQty, minPrice, maxPrice, sort });
+    }
+
+    const handleClearAll = () => {
+        setSearch('');
+        setCategory('All Categories');
+        setMinQty('');
+        setMaxQty('');
+        setMinPrice('');
+        setMaxPrice('');
+        setSort('Sort: Most Relevant');
+        fetchListings({
+            search: '', category: 'All Categories', minQty: '', maxQty: '', minPrice: '', maxPrice: '', sort: 'Sort: Most Relevant'
+        });
+    }
 
     return (
         <>
@@ -32,37 +59,37 @@ const BuyerBrowseMarketplace = () => {
                     <div>
                         <h2 className="text-lg font-bold text-slate-900 mb-4">Filters</h2>
                         <input type="text" placeholder="Search listings..."
+                            value={search} onChange={(e) => setSearch(e.target.value)}
                             className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                     </div>
 
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-2">Waste Type</label>
                         <select
+                            value={category} onChange={(e) => setCategory(e.target.value)}
                             className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option>All Categories</option>
-                            <option>Plastics</option>
-                            <option>Metals</option>
-                            <option>Wood</option>
-                            <option>Textiles</option>
-                            <option>Organic</option>
-                            <option>Electronics</option>
-                            <option>Construction Debris</option>
+                            <option value="All Categories">All Categories</option>
+                            <option value="Construction">Construction</option>
+                            <option value="Metals">Metals</option>
+                            <option value="Wood">Wood</option>
                         </select>
                     </div>
 
-                    <div>
+                    {/* <div>
                         <label className="block text-sm font-medium text-slate-700 mb-2">Location</label>
                         <input type="text" placeholder="City, State or ZIP"
                             className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                    </div>
+                    </div> */}
 
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-2">Quantity Range (kg)</label>
                         <div className="flex items-center gap-2">
                             <input type="number" placeholder="Min"
+                                value={minQty} onChange={(e) => setMinQty(e.target.value)}
                                 className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                             <span className="text-slate-400 text-sm">–</span>
                             <input type="number" placeholder="Max"
+                                value={maxQty} onChange={(e) => setMaxQty(e.target.value)}
                                 className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                         </div>
                     </div>
@@ -71,18 +98,22 @@ const BuyerBrowseMarketplace = () => {
                         <label className="block text-sm font-medium text-slate-700 mb-2">Price Range ($)</label>
                         <div className="flex items-center gap-2">
                             <input type="number" placeholder="Min"
+                                value={minPrice} onChange={(e) => setMinPrice(e.target.value)}
                                 className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                             <span className="text-slate-400 text-sm">–</span>
                             <input type="number" placeholder="Max"
+                                value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)}
                                 className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                         </div>
                     </div>
 
                     <button
+                        onClick={handleApplyFilters}
                         className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2.5 rounded-lg">Apply
                         Filters
                     </button>
                     <button
+                        onClick={handleClearAll}
                         className="w-full border border-slate-300 text-slate-600 text-sm font-medium py-2.5 rounded-lg hover:bg-slate-50">Clear
                         All
                     </button>
@@ -96,6 +127,7 @@ const BuyerBrowseMarketplace = () => {
                             <p className="text-sm text-slate-500 mt-1">{data.length} listings found</p>
                         </div>
                         <select
+                            value={sort} onChange={(e) => setSort(e.target.value)}
                             className="rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <option>Sort: Most Relevant</option>
                             <option>Sort: Newest First</option>
