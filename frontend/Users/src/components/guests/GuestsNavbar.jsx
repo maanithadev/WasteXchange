@@ -16,11 +16,6 @@ const GuestsNavbar = () => {
                     <Link to="/buyer/dashboard"
                         className="text-sm font-medium text-slate-700 border border-slate-300 rounded-lg px-4 py-2 hover:bg-slate-50">Dashboard</Link>
                 )
-            case "admin":
-                return (
-                    <button onClick={() => window.location.href = import.meta.env.VITE_ADMIN_FRONTEND_URL + import.meta.env.VITE_ADMIN_DASHBOARD_URL}
-                        className="text-sm font-medium text-slate-700 border border-slate-300 rounded-lg px-4 py-2 hover:bg-slate-50">Dashboard</button>
-                )
             default:
                 return (
                     <>

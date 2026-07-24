@@ -20,6 +20,7 @@ const ReportsAndAnalytics = lazy(() => import("./pages/admin/./ReportsAndAnalyti
 const SupportResolution = lazy(() => import("./pages/admin/./SupportResolution"))
 const NotificationsManagement = lazy(() => import("./pages/admin/./NotificationsManagement"))
 const Settings = lazy(() => import("./pages/admin/./Settings"))
+const ContactsManagement = lazy(() => import("./pages/admin/ContactsManagement"))
 
 const App = () => {
     return (
@@ -47,6 +48,7 @@ const App = () => {
                             <Route path="/support-resolution" element={<SupportResolution/>}/>
                             <Route path="/notifications" element={<NotificationsManagement/>}/>
                             <Route path="/settings" element={<Settings/>}/>
+                            <Route path="/contacts-management" element={<ContactsManagement/>}/>
                         </Route>
                     </Route>
                 </Route>

@@ -6,6 +6,7 @@ const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
 const connectDB = require("./config/database");
 const userRoutes = require("./routes/users.route.js");
+const contactRoutes = require("./routes/contacts.route.js");
 
 connectDB()
 
@@ -22,6 +23,7 @@ const limiter = rateLimit({
 app.use(helmet());
 app.use(limiter);
 app.use("/api/users", userRoutes)
+app.use("/api/contacts", contactRoutes)
 
 app.use((error, req, res, next) => {
     if (error) {
