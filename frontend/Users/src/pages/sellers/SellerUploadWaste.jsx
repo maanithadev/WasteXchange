@@ -69,6 +69,7 @@ const SellerUploadWaste = () => {
             setCurrentStep("step2")
             setLoading(false)
         } catch (err) {
+            setLoading(false)
             if (err.message === "Request failed with status code 429") {
                 toast.error("Too many requests, please try again later.")
             } else {

@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import { useEffect } from "react";
+import toast from "react-hot-toast";
 
 export function useVerifyUser() {
     const [user, setUser] = useState(null)

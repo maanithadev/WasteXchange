@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import toast from "react-hot-toast";
 
 const ReportsAndAnalytics = () => {
     const [filter, setFilter] = useState("Year to Date");

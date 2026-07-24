@@ -3,6 +3,7 @@ import { useSidebarContext } from "../../contexts/SidebarContext.jsx";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Bell } from 'lucide-react';
+import toast from "react-hot-toast";
 
 const SellerNavbar = () => {
     const { isSidebarOpen, setIsSidebarOpen } = useSidebarContext();

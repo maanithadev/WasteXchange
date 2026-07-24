@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios"
+import toast from "react-hot-toast";
 
 const Transactions = () => {
     const [data, setData] = useState([]);
@@ -31,21 +32,37 @@ const Transactions = () => {
 
     useEffect(() => {
         async function loadPayments() {
-            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_ALL_PAYMENTS_URL, {
-                headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`,
+            try {
+                const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_ALL_PAYMENTS_URL, {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                    }
+                });
+                setData(res.data);
+            } catch (err) {
+                if (err.message === "Request failed with status code 429") {
+                    toast.error("Too many requests, please try again later.")
+                } else {
+                    toast.error('Something went wrong! Please try again later.')
                 }
-            });
-            setData(res.data);
+            }
         }
 
         async function loadCards() {
-            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_ADMIN_TRANSACTIONS_CARDS_URL, {
-                headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`,
+            try {
+                const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_ADMIN_TRANSACTIONS_CARDS_URL, {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                    }
+                });
+                setCardData(res.data);
+            } catch (err) {
+                if (err.message === "Request failed with status code 429") {
+                    toast.error("Too many requests, please try again later.")
+                } else {
+                    toast.error('Something went wrong! Please try again later.')
                 }
-            });
-            setCardData(res.data);
+            }
         }
 
         loadPayments()

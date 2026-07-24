@@ -4,6 +4,7 @@ import axios from "axios";
 import { useCheckoutContext } from "../../contexts/CheckoutContext.jsx";
 import { useVerifyUser } from "../../hooks/useVerifyUser";
 import { useConversationsContext } from "../../contexts/ConversationsContext.jsx";
+import toast from "react-hot-toast";
 
 const BuyerListingDetail = () => {
     const { id } = useParams()
@@ -16,29 +17,53 @@ const BuyerListingDetail = () => {
 
     useEffect(() => {
         async function fetchWasteListingData() {
-            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_SINGLE_WASTE_LISTING_URL + id)
-            setData(res.data)
+            try {
+                const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_SINGLE_WASTE_LISTING_URL + id)
+                setData(res.data)
+            } catch (err) {
+                if (err.message === "Request failed with status code 429") {
+                    toast.error("Too many requests, please try again later.")
+                } else {
+                    toast.error('Something went wrong! Please try again later.')
+                }
+            }
         }
 
         fetchWasteListingData()
     }, []);
 
     async function handlePlaceOrder() {
-        const completeDataToSend = { ...data, buyer_id: user.user_id }
-        const res = await axios.post(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_CHECKOUT_URL, {
-            data: completeDataToSend,
-        })
-        setCheckoutParams(res.data)
-        navigate("/initiate-checkout")
+        try {
+            const completeDataToSend = { ...data, buyer_id: user.user_id }
+            const res = await axios.post(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_CHECKOUT_URL, {
+                data: completeDataToSend,
+            })
+            setCheckoutParams(res.data)
+            navigate("/initiate-checkout")
+        } catch (err) {
+            if (err.message === "Request failed with status code 429") {
+                toast.error("Too many requests, please try again later.")
+            } else {
+                toast.error('Something went wrong! Please try again later.')
+            }
+        }
     }
 
     async function startMessaging() {
-        const res = await axios.post(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_START_CHAT_URL, {
-            buyer_id: user.user_id,
-            seller_id: data.seller_id
-        })
-        setConversationId(res.data.conversation_id)
-        navigate("/buyer/messages")
+        try {
+            const res = await axios.post(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_START_CHAT_URL, {
+                buyer_id: user.user_id,
+                seller_id: data.seller_id
+            })
+            setConversationId(res.data.conversation_id)
+            navigate("/buyer/messages")
+        } catch (err) {
+            if (err.message === "Request failed with status code 429") {
+                toast.error("Too many requests, please try again later.")
+            } else {
+                toast.error('Something went wrong! Please try again later.')
+            }
+        }
     }
 
     return (

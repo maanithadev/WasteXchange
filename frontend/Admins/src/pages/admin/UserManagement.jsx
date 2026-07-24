@@ -21,13 +21,21 @@ const UserManagement = () => {
 
     useEffect(() => {
         async function fetchData() {
-            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_ALL_USERS_URL, {
-                headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+            try {
+                const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_ALL_USERS_URL, {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`
+                    }
+                })
+                setData(res.data)
+                setFilteredData(res.data)
+            } catch (err) {
+                if (err.message === "Request failed with status code 429") {
+                    toast.error("Too many requests, please try again later.")
+                } else {
+                    toast.error('Something went wrong! Please try again later.')
                 }
-            })
-            setData(res.data)
-            setFilteredData(res.data)
+            }
         }
 
         fetchData()

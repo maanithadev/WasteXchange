@@ -76,7 +76,7 @@ const localUpload = multer({
 router.post("/seller-upload-waste", geminiUpload.single("image"), verifyUser, async (req, res) => {
     try {
         if (!req.file) {
-            return res.status(400).json({ message: "No image uploaded" });
+            return res.json({ message: "No image uploaded" });
         }
 
         const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -121,7 +121,7 @@ If you are unsure about a field, make your best visual estimate rather than leav
         try {
             parsed = JSON.parse(cleaned);
         } catch (parseErr) {
-            return res.status(502).json({
+            return res.json({
                 error: "Gemini did not return valid JSON",
                 raw_response: rawText,
             });
@@ -131,7 +131,7 @@ If you are unsure about a field, make your best visual estimate rather than leav
 
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: "server error", error: err.message });
+        res.json({ message: "server error", error: err.message });
     }
 })
 
@@ -216,7 +216,7 @@ router.put("/update-listing-status", verifyUser, async (req, res) => {
         }
         res.json(updatedListing)
     } catch (err) {
-        res.status(500).json({ message: err.message })
+        res.json({ message: err.message })
     }
 })
 
@@ -268,10 +268,10 @@ router.put("/update-listing/:id", localUpload.single("image"), verifyUser, async
             await Matches.deleteMany({ wasteListings_id: updatedListing._id })
         }
 
-        res.status(200).json({ message: "Listing updated successfully", formData: updatedListing });
+        res.json({ message: "Listing updated successfully", formData: updatedListing });
 
     } catch (err) {
-        res.status(500).json({ message: "server error", error: err.message });
+        res.json({ message: "server error", error: err.message });
     }
 });
 
@@ -283,7 +283,7 @@ router.delete("/delete-listing/:id", verifyUser, async (req, res) => {
 
         const existingListing = await WasteListings.findOne({ _id: listingId, seller_id: req.token.user_id });
         if (!existingListing) {
-            return res.status(404).json({ message: "Listing not found or not authorized" });
+            return res.json({ message: "Listing not found or not authorized" });
         }
 
         if (existingListing.image) {
@@ -296,10 +296,10 @@ router.delete("/delete-listing/:id", verifyUser, async (req, res) => {
         await WasteListings.deleteOne({ _id: listingId, seller_id: req.token.user_id });
         await Matches.deleteMany({ wasteListings_id: listingId });
 
-        res.status(200).json({ message: "Listing deleted successfully", id: listingId });
+        res.json({ message: "Listing deleted successfully", id: listingId });
 
     } catch (err) {
-        res.status(500).json({ message: "server error", error: err.message });
+        res.json({ message: "server error", error: err.message });
     }
 });
 

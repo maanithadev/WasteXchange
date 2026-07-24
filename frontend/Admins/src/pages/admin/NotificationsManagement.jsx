@@ -10,30 +10,45 @@ const NotificationsManagement = () => {
 
     useEffect(() => {
         async function fetchData() {
-            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_ALL_ADMIN_ANNOUNCEMENTS_URL, {
-                headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+            try {
+                const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_ALL_ADMIN_ANNOUNCEMENTS_URL, {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`
+                    }
+                })
+                setData(res.data)
+            } catch (err) {
+                if (err.message === "Request failed with status code 429") {
+                    toast.error("Too many requests, please try again later.")
+                } else {
+                    toast.error('Something went wrong! Please try again later.')
                 }
-            })
-            setData(res.data)
+            }
         }
 
         fetchData()
     }, [refresh])
 
     async function onsubmit(formData) {
-        const res = await axios.post(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_ADMIN_ANNOUNCEMENT_SENT_URL,
-            { formData },
-            {
-                headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+        try {
+            const res = await axios.post(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_ADMIN_ANNOUNCEMENT_SENT_URL,
+                { formData },
+                {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`
+                    }
                 }
+            )
+            setRefresh(!refresh)
+            toast.success("Announcement sent successfully!")
+        } catch (err) {
+            if (err.message === "Request failed with status code 429") {
+                toast.error("Too many requests, please try again later.")
+            } else {
+                toast.error('Something went wrong! Please try again later.')
             }
-        )
-        setRefresh(!refresh)
-        toast.success("Announcement sent successfully!")
+        }
     }
-
 
     return (
         <>

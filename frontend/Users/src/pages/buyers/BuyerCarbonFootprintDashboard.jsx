@@ -1,18 +1,27 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import toast from "react-hot-toast";
 
 const CarbonFootprintDashboard = () => {
     const [card, setCard] = useState({});
 
     useEffect(() => {
         async function loadCard() {
-            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_BUYER_DASHBOARD_CARDS_URL, {
-                headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`,
+            try {
+                const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_BUYER_DASHBOARD_CARDS_URL, {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                    }
+                });
+                setCard(res.data)
+            } catch (err) {
+                if (err.message === "Request failed with status code 429") {
+                    toast.error("Too many requests, please try again later.")
+                } else {
+                    toast.error('Something went wrong! Please try again later.')
                 }
-            });
-            setCard(res.data)
+            }
         }
 
         loadCard()

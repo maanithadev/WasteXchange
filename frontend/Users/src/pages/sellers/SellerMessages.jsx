@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from "react"
 import axios from "axios"
 import { useVerifyUser } from "../../hooks/useVerifyUser"
 import { io } from "socket.io-client"
+import toast from "react-hot-toast";
 
 const SellerMessages = () => {
     const { user } = useVerifyUser()
@@ -16,21 +17,37 @@ const SellerMessages = () => {
 
     useEffect(() => {
         async function getConversations() {
-            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_ALL_SELLER_CONVERSATIONS_URL, {
-                headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`,
+            try {
+                const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_ALL_SELLER_CONVERSATIONS_URL, {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                    }
+                })
+                setConversations(res.data)
+            } catch (err) {
+                if (err.message === "Request failed with status code 429") {
+                    toast.error("Too many requests, please try again later.")
+                } else {
+                    toast.error('Something went wrong! Please try again later.')
                 }
-            })
-            setConversations(res.data)
+            }
         }
 
         async function findMessages() {
-            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_MESSAGES_URL + conversationId, {
-                headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`,
+            try {
+                const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_MESSAGES_URL + conversationId, {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                    }
+                })
+                setMessages(res.data);
+            } catch (err) {
+                if (err.message === "Request failed with status code 429") {
+                    toast.error("Too many requests, please try again later.")
+                } else {
+                    toast.error('Something went wrong! Please try again later.')
                 }
-            })
-            setMessages(res.data);
+            }
         }
 
         getConversations()
@@ -98,18 +115,26 @@ const SellerMessages = () => {
     }, [user, conversationId]);
 
     async function sendMessage() {
-        const res = await axios.post(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_SEND_MESSAGE_URL + conversationId,
-            { message: typedMessage },
-            {
-                headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`,
-                }
-            })
-        setMessages((prev) => [...prev, res.data])
-        setConversations(prev => prev.map(c =>
-            c._id === conversationId ? { ...c, last_message: typedMessage } : c
-        ));
-        setTypedMessage("")
+        try {
+            const res = await axios.post(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_SEND_MESSAGE_URL + conversationId,
+                { message: typedMessage },
+                {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                    }
+                })
+            setMessages((prev) => [...prev, res.data])
+            setConversations(prev => prev.map(c =>
+                c._id === conversationId ? { ...c, last_message: typedMessage } : c
+            ));
+            setTypedMessage("")
+        } catch (err) {
+            if (err.message === "Request failed with status code 429") {
+                toast.error("Too many requests, please try again later.")
+            } else {
+                toast.error('Something went wrong! Please try again later.')
+            }
+        }
     }
 
     return (

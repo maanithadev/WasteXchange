@@ -5,15 +5,6 @@ import { useEffect } from "react";
 import toast from 'react-hot-toast';
 
 const GuestsLogin = () => {
-    useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get("logout") === "true") {
-            localStorage.clear();
-            window.history.replaceState({}, document.title, window.location.pathname);
-            window.location.reload();
-        }
-    }, []);
-
     const { register, handleSubmit, formState } = useForm({
         defaultValues: {
             email: "",

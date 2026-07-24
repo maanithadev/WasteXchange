@@ -1,18 +1,27 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
 import { Link } from "react-router-dom"
+import toast from "react-hot-toast"
 
 const BuyerMatchedRecommendations = () => {
 
     const [data, setData] = useState([])
     useEffect(() => {
         async function fetchData() {
-            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_BUYER_WASTE_MATCHES_URL, {
-                headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+            try {
+                const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_BUYER_WASTE_MATCHES_URL, {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`
+                    }
+                })
+                setData(res.data)
+            } catch (err) {
+                if (err.message === "Request failed with status code 429") {
+                    toast.error("Too many requests, please try again later.")
+                } else {
+                    toast.error('Something went wrong! Please try again later.')
                 }
-            })
-            setData(res.data)
+            }
         }
         fetchData()
     }, [])

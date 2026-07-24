@@ -135,14 +135,14 @@ router.post('/payment/response', async (req, res) => {
 
         // Safety check: make sure the response has a signature
         if (!data.signed_field_names || !data.signature) {
-            return res.status(400).send('Bad request: missing signature.');
+            return res.send('Bad request: missing signature.');
         }
 
         // Verify the signature to make sure the response is genuine and not tampered with
         const isValid = verifySignature(data);
         if (!isValid) {
             console.error('Signature mismatch', { received: data.signature });
-            return res.status(400).send('Invalid signature — possible tampering detected.');
+            return res.send('Invalid signature — possible tampering detected.');
         }
 
         const cybersource_Transaction_saveData = new Cybersource_Transactions({
@@ -293,7 +293,7 @@ router.post('/payment/response', async (req, res) => {
                 return res.redirect(process.env.USERS_FRONTEND_URL + process.env.BUYER_DASHBOARD_REDIRECT_URL);
         }
     } catch (err) {
-        res.status(500).json({ message: err.message || 'Unknown error' });
+        res.json({ message: err.message });
     }
 });
 

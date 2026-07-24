@@ -19,10 +19,10 @@ const verifyUser = async (req, res, next) => {
             req.token = user
             next()
         } else {
-            res.status(401).json({ message: 'No token provided' })
+            res.json({ message: 'No token provided' })
         }
     } catch (err) {
-        res.status(403).json({ message: 'Invalid or expired token' })
+        res.json({ message: 'Invalid or expired token' })
     }
 }
 

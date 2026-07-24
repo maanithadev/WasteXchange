@@ -18,10 +18,10 @@ router.get("/verifyUser", async (req, res) => {
             if (foundUser.status === "suspended") return res.json({ message: 'User Account is Suspended' })
             res.json(user)
         } else {
-            res.status(401).json({ message: 'No token provided' })
+            res.json({ message: 'No token provided' })
         }
     } catch (err) {
-        res.status(403).json({ message: 'Invalid or expired token' })
+        res.json({ message: 'Invalid or expired token' })
     }
 })
 
@@ -57,9 +57,9 @@ router.post("/signup", async (req, res) => {
             user_id: savedUser._id,
             role: savedUser.role
         }, process.env.JWT_SECRET, { expiresIn: "7d" })
-        res.status(200).json({ message: 'User saved successfully.', token, role: savedUser.role })
+        res.json({ message: 'User saved successfully.', token, role: savedUser.role })
     } catch (err) {
-        res.status(400).send({ message: "server error" })
+        res.send({ message: "server error" })
     }
 })
 
@@ -98,10 +98,10 @@ router.post("/change-password", verifyUser, async (req, res) => {
     try {
         const { currentPassword, newPassword } = req.body;
         const user = await Users.findOne({ _id: req.token.user_id });
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user) return res.json({ message: "User not found" });
 
         const isMatch = await bcrypt.compare(currentPassword, user.password);
-        if (!isMatch) return res.status(400).json({ message: "Incorrect current password" });
+        if (!isMatch) return res.json({ message: "Incorrect current password" });
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         await Users.updateOne(
@@ -111,25 +111,25 @@ router.post("/change-password", verifyUser, async (req, res) => {
 
         res.json({ message: "Password updated successfully" });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.json({ message: err.message });
     }
 })
 
 router.post("/forgot-password", async (req, res) => {
     try {
-        const {email, newPassword} = req.body;
-        const user = await Users.findOne({email});
-        if (!user) return res.status(404).json({message: "User not found"});
+        const { email, newPassword } = req.body;
+        const user = await Users.findOne({ email });
+        if (!user) return res.json({ message: "User not found" });
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         await Users.updateOne(
-            {email},
-            {password: hashedPassword}
+            { email },
+            { password: hashedPassword }
         );
 
-        res.json({message: "Password reset successfully"});
+        res.json({ message: "Password reset successfully" });
     } catch (err) {
-        res.status(500).json({message: err.message});
+        res.json({ message: err.message });
     }
 })
 
@@ -143,7 +143,7 @@ router.put("/update-user-roleandstatus", verifyUser, async (req, res) => {
         );
         res.json(users)
     } catch (err) {
-        res.status(500).json({ message: err.message })
+        res.json({ message: err.message })
     }
 })
 

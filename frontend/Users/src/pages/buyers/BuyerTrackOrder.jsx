@@ -5,6 +5,7 @@ import Loading from "../../components/Loading";
 import { useVerifyUser } from "../../hooks/useVerifyUser";
 import { useConversationsContext } from "../../contexts/ConversationsContext.jsx";
 import { Ban } from "lucide-react";
+import toast from "react-hot-toast";
 
 const BuyerTrackOrder = () => {
     const [data, setData] = useState({})
@@ -16,25 +17,42 @@ const BuyerTrackOrder = () => {
 
     useEffect(() => {
         async function fetchData() {
-            setLoading(true)
-            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_BUYER_TRACK_ORDER_URL + id, {
-                headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+            try {
+                setLoading(true)
+                const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_BUYER_TRACK_ORDER_URL + id, {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`
+                    }
+                })
+                setData(res.data)
+                setLoading(false)
+            } catch (err) {
+                if (err.message === "Request failed with status code 429") {
+                    toast.error("Too many requests, please try again later.")
+                } else {
+                    toast.error('Something went wrong! Please try again later.')
                 }
-            })
-            setData(res.data)
-            setLoading(false)
+                setLoading(false)
+            }
         }
         fetchData()
     }, [])
 
     async function startMessaging() {
-        const res = await axios.post(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_START_CHAT_URL, {
-            buyer_id: user.user_id,
-            seller_id: data.order?.sellerDetails._id
-        })
-        setConversationId(res.data.conversation_id)
-        navigate("/buyer/messages")
+        try {
+            const res = await axios.post(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_START_CHAT_URL, {
+                buyer_id: user.user_id,
+                seller_id: data.order?.sellerDetails._id
+            })
+            setConversationId(res.data.conversation_id)
+            navigate("/buyer/messages")
+        } catch (err) {
+            if (err.message === "Request failed with status code 429") {
+                toast.error("Too many requests, please try again later.")
+            } else {
+                toast.error('Something went wrong! Please try again later.')
+            }
+        }
     }
 
     function handleGreenLine() {

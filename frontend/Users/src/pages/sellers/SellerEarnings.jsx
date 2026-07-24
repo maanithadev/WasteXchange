@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const SellerEarnings = () => {
     const [data, setData] = useState([]);
@@ -23,14 +24,22 @@ const SellerEarnings = () => {
 
     useEffect(() => {
         async function loadProducts() {
-            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_SELLER_PAYMENTS_INFO_URL, {
-                headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`,
+            try {
+                const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_SELLER_PAYMENTS_INFO_URL, {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                    }
+                });
+                setData(res.data.payments || []);
+                setTotalEarnings(res.data.allTimeEarnings || 0);
+                setCurrentMonthEarnings(res.data.currentMonthEarnings || 0);
+            } catch (err) {
+                if (err.message === "Request failed with status code 429") {
+                    toast.error("Too many requests, please try again later.")
+                } else {
+                    toast.error('Something went wrong! Please try again later.')
                 }
-            });
-            setData(res.data.payments || []);
-            setTotalEarnings(res.data.allTimeEarnings || 0);
-            setCurrentMonthEarnings(res.data.currentMonthEarnings || 0);
+            }
         }
 
         loadProducts()

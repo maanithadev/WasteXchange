@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import { useSidebarContext } from "../../contexts/SidebarContext.jsx";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const BuyerNavbar = () => {
     const { isSidebarOpen, setIsSidebarOpen } = useSidebarContext();

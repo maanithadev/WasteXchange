@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { Dot } from 'lucide-react';
+import toast from "react-hot-toast";
 
 const SellerDashboard = () => {
     const [notifications, setNotifications] = useState([]);
@@ -9,21 +10,37 @@ const SellerDashboard = () => {
 
     useEffect(() => {
         async function load4Cards() {
-            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_SELLER_DASHBOARD_CARDS_URL, {
-                headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`,
+            try {
+                const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_SELLER_DASHBOARD_CARDS_URL, {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                    }
+                });
+                setCards(res.data)
+            } catch (err) {
+                if (err.message === "Request failed with status code 429") {
+                    toast.error("Too many requests, please try again later.")
+                } else {
+                    toast.error('Something went wrong! Please try again later.')
                 }
-            });
-            setCards(res.data)
+            }
         }
 
         async function loadNotifications() {
-            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_SPECIFIC_USER_NOTIFICATIONS_URL, {
-                headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`,
+            try {
+                const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_SPECIFIC_USER_NOTIFICATIONS_URL, {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                    }
+                });
+                setNotifications(res.data);
+            } catch (err) {
+                if (err.message === "Request failed with status code 429") {
+                    toast.error("Too many requests, please try again later.")
+                } else {
+                    toast.error('Something went wrong! Please try again later.')
                 }
-            });
-            setNotifications(res.data);
+            }
         }
 
         load4Cards()

@@ -3,6 +3,7 @@ import axios from "axios"
 import { useNavigate, useParams } from "react-router-dom"
 import { useConversationsContext } from "../../contexts/ConversationsContext";
 import Loading from "../../components/Loading"
+import toast from "react-hot-toast";
 
 const SellerListingStatusDetails = () => {
 
@@ -14,25 +15,42 @@ const SellerListingStatusDetails = () => {
 
     useEffect(() => {
         async function fetchData() {
-            setLoading(true)
-            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_SELLER_WASTE_MATCHES_URL + id, {
-                headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+            try {
+                setLoading(true)
+                const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_SELLER_WASTE_MATCHES_URL + id, {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`
+                    }
+                })
+                setData(res.data)
+                setLoading(false)
+            } catch (err) {
+                if (err.message === "Request failed with status code 429") {
+                    toast.error("Too many requests, please try again later.")
+                } else {
+                    toast.error('Something went wrong! Please try again later.')
                 }
-            })
-            setData(res.data)
-            setLoading(false)
+                setLoading(false)
+            }
         }
         fetchData()
     }, [])
 
     async function startMessaging(buyer_id, seller_id) {
-        const res = await axios.post(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_START_CHAT_URL, {
-            buyer_id,
-            seller_id
-        })
-        setConversationId(res.data.conversation_id)
-        navigate("/seller/messages")
+        try {
+            const res = await axios.post(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_START_CHAT_URL, {
+                buyer_id,
+                seller_id
+            })
+            setConversationId(res.data.conversation_id)
+            navigate("/seller/messages")
+        } catch (err) {
+            if (err.message === "Request failed with status code 429") {
+                toast.error("Too many requests, please try again later.")
+            } else {
+                toast.error('Something went wrong! Please try again later.')
+            }
+        }
     }
 
     return loading

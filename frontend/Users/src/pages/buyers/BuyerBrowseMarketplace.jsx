@@ -1,14 +1,23 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const BuyerBrowseMarketplace = () => {
     const [data, setData] = useState([])
 
     useEffect(() => {
         async function fetchData() {
-            const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_BUYERS_GET_ALL_WASTE_LISTINGS_URL)
-            setData(res.data)
+            try {
+                const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_BUYERS_GET_ALL_WASTE_LISTINGS_URL)
+                setData(res.data)
+            } catch (err) {
+                if (err.message === "Request failed with status code 429") {
+                    toast.error("Too many requests, please try again later.")
+                } else {
+                    toast.error('Something went wrong! Please try again later.')
+                }
+            }
         }
 
         fetchData()

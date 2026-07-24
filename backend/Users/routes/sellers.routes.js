@@ -89,9 +89,9 @@ router.get("/get-seller-details", verifyUser, async (req, res) => {
 router.get("/get-all-waste-listings", verifyUser, async (req, res) => {
     try {
         const wasteListings = await WasteListings.find({ seller_id: req.token.user_id }).sort({ updated_at: -1 })
-        res.status(200).json(wasteListings)
+        res.json(wasteListings)
     } catch (err) {
-        res.status(500).send({ message: err.message })
+        res.json({ message: err.message })
     }
 })
 

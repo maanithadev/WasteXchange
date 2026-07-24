@@ -91,18 +91,18 @@ router.get("/buyer-dashboard-cards", verifyUser, async (req, res) => {
 router.get("/get-all-waste-listings", async (req, res) => {
     try {
         const wasteListings = await WasteListings.find({ status: "active" }).sort({ created_at: -1 })
-        res.status(200).json(wasteListings)
+        res.json(wasteListings)
     } catch (err) {
-        res.status(500).send({ message: err.message })
+        res.json({ message: err.message })
     }
 })
 
 router.get("/get-single-waste-listing/:id", async (req, res) => {
     try {
         const wasteListing = await WasteListings.findOne({ _id: req.params.id }).populate('sellerDetails', '-email -password');
-        res.status(200).json(wasteListing)
+        res.json(wasteListing)
     } catch (err) {
-        res.status(500).send({ message: err.message })
+        res.json({ message: err.message })
     }
 })
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export function useVerifyUser() {
     const [user, setUser] = useState(null)
@@ -10,14 +11,13 @@ export function useVerifyUser() {
         async function verifyUser() {
             try {
                 if (token !== null) {
+                    setLoading(true)
                     const res = await axios.get(import.meta.env.VITE_ADMIN_BACKEND_URL + import.meta.env.VITE_VERIFY_USER_HOOK_URL, {
                         headers: {
                             Authorization: `Bearer ${token}`
                         }
                     })
                     setUser(res.data)
-                    setLoading(false)
-                } else {
                     setLoading(false)
                 }
             } catch (err) {

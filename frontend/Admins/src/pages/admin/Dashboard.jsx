@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Line } from "recharts";
+import toast from "react-hot-toast";
 
 function timeAgo(dateString) {
     if (!dateString) return "Just now";
