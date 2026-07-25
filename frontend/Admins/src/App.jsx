@@ -1,10 +1,11 @@
 import {lazy} from "react"
 import {Route, Routes} from "react-router-dom"
-import ProtectedAdminRoutes from "./auth/ProtectedAdminRoutes"
+import ProtectedRoutes from "./auth/ProtectedRoutes.jsx"
 import {SidebarProvider} from "./contexts/SidebarContext"
 import {Toaster} from 'react-hot-toast';
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import BackendUsersManagement from "./pages/admin/BackendUsersManagement.jsx";
+import ProtectedAdminRoutes from "./auth/ProtectedAdminRoutes.jsx";
 
 const Login = lazy(() => import("./pages/admin/./Login"));
 const ForgotPassword = lazy(() => import("./pages/admin/./ForgotPassword"));
@@ -31,7 +32,7 @@ const App = () => {
                 <Route path="/forgot-password" element={<ForgotPassword/>}/>
                 <Route path="*" element={<NotFoundPage/>}/>
 
-                <Route element={<ProtectedAdminRoutes/>}>
+                <Route element={<ProtectedRoutes/>}>
                     <Route element={
                         <SidebarProvider>
                             <Sidebar/>
@@ -40,15 +41,18 @@ const App = () => {
                         <Route element={<Navbar/>}>
                             <Route path="/dashboard" element={<Dashboard/>}/>
                             <Route path="/user-management" element={<UserManagement/>}/>
-                            <Route path="/backend-users-management" element={<BackendUsersManagement/>}/>
                             <Route path="/listing-moderation" element={<ListingModeration/>}/>
                             {/* <Route path="/ai-classification-review-queue" element={<AIclassNameificationReviewQueue />} /> */}
                             <Route path="/transactions" element={<Transactions/>}/>
                             <Route path="/reports-and-analytics" element={<ReportsAndAnalytics/>}/>
-                            <Route path="/support-resolution" element={<SupportResolution/>}/>
-                            <Route path="/notifications" element={<NotificationsManagement/>}/>
+                            {/*<Route path="/support-resolution" element={<SupportResolution/>}/>*/}
                             <Route path="/settings" element={<Settings/>}/>
-                            <Route path="/contacts-management" element={<ContactsManagement/>}/>
+
+                            <Route element={<ProtectedAdminRoutes/>}>
+                                <Route path="/backend-users-management" element={<BackendUsersManagement/>}/>
+                                <Route path="/notifications" element={<NotificationsManagement/>}/>
+                                <Route path="/contacts-management" element={<ContactsManagement/>}/>
+                            </Route>
                         </Route>
                     </Route>
                 </Route>

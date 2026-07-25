@@ -1,14 +1,12 @@
-import { Navigate, Outlet } from "react-router-dom";
+import {useVerifyUser} from "../hooks/useVerifyUser.jsx";
+import {Navigate, Outlet} from "react-router-dom";
 import Loading from "../components/Loading.jsx";
-import { useVerifyUser } from "../hooks/useVerifyUser.jsx";
 
 const ProtectedAdminRoutes = () => {
-    const { user, loading, token } = useVerifyUser();
+    const {user, loading} = useVerifyUser()
 
-    if (!token) return <Navigate to="/" />
+    if (loading) return <Loading/>
 
-    if (loading) return <Loading />
-
-    return user?.message ? <Navigate to="/" /> : <Outlet />
+    return user?.role === "admin" || user?.role === "manager" ? <Outlet/> : <Navigate to="/"/>
 }
 export default ProtectedAdminRoutes

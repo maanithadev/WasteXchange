@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
 import toast from "react-hot-toast"
+import { useVerifyUser } from "../../hooks/useVerifyUser"
 
 const ListingModeration = () => {
+    const { user } = useVerifyUser();
+
     const [data, setData] = useState([])
     const [filteredData, setFilteredData] = useState([])
     const [filter, setFilter] = useState("all")
@@ -220,14 +223,17 @@ const ListingModeration = () => {
                                         <td className="px-6 py-3.5 text-slate-500">{item.created_at}</td>
                                         <td className="px-6 py-3.5 text-right space-x-1 whitespace-nowrap">
                                             {/* <button className="text-xs font-medium bg-emerald-600 text-white rounded-md px-2.5 py-1 hover:bg-emerald-700">Approve</button> */}
-                                            <button type="button" onClick={() => {
-                                                setStatusValue("rejected")
-                                                setSelectedItem(item);
-                                                setIsRejectModalOpen(true);
-                                                setRejectMessage("");
-                                            }}
-                                                className="text-xs font-medium bg-red-600 text-white rounded-md px-2.5 py-1 hover:bg-red-700">Reject
-                                            </button>
+                                            {(user.role === "admin" || user.role === "manager") &&
+                                                <button type="button" onClick={() => {
+                                                    setStatusValue("rejected")
+                                                    setSelectedItem(item);
+                                                    setIsRejectModalOpen(true);
+                                                    setRejectMessage("");
+                                                }}
+                                                    className="text-xs font-medium bg-red-600 text-white rounded-md px-2.5 py-1 hover:bg-red-700">Reject
+                                                </button>
+                                            }
+
                                             <button onClick={() => handleView(item)}
                                                 className="text-xs font-medium border border-slate-300 text-slate-600 rounded-md px-2.5 py-1 hover:bg-slate-50">View
                                             </button>
@@ -258,13 +264,16 @@ const ListingModeration = () => {
                                 {/* Status */}
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Status</label>
-                                    <select value={statusValue} onChange={handleStatusChange}
-                                        className={`w-full text-sm border-2 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none ${statusValue === "rejected" ? "border-red-500" : "border-slate-200"}`}>
-                                        <option>Select Option</option>
-                                        {statusList.map((item, index) => (
-                                            <option key={index} value={item}>{item}</option>
-                                        ))}
-                                    </select>
+                                    {(user.role === "admin" || user.role === "manager")
+                                        ? <select value={statusValue} onChange={handleStatusChange}
+                                            className={`w-full text-sm border-2 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none ${statusValue === "rejected" ? "border-red-500" : "border-slate-200"}`}>
+                                            <option>Select Option</option>
+                                            {statusList.map((item, index) => (
+                                                <option key={index} value={item}>{item}</option>
+                                            ))}
+                                        </select>
+                                        : <input type="text" value={selectedItem.status} readOnly
+                                            className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none" />}
 
                                     {statusValue === "rejected" && <div className="mt-5">
                                         <label className="block text-sm font-medium text-slate-700 mb-2">Suspend
@@ -378,10 +387,11 @@ const ListingModeration = () => {
                                     <button type="button" onClick={closeModal}
                                         className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50">Cancel
                                     </button>
-                                    <button type="button" onClick={handleUpdateStatus}
-                                        className="px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700">Save
-                                        Changes
-                                    </button>
+                                    {(user.role === "admin" || user.role === "manager") &&
+                                        <button type="button" onClick={handleUpdateStatus}
+                                            className="px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700">Save
+                                            Changes
+                                        </button>}
                                 </div>
                             </div>
                         </div>

@@ -1,8 +1,13 @@
 import { Outlet } from "react-router-dom"
 import { useSidebarContext } from "../../contexts/SidebarContext.jsx"
+import {useVerifyUser} from "../../hooks/useVerifyUser.jsx";
+import Loading from "../Loading.jsx";
 
 const AdminNavbar = () => {
     const { isSidebarOpen, setIsSidebarOpen } = useSidebarContext();
+    const {user, loading} = useVerifyUser();
+    if (loading) return <Loading />;
+
     return (
         <>
             {/* <!-- SHARED NAVBAR / TOPBAR COMPONENT (ADMIN) --> */}
@@ -18,7 +23,7 @@ const AdminNavbar = () => {
                         </svg>
                     </button>
 
-                    <span className="text-xs font-semibold bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full ml-1">Admin Panel</span>
+                    <span className="text-xs font-semibold bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full ml-1 capitalize">{user.role} Panel</span>
                 </div>
 
                 {/* <div className="flex items-center gap-5">

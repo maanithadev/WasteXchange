@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
 import toast from "react-hot-toast"
+import { useVerifyUser } from "../../hooks/useVerifyUser";
 
 const UserManagement = () => {
+    const { user } = useVerifyUser();
+
     const [data, setData] = useState([])
     const [filter, setFilter] = useState("all")
     const [filteredData, setFilteredData] = useState([])
@@ -174,7 +177,19 @@ const UserManagement = () => {
                             </button>
                         </div>
                         <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-4">
+                                {(user.role === "admin" || user.role === "manager") &&
+                                    <div>
+                                        <label className="block text-xs font-medium text-slate-500 mb-1">Status</label>
+                                        <select
+                                            value={selectedUser.status}
+                                            onChange={(e) => setSelectedUser({ ...selectedUser, status: e.target.value })}
+                                            className="w-full text-sm border border-slate-300 rounded-md px-3 py-2 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-white"
+                                        >
+                                            <option value="active">Active</option>
+                                            <option value="suspended">Suspended</option>
+                                        </select>
+                                    </div>}
                                 <div>
                                     <label className="block text-xs font-medium text-slate-500 mb-1">Company
                                         Name</label>
@@ -208,27 +223,18 @@ const UserManagement = () => {
                                         value={new Date(selectedUser.created_at).toLocaleDateString() || ""}
                                         className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none" />
                                 </div>
-                                <div>
-                                    <label className="block text-xs font-medium text-slate-500 mb-1">Status</label>
-                                    <select
-                                        value={selectedUser.status}
-                                        onChange={(e) => setSelectedUser({ ...selectedUser, status: e.target.value })}
-                                        className="w-full text-sm border border-slate-300 rounded-md px-3 py-2 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-white"
-                                    >
-                                        <option value="active">Active</option>
-                                        <option value="suspended">Suspended</option>
-                                    </select>
-                                </div>
                             </div>
                         </div>
                         <div className="px-6 py-4 border-t border-slate-200 bg-slate-50 flex justify-end gap-3">
                             <button onClick={() => setSelectedUser(null)}
-                                className="px-4 py-2 text-sm font-medium text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-100 transition-colors">Cancel
+                                className="px-4 py-2 text-sm font-medium text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-100 transition-colors">Close
                             </button>
-                            <button onClick={() => handleUpdateStatus(selectedUser._id, selectedUser.status)}
-                                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors">Save
-                                Changes
-                            </button>
+                            {(user.role === "admin" || user.role === "manager") &&
+                                <button onClick={() => handleUpdateStatus(selectedUser._id, selectedUser.status)}
+                                    className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors">Save
+                                    Changes
+                                </button>
+                            }
                         </div>
                     </div>
                 </div>

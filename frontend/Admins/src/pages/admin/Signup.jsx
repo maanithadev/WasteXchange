@@ -4,7 +4,9 @@ import { Link, useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
 
 const Signup = () => {
-    const { register, handleSubmit } = useForm()
+    const { register, handleSubmit, formState } = useForm()
+
+    const { errors } = formState;
 
     const navigate = useNavigate()
 
@@ -51,21 +53,37 @@ const Signup = () => {
                         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
-                                <input type="email" placeholder="you@company.com"
-                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("email")} />
+                                <input type="email"
+                                    placeholder="you@company.com" {...register("email", { required: "Email is required" })}
+                                    className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                    required />
+                                {errors.email && <p className="text-red-600 font-medium">{errors.email?.message}</p>}
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Password</label>
-                                    <input type="password" placeholder="••••••••"
-                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" {...register("password")} />
+                                    <input type="password"
+                                        placeholder="••••••••" {...register("password", {
+                                            required: "Password is required",
+                                            minLength: { value: 8, message: "Minimum Password Length is 8" },
+                                        })}
+                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                        required />
+                                    {errors.password &&
+                                        <p className="text-red-600 font-medium">{errors.password?.message}</p>}
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Confirm
                                         Password</label>
-                                    <input type="password" placeholder="••••••••"
-                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                    <input type="password" placeholder="••••••••" {...register("confirm_password", {
+                                        required: "Confirm Password is required",
+                                        minLength: { value: 8, message: "Minimum Confirm Password Length is 8" },
+                                    })}
+                                        className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                        required />
+                                    {errors.confirm_password &&
+                                        <p className="text-red-600 font-medium">{errors.confirm_password?.message}</p>}
                                 </div>
                             </div>
 
