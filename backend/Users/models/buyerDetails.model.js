@@ -42,10 +42,10 @@ const buyerDetailsSchema = mongoose.Schema({
         type: Number
     },
     created_at: {
-        type: String
+        type: Date
     },
     updated_at: {
-        type: String
+        type: Date
     }
 })
 

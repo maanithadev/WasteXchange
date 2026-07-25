@@ -20,10 +20,10 @@ const userSchema = mongoose.Schema({
         enum: ["pending", "active", "suspend"]
     },
     created_at: {
-        type: String
+        type: Date
     },
     updated_at: {
-        type: String
+        type: Date
     }
 })
 

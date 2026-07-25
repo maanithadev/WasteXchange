@@ -42,7 +42,7 @@ const BuyerTrackOrder = () => {
         try {
             const res = await axios.post(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_START_CHAT_URL, {
                 buyer_id: user.user_id,
-                seller_id: data.order?.sellerDetails._id
+                seller_id: data.order?.seller_id
             })
             setConversationId(res.data.conversation_id)
             navigate("/buyer/messages")
@@ -251,7 +251,11 @@ const BuyerTrackOrder = () => {
                         <div className="space-y-4">
                             <div className="flex justify-between border-b border-slate-100 pb-3">
                                 <span className="text-sm text-slate-500">Ordered Date</span>
-                                <span className="text-sm font-medium text-slate-900">{data.order.ordered_date}</span>
+                                <span className="text-sm font-medium text-slate-900">{new Date(data.order.ordered_date).toLocaleString()}</span>
+                            </div>
+                            <div className="flex justify-between border-b border-slate-100 pb-3">
+                                <span className="text-sm text-slate-500">Collected Date</span>
+                                <span className="text-sm font-medium text-slate-900">{new Date(data.order.collected_date || "-").toLocaleString()}</span>
                             </div>
                             <div className="flex justify-between border-b border-slate-100 pb-3">
                                 <span className="text-sm text-slate-500">Quantity</span>

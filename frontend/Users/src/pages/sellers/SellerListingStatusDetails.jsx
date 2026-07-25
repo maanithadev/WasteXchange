@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 const SellerListingStatusDetails = () => {
 
     const { id } = useParams()
-    const [data, setData] = useState([])
+    const [data, setData] = useState([] || null)
     const [loading, setLoading] = useState(true)
     const { setConversationId } = useConversationsContext()
     const navigate = useNavigate();
@@ -53,9 +53,20 @@ const SellerListingStatusDetails = () => {
         }
     }
 
-    return loading
-        ? <Loading />
-        : (
+    if (loading) return <Loading />
+    console.log(data)
+
+    return data?.length === 0
+        ? (<main className="flex-1 p-8 bg-slate-50 w-full min-h-[90%]">
+            <div className="flex">
+                <h1 className="text-2xl font-bold text-slate-900">Sorry! No buyers found yet.</h1>
+                {/* <p className="text-xs font-medium text-emerald-600 mb-1">My Listings / Match View</p> */}
+                {/* <h1 className="text-2xl font-bold text-slate-900">{data[0].wasteListings_id?.title}</h1>
+                <p className="text-sm text-slate-500 mt-1">{data[0].wasteListings_id?.quantity} {data[0].wasteListings_id?.unit} &middot; {data[0].wasteListings_id?.category}</p> */}
+            </div>
+        </main>)
+        :
+        (
             <>
                 {/* <!-- LISTING STATUS / MATCH VIEW PAGE --> */}
                 <main className="flex-1 p-8 bg-slate-50 min-h-screen">

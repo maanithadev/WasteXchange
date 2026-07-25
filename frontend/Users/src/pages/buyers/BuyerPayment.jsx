@@ -67,7 +67,7 @@ const BuyerPayment = () => {
                             <tbody className="divide-y divide-slate-100">
                                 {data.map((item, index) => (
                                     <tr key={index}>
-                                        <td className="px-6 py-4 text-slate-600">{item.created_at}</td>
+                                        <td className="px-6 py-4 text-slate-600">{new Date(item.created_at).toLocaleString()}</td>
                                         <td className="px-6 py-4 font-medium text-slate-800">{item.sellerDetails?.company_name}</td>
                                         <td className="px-6 py-4 text-slate-600">{item.currency === "LKR" ? "RS." : "$"}{item.total_price}</td>
                                         <td className="px-6 py-4"><span

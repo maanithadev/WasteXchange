@@ -151,7 +151,7 @@ const BackendUsersManagement = () => {
                                         <td className="px-6 py-3.5"><span
                                             className={`text-xs font-semibold text-black px-2 py-0.5 rounded-full capitalize ${statusColor(item.status)}`}>{item.status}</span>
                                         </td>
-                                        <td className="px-6 py-3.5 text-slate-500">{new Date(item.created_at).toLocaleDateString()}</td>
+                                        <td className="px-6 py-3.5 text-slate-500">{new Date(item.created_at).toLocaleString()}</td>
                                         <td className="px-6 py-3.5 text-right space-x-1 whitespace-nowrap">
                                             <button onClick={() => setSelectedUser(item)}
                                                 className="text-xs font-medium border border-slate-300 text-slate-600 rounded-md px-2.5 py-1 hover:bg-slate-50">View
@@ -203,7 +203,7 @@ const BackendUsersManagement = () => {
                                 <div>
                                     <label className="block text-xs font-medium text-slate-500 mb-1">Joined Date</label>
                                     <input type="text" readOnly
-                                        value={new Date(selectedUser.created_at).toLocaleDateString() || ""}
+                                        value={new Date(selectedUser.created_at).toLocaleString()}
                                         className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none" />
                                 </div>
                                 <div>

@@ -16,7 +16,7 @@ const matchesSchema = mongoose.Schema({
         required: true
     },
     created_at: {
-        type: String
+        type: Date
     }
 }, {
     toJSON: { virtuals: true },

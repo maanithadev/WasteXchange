@@ -8,7 +8,7 @@ async function createNotifications({ user_id, type, title, message, created_at }
         type,
         title,
         message,
-        created_at: created_at || new Date()
+        created_at: created_at || new Date().toISOString
     })
     await newNotification.save()
 }

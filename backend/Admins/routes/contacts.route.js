@@ -38,7 +38,7 @@ router.post("/", async (req, res) => {
 router.put("/:id/read", verifyToken, async (req, res) => {
     try {
         const { id } = req.params;
-        await ContactModel.findByIdAndUpdate(id, { isRead: true });
+        await ContactModel.findByIdAndUpdate(id, { isRead: true, updated_at: new Date().toISOString() });
         res.status(200).json({ message: "Marked as read successfully" });
     } catch (err) {
         res.status(500).json({ message: "Internal server error" });

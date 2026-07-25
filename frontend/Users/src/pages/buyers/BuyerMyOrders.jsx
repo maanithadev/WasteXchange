@@ -106,7 +106,7 @@ const BuyerMyOrders = () => {
                                         <td className="px-6 py-4 font-medium text-slate-800">{item.sellerDetails?.company_name}</td>
                                         <td className="px-6 py-4 text-slate-600">{item.wasteListings_id?.title}</td>
                                         <td className="px-6 py-4 text-slate-600">{item.quantity} {item.unit}</td>
-                                        <td className="px-6 py-4 text-slate-600">{item.ordered_date}</td>
+                                        <td className="px-6 py-4 text-slate-600">{new Date(item.ordered_date).toLocaleString()}</td>
                                         <td className="px-6 py-4"><span
                                             className={`text-xs font-semibold text-black px-2.5 py-1 rounded-full capitalize ${statusColor(item.status)}`}>{item.status}</span>
                                         </td>

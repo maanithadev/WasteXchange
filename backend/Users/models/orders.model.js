@@ -78,16 +78,16 @@ const ordersSchema = mongoose.Schema({
         enum: ["pending", "confirmed", "shipped", "collected", "cancelled"]
     },
     ordered_date: {
-        type: String
+        type: Date
     },
     collected_date: {
-        type: String
+        type: Date
     },
     created_at: {
-        type: String
+        type: Date
     },
     updated_at: {
-        type: String
+        type: Date
     },
 }, {
     toJSON: { virtuals: true },   // important, so virtuals show up when converting to JSON

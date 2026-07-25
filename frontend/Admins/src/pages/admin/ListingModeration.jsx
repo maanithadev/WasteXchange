@@ -220,7 +220,7 @@ const ListingModeration = () => {
                                             <span
                                                 className={`text-center text-xs font-semibold text-black px-2 py-0.5 rounded-full ${statusColor(item.status)}`}>{item.status}</span>
                                         </td>
-                                        <td className="px-6 py-3.5 text-slate-500">{item.created_at}</td>
+                                        <td className="px-6 py-3.5 text-slate-500">{new Date(item.created_at).toLocaleString()}</td>
                                         <td className="px-6 py-3.5 text-right space-x-1 whitespace-nowrap">
                                             {/* <button className="text-xs font-medium bg-emerald-600 text-white rounded-md px-2.5 py-1 hover:bg-emerald-700">Approve</button> */}
                                             {(user.role === "admin" || user.role === "manager") &&

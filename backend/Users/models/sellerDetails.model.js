@@ -33,10 +33,10 @@ const sellerDetailsSchema = mongoose.Schema({
         },
     },
     created_at: {
-        type: String
+        type: Date
     },
     updated_at: {
-        type: String
+        type: Date
     }
 })
 

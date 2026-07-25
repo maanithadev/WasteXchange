@@ -27,8 +27,19 @@ router.get("/buyer-dashboard-cards", verifyUser, async (req, res) => {
 
         const unreadNotifications = await Notifications.countDocuments({ user_id: req.token.user_id, isRead: false })
 
-        const currentMonthStr = new Date().toISOString().slice(0, 7); // e.g. "2026-07"
-        const currentYearStr = new Date().getFullYear().toString(); // e.g. "2026"
+        const startOfMonth = new Date();
+        startOfMonth.setDate(1);
+        startOfMonth.setHours(0, 0, 0, 0);
+
+        const startOfNextMonth = new Date(startOfMonth);
+        startOfNextMonth.setMonth(startOfNextMonth.getMonth() + 1);
+
+        const startOfYear = new Date();
+        startOfYear.setMonth(0, 1);
+        startOfYear.setHours(0, 0, 0, 0);
+
+        const startOfNextYear = new Date(startOfYear);
+        startOfNextYear.setFullYear(startOfNextYear.getFullYear() + 1);
 
         // All-time Carbon
         const carbonRecordsAllTime = await CarbonRecords.aggregate([
@@ -42,7 +53,7 @@ router.get("/buyer-dashboard-cards", verifyUser, async (req, res) => {
             {
                 $match: {
                     buyer_id: new mongoose.Types.ObjectId(req.token.user_id),
-                    created_at: { $regex: `^${currentMonthStr}` }
+                    created_at: { $gte: startOfMonth, $lt: startOfNextMonth }
                 }
             },
             { $group: { _id: null, totalSum: { $sum: "$co2SavedKg" } } }
@@ -52,7 +63,7 @@ router.get("/buyer-dashboard-cards", verifyUser, async (req, res) => {
         // Current Year Carbon & Chart Data (for BuyerCarbonFootprintDashboard)
         const currentYearDocs = await CarbonRecords.find({
             buyer_id: new mongoose.Types.ObjectId(req.token.user_id),
-            created_at: { $regex: `^${currentYearStr}` }
+            created_at: { $gte: startOfYear, $lt: startOfNextYear }
         });
 
         let currentYearCarbonSaved = 0;
@@ -65,9 +76,8 @@ router.get("/buyer-dashboard-cards", verifyUser, async (req, res) => {
 
         currentYearDocs.forEach(doc => {
             currentYearCarbonSaved += doc.co2SavedKg;
-            if (doc.created_at && doc.created_at.length >= 7) {
-                const monthStr = doc.created_at.substring(5, 7);
-                const monthIndex = parseInt(monthStr, 10) - 1;
+            if (doc.created_at) {
+                const monthIndex = new Date(doc.created_at).getMonth();
                 if (monthIndex >= 0 && monthIndex <= 11) {
                     monthlyData[monthIndex].co2Saved += (doc.co2SavedKg / 1000);
                 }
@@ -78,10 +88,10 @@ router.get("/buyer-dashboard-cards", verifyUser, async (req, res) => {
             matchedListings,
             activeOrders,
             unreadNotifications,
-            currentMonthCarbonSaved: (currentMonthCarbonSaved / 1000),
-            totalCarbonSaved: (totalCarbonSaved / 1000),
-            currentYearCarbonSaved: (currentYearCarbonSaved / 1000),
-            chartData: monthlyData
+            currentMonthCarbonSaved: Number((currentMonthCarbonSaved / 1000).toFixed(2)),
+            totalCarbonSaved: Number((totalCarbonSaved / 1000).toFixed(2)),
+            currentYearCarbonSaved: Number((currentYearCarbonSaved / 1000).toFixed(2)),
+            chartData: monthlyData.map(d => ({ ...d, co2Saved: Number(d.co2Saved.toFixed(2)) }))
         })
     } catch (err) {
         res.json({ message: err.message })
@@ -122,7 +132,8 @@ router.put("/update-buyer-details", verifyUser, async (req, res) => {
                         state: req.body.data.address?.state,
                         postal_code: req.body.data.address?.postal_code,
                         country: req.body.data.address?.country,
-                    }
+                    },
+                    updated_at: new Date().toISOString()
                 }
             }
         )

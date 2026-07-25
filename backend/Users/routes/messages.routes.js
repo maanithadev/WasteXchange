@@ -44,7 +44,8 @@ router.post("/start-chat", async (req, res) => {
         if (!conversationExists) {
             const createdConversation = await Conversations.create({
                 buyer_id: req.body.buyer_id,
-                seller_id: req.body.seller_id
+                seller_id: req.body.seller_id,
+                create_at: new Date().toISOString()
             })
             res.json({ conversation_id: createdConversation._id })
         }
@@ -62,21 +63,21 @@ router.post("/send-message/:conversationId", verifyUser, async (req, res) => {
             conversation_id: req.params.conversationId,
             sender_id: req.token.user_id,
             message: req.body.message,
-            create_at: new Date()
+            create_at: new Date().toISOString()
         })
 
         const conversation = await Conversations.findByIdAndUpdate(req.params.conversationId, {
             last_message: req.body.message
         }, { new: true });
-        
+
         if (conversation) {
-            const recipient_id = conversation.buyer_id.toString() === req.token.user_id 
-                ? conversation.seller_id.toString() 
+            const recipient_id = conversation.buyer_id.toString() === req.token.user_id
+                ? conversation.seller_id.toString()
                 : conversation.buyer_id.toString();
-            
+
             const io = req.app.get('io');
             const userSockets = req.app.get('userSockets');
-            
+
             if (io && userSockets && userSockets.has(recipient_id)) {
                 const socket_id = userSockets.get(recipient_id);
                 io.to(socket_id).emit('receive_message', message);

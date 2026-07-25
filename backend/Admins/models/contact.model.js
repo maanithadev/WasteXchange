@@ -24,7 +24,10 @@ const contactsSchema = mongoose.Schema({
         default: false
     },
     created_at: {
-        type: String
+        type: Date
+    },
+    updated_at: {
+        type: Date
     }
 })
 

@@ -21,10 +21,10 @@ const carbonRecordsSchema = mongoose.Schema({
         required: true
     },
     created_at: {
-        type: String
+        type: Date
     },
     updated_at: {
-        type: String
+        type: Date
     },
 })
 

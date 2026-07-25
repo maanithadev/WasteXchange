@@ -46,6 +46,7 @@ const SellerDashboard = () => {
         load4Cards()
         loadNotifications()
     }, []);
+    console.log(cards)
 
     return (
         <>
@@ -80,7 +81,7 @@ const SellerDashboard = () => {
                                 </svg>
                             </div>
                         </div>
-                        <p className="text-3xl font-bold text-slate-900">{cards.activeListings}</p>
+                        <p className="text-3xl font-bold text-slate-900">{cards.activeListings || 0}</p>
                         {/* <p className="text-xs text-slate-400 mt-1">+2 this week</p> */}
                     </div>
 
@@ -95,7 +96,7 @@ const SellerDashboard = () => {
                                 </svg>
                             </div>
                         </div>
-                        <p className="text-3xl font-bold text-slate-900">{cards.pendingOrders}</p>
+                        <p className="text-3xl font-bold text-slate-900">{cards.pendingOrders || 0}</p>
                         <p className="text-xs text-slate-400 mt-1">Awaiting confirmation</p>
                     </div>
 
@@ -110,7 +111,7 @@ const SellerDashboard = () => {
                                 </svg>
                             </div>
                         </div>
-                        <p className="text-3xl font-bold text-slate-900">{cards.unreadNotifications}</p>
+                        <p className="text-3xl font-bold text-slate-900">{cards.unreadNotifications || 0}</p>
                         <p className="text-xs text-slate-400 mt-1">New updates</p>
                     </div>
 
@@ -125,7 +126,7 @@ const SellerDashboard = () => {
                                 </svg>
                             </div>
                         </div>
-                        <p className="text-3xl font-bold text-slate-900">{cards.totalCarbonSaved}t</p>
+                        <p className="text-3xl font-bold text-slate-900">{cards.totalCarbonSaved || 0}t</p>
                         {/* <p className="text-xs text-slate-400 mt-1">CO2e this year</p> */}
                     </div>
                 </div>
@@ -138,11 +139,11 @@ const SellerDashboard = () => {
                             <li key={index} className="flex items-start gap-2 py-4">
                                 <div
                                     className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
-                                    <Dot size={50} color="#009966"/>
+                                    <Dot size={50} color="#009966" />
                                 </div>
                                 <div className="flex-1">
                                     <p className="text-sm text-slate-800">{item.message}</p>
-                                    <p className="text-xs text-slate-400 mt-0.5">{item.created_at}</p>
+                                    <p className="text-xs text-slate-400 mt-0.5">{new Date(item.created_at).toLocaleString()}</p>
                                 </div>
                             </li>
                         ))}

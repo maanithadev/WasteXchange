@@ -13,10 +13,9 @@ const conversationsSchema = mongoose.Schema({
     },
     last_message: {
         type: String,
-        default: "hi!!!"
     },
     create_at: {
-        type: String
+        type: Date
     }
 }, {
     toJSON: { virtuals: true },   // important, so virtuals show up when converting to JSON

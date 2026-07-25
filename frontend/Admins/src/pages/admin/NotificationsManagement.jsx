@@ -119,7 +119,7 @@ const NotificationsManagement = () => {
                                         <td className="px-6 py-3.5"><span
                                             className="text-xs font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full capitalize">{item.audience}</span>
                                         </td>
-                                        <td className="px-6 py-3.5 text-slate-500">{item.send_date}</td>
+                                        <td className="px-6 py-3.5 text-slate-500">{new Date(item.send_date).toLocaleString()}</td>
                                     </tr>
                                 ))}
                             </tbody>

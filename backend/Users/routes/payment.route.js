@@ -29,22 +29,27 @@ router.get("/get-all-payments", verifyUser, async (req, res) => {
 
 router.get("/admin-dashboard-cards", verifyUser, async (req, res) => {
     try {
-        const currentMonthStr = new Date().toISOString().slice(0, 7); // e.g. "2026-07"
+        const startOfMonth = new Date();
+        startOfMonth.setDate(1);
+        startOfMonth.setHours(0, 0, 0, 0);
+
+        const startOfNextMonth = new Date(startOfMonth);
+        startOfNextMonth.setMonth(startOfNextMonth.getMonth() + 1);
 
         const completedPayments = await Payments.aggregate([
-            { $match: { payment_status: "completed", created_at: { $regex: `^${currentMonthStr}` } } },
+            { $match: { payment_status: "completed", created_at: { $gte: startOfMonth, $lt: startOfNextMonth } } },
             { $group: { _id: null, totalSum: { $sum: "$total_price" } } }
         ]);
         const totalRevenue = completedPayments.length > 0 ? completedPayments[0].totalSum : 0;
 
         const pendingPayments = await Payments.aggregate([
-            { $match: { payment_status: "completed", created_at: { $regex: `^${currentMonthStr}` } } },
+            { $match: { payment_status: "pending", created_at: { $gte: startOfMonth, $lt: startOfNextMonth } } },
             { $group: { _id: null, totalSum: { $sum: "$total_price" } } }
         ]);
         const pendingPayouts = pendingPayments.length > 0 ? pendingPayments[0].totalSum : 0;
 
         const failedPayments = await Payments.aggregate([
-            { $match: { payment_status: "failed", created_at: { $regex: `^${currentMonthStr}` } } },
+            { $match: { payment_status: "failed", created_at: { $gte: startOfMonth, $lt: startOfNextMonth } } },
             { $group: { _id: null, totalSum: { $sum: "$total_price" } } }
         ]);
         const disputedTransactions = failedPayments.length > 0 ? failedPayments[0].totalSum : 0;
@@ -166,7 +171,7 @@ router.post('/payment/response', async (req, res) => {
                 card_number: data.req_card_number || null,
                 card_type_name: data.card_type_name || null,
                 payment_status: data.decision === "ACCEPT" ? "completed" : "failed",
-                created_at: data.signed_date_time,
+                created_at: data.signed_date_time
             })
             const saved_payment = await Payment_saveData.save();
             saved_payment_id = saved_payment._id
@@ -199,7 +204,7 @@ router.post('/payment/response', async (req, res) => {
                 buyer_id: transaction_Data.buyer_id,
                 co2SavedKg: co2SavedKg,
                 created_at: data.signed_date_time,
-                updated_at: data.signed_date_time,
+                updated_at: data.signed_date_time
             });
 
             return await carbonRecord.save();

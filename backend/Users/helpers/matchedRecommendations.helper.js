@@ -44,7 +44,7 @@ const matchedRecommendations = async (
         wasteListings_id,
         buyer_id,
         matchScore: matchScore / 100,
-        created_at: new Date()
+        created_at: new Date().toISOString()
     })
     await match.save();
 }

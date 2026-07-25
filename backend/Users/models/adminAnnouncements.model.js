@@ -14,7 +14,7 @@ const adminAnnouncementsSchema = mongoose.Schema({
         required: true
     },
     send_date: {
-        type: String
+        type: Date
     }
 })
 

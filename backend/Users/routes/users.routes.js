@@ -265,8 +265,8 @@ router.post("/signup", async (req, res) => {
             email: req.body.email,
             password: hashedPassword,
             status: "active",
-            created_at: new Date(),
-            updated_at: new Date()
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
         })
         const savedUser = await userData.save()
 
@@ -282,8 +282,8 @@ router.post("/signup", async (req, res) => {
                     postal_code: req.body.address?.postal_code,
                     country: req.body.address?.country
                 },
-                created_at: new Date(),
-                updated_at: new Date()
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
             })
             await sellerData.save()
         } else {
@@ -301,8 +301,8 @@ router.post("/signup", async (req, res) => {
                 interested_category: req.body.interested_category,
                 minqty: req.body.minqty,
                 maxqty: req.body.maxqty,
-                created_at: new Date(),
-                updated_at: new Date()
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
             })
             const saved_buyer = await buyerData.save()
 
@@ -357,7 +357,7 @@ router.post("/change-password", verifyUser, async (req, res) => {
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         await Users.updateOne(
             { _id: req.token.user_id },
-            { password: hashedPassword }
+            { password: hashedPassword, updated_at: new Date().toISOString() }
         );
 
         res.json({ message: "Password updated successfully" });
@@ -375,7 +375,7 @@ router.post("/forgot-password", async (req, res) => {
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         await Users.updateOne(
             { email },
-            { password: hashedPassword }
+            { password: hashedPassword, updated_at: new Date().toISOString() }
         );
 
         res.json({ message: "Password reset successfully" });
@@ -392,7 +392,7 @@ router.put("/update-user-status", verifyUser, async (req, res) => {
             { _id: req.body.user_id },
             {
                 status: req.body.status,
-                updated_at: new Date()
+                updated_at: new Date().toISOString()
             }
         );
         res.json({ message: "user updated" })

@@ -52,8 +52,8 @@ router.post("/signup", async (req, res) => {
             email: req.body.email,
             password: hashedPassword,
             status: "pending",
-            created_at: new Date(),
-            updated_at: new Date()
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
         })
         const savedUser = await userData.save()
 
@@ -108,7 +108,7 @@ router.post("/change-password", verifyUser, async (req, res) => {
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         await Users.updateOne(
             { _id: req.token.user_id },
-            { password: hashedPassword }
+            { password: hashedPassword, updated_at: new Date().toISOString() }
         );
 
         res.json({ message: "Password updated successfully" });
@@ -126,7 +126,7 @@ router.post("/forgot-password", async (req, res) => {
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         await Users.updateOne(
             { email },
-            { password: hashedPassword }
+            { password: hashedPassword, updated_at: new Date().toISOString() }
         );
 
         res.json({ message: "Password reset successfully" });
@@ -141,7 +141,7 @@ router.put("/update-user-roleandstatus", verifyUser, async (req, res) => {
     try {
         const users = await Users.updateOne(
             { _id: req.body.user_id },
-            { role: req.body.role, status: req.body.status, updated_at: new Date() }
+            { role: req.body.role, status: req.body.status, updated_at: new Date().toISOString() }
         );
         res.json(users)
     } catch (err) {

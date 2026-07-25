@@ -182,8 +182,8 @@ router.post("/seller-upload-waste-save", localUpload.single("image"), verifyUser
             },
             status: req.body.status,
             suspend_message: null,
-            created_at: new Date(),
-            updated_at: new Date(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
         })
         formData.image = req.file.filename
         const saved_formData = await formData.save();
@@ -210,7 +210,7 @@ router.put("/update-listing-status", verifyUser, async (req, res) => {
             {
                 status: status,
                 suspend_message: status === "rejected" ? suspend_message : null,
-                updated_at: new Date()
+                updated_at: new Date().toISOString()
             }
         );
 
@@ -266,7 +266,7 @@ router.put("/update-listing/:id", localUpload.single("image"), verifyUser, async
                 postal_code: req.body.postal_code
             },
             status: req.body.status,
-            updated_at: new Date()
+            updated_at: new Date().toISOString()
         };
 
         if (req.file) {

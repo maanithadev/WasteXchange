@@ -182,10 +182,10 @@ const SellerMessages = () => {
                             {/* <!-- Messages --> */}
                             <div className="flex-1 overflow-y-auto p-6 space-y-4">
                                 {messages.map((item, index) => (
-                                    <div key={index} className={`flex ${user.user_id === item.sender_id ? 'justify-end' : 'justify-start'}`}>
-                                        <div className={`max-w-xs px-4 py-2.5 rounded-2xl ${user.user_id === item.sender_id ? 'bg-blue-600 rounded-br-sm' : 'bg-white border border-slate-200 rounded-bl-sm'}`}>
-                                            <p className={`text-sm ${user.user_id === item.sender_id ? 'text-white' : 'text-slate-800'}`}>{item.message}</p>
-                                            <p className={`text-[10px] mt-1 ${user.user_id === item.sender_id ? 'text-blue-100' : 'text-slate-400'}`}>{item.create_at}</p>
+                                    <div key={index} className={`flex ${user?.user_id === item.sender_id ? 'justify-end' : 'justify-start'}`}>
+                                        <div className={`max-w-xs px-4 py-2.5 rounded-2xl ${user?.user_id === item.sender_id ? 'bg-blue-600 rounded-br-sm' : 'bg-white border border-slate-200 rounded-bl-sm'}`}>
+                                            <p className={`text-sm ${user?.user_id === item.sender_id ? 'text-white' : 'text-slate-800'}`}>{item.message}</p>
+                                            <p className={`text-[10px] mt-1 ${user?.user_id === item.sender_id ? 'text-blue-100' : 'text-slate-400'}`}>{new Date(item.create_at).toLocaleString().toString().slice(0, -3)}</p>
                                         </div>
                                     </div>
                                 ))}

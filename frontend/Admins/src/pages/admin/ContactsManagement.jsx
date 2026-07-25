@@ -29,7 +29,7 @@ const ContactsManagement = () => {
         }
 
         fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [refresh]);
 
     const applyFilter = (contactsData, currentFilter) => {
@@ -166,7 +166,7 @@ const ContactsManagement = () => {
                                 </div>
                                 <div>
                                     <label className="block text-xs font-medium text-slate-500 mb-1">Submitted Date</label>
-                                    <input type="text" readOnly value={selectedContact.created_at ? new Date(selectedContact.created_at).toLocaleString() : ""}
+                                    <input type="text" readOnly value={new Date(selectedContact.created_at).toLocaleString()}
                                         className="w-full text-sm border border-slate-200 rounded-md px-3 py-2 bg-slate-50 text-slate-700 outline-none" />
                                 </div>
                             </div>

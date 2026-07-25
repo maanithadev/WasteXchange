@@ -16,7 +16,12 @@ router.get("/seller-dashboard-cards", verifyUser, async (req, res) => {
         const wasteListings = await WasteListings.countDocuments({ seller_id: req.token.user_id, status: "active" })
         const orders = await Orders.countDocuments({ seller_id: req.token.user_id, status: "pending" })
         const notifications = await Notifications.countDocuments({ user_id: req.token.user_id, isRead: false })
-        const currentYear = new Date().getFullYear().toString();
+        const startOfYear = new Date();
+        startOfYear.setMonth(0, 1);
+        startOfYear.setHours(0, 0, 0, 0);
+
+        const startOfNextYear = new Date(startOfYear);
+        startOfNextYear.setFullYear(startOfNextYear.getFullYear() + 1);
 
         const carbonRecordsAllTime = await CarbonRecords.aggregate([
             { $match: { seller_id: new mongoose.Types.ObjectId(req.token.user_id) } },
@@ -31,7 +36,7 @@ router.get("/seller-dashboard-cards", verifyUser, async (req, res) => {
 
         const currentYearDocs = await CarbonRecords.find({
             seller_id: new mongoose.Types.ObjectId(req.token.user_id),
-            created_at: { $regex: `^${currentYear}` }
+            created_at: { $gte: startOfYear, $lt: startOfNextYear }
         });
 
         let totalCarbonCurrentYear = 0;
@@ -54,9 +59,8 @@ router.get("/seller-dashboard-cards", verifyUser, async (req, res) => {
         currentYearDocs.forEach(doc => {
             totalCarbonCurrentYear += doc.co2SavedKg;
 
-            if (doc.created_at && doc.created_at.length >= 7) {
-                const monthStr = doc.created_at.substring(5, 7);
-                const monthIndex = parseInt(monthStr, 10) - 1;
+            if (doc.created_at) {
+                const monthIndex = new Date(doc.created_at).getMonth();
 
                 if (monthIndex >= 0 && monthIndex <= 11) {
                     monthlyData[monthIndex].co2Saved += (doc.co2SavedKg / 1000);
@@ -68,9 +72,9 @@ router.get("/seller-dashboard-cards", verifyUser, async (req, res) => {
             activeListings: wasteListings,
             pendingOrders: orders,
             unreadNotifications: notifications,
-            totalCarbonSaved: (totalCarbonAllTime / 1000),
-            currentYearCarbonSaved: (totalCarbonCurrentYear / 1000),
-            chartData: monthlyData
+            totalCarbonSaved: Number((totalCarbonAllTime / 1000).toFixed(2)),
+            currentYearCarbonSaved: Number((totalCarbonCurrentYear / 1000).toFixed(2)),
+            chartData: monthlyData.map(d => ({ ...d, co2Saved: Number(d.co2Saved.toFixed(2)) }))
         })
     } catch (err) {
         res.json({ message: err.message })
@@ -111,7 +115,8 @@ router.put("/update-seller-details", verifyUser, async (req, res) => {
                         state: req.body.data.address?.state,
                         postal_code: req.body.data.address?.postal_code,
                         country: req.body.data.address?.country,
-                    }
+                    },
+                    updated_at: new Date().toISOString()
                 }
             }
         )

@@ -68,6 +68,8 @@ const Transactions = () => {
         loadPayments()
         loadCards()
     }, []);
+    console.log(data)
+    console.log(cardData)
 
     const handleView = (item) => {
         setSelectedItem(item);
@@ -175,15 +177,15 @@ const Transactions = () => {
                             <tbody className="divide-y divide-slate-100">
                                 {currentItems.map((item, index) => (
                                     <tr key={index}>
-                                        <td className="px-6 py-3.5 font-mono text-xs text-slate-600">{item.transaction_id}</td>
-                                        <td className="px-6 py-3.5 font-mono text-xs text-slate-600">{item.order_id?.order_reference_number}</td>
-                                        <td className="px-6 py-3.5 text-slate-700">{item.buyerDetails?.company_name}</td>
-                                        <td className="px-6 py-3.5 text-slate-700">{item.sellerDetails?.company_name}</td>
-                                        <td className="px-6 py-3.5 text-slate-700">{item.order_id?.currency}{item.order_id?.total_price}</td>
+                                        <td className="px-6 py-3.5 font-mono text-xs text-slate-600">{item.transaction_id || "-"}</td>
+                                        <td className="px-6 py-3.5 font-mono text-xs text-slate-600">{item.order_id?.order_reference_number || "-"}</td>
+                                        <td className="px-6 py-3.5 text-slate-700">{item.buyerDetails?.company_name || "-"}</td>
+                                        <td className="px-6 py-3.5 text-slate-700">{item.sellerDetails?.company_name || "-"}</td>
+                                        <td className="px-6 py-3.5 text-slate-700">{item.currency}{item.total_price || "-"}</td>
                                         <td className="px-6 py-3.5"><span
                                             className={`text-xs font-semibold text-black px-2 py-0.5 rounded-full ${statusColor(item.payment_status)}`}>{item.payment_status}</span>
                                         </td>
-                                        <td className="px-6 py-3.5 text-slate-500">{new Date(item.created_at).toLocaleDateString()}</td>
+                                        <td className="px-6 py-3.5 text-slate-500">{new Date(item.created_at).toLocaleString()}</td>
                                         <td className="px-6 py-3.5 text-right">
                                             <button onClick={() => handleView(item)}
                                                 className="text-xs font-medium border border-slate-300 text-slate-600 rounded-md px-2.5 py-1 hover:bg-slate-50">View
@@ -261,7 +263,7 @@ const Transactions = () => {
                                                 {renderField("Card Number", selectedItem.card_number)}
                                                 {renderField("Card Type Name", selectedItem.card_type_name)}
                                                 {renderField("Payment Status", selectedItem.payment_status)}
-                                                {renderField("Created At", selectedItem.created_at)}
+                                                {renderField("Created At", new Date(selectedItem.created_at).toLocaleString())}
                                             </div>
                                         </div>
 
@@ -280,7 +282,7 @@ const Transactions = () => {
                                                 {renderField("Total Price", selectedItem.order_id?.total_price)}
                                                 {renderField("Currency", selectedItem.order_id?.currency)}
                                                 {renderField("Status", selectedItem.order_id?.status)}
-                                                {renderField("Ordered Date", selectedItem.order_id?.ordered_date)}
+                                                {renderField("Ordered Date", new Date(selectedItem.order_id?.ordered_date).toLocaleString())}
                                                 {renderField("Address Line 1", selectedItem.order_id?.address?.address_line1)}
                                                 {renderField("Address Line 2", selectedItem.order_id?.address?.address_line2)}
                                                 {renderField("City", selectedItem.order_id?.address?.city)}

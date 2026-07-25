@@ -19,7 +19,7 @@ const cybersourceTransactionsSchema = mongoose.Schema({
         type: mongoose.Schema.Types.Mixed
     },
     created_at: {
-        type: String
+        type: Date
     }
 }, { strict: false });
 

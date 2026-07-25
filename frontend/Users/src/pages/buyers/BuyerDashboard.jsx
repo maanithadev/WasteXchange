@@ -142,7 +142,7 @@ const BuyerDashboard = () => {
                                 </div>
                                 <div className="flex-1">
                                     <p className="text-sm text-slate-800">{item.message}</p>
-                                    <p className="text-xs text-slate-400 mt-0.5">{item.created_at}</p>
+                                    <p className="text-xs text-slate-400 mt-0.5">{new Date(item.created_at).toLocaleString()}</p>
                                 </div>
                             </li>
                         ))}

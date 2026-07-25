@@ -4,6 +4,9 @@ const connectDB = () => {
         .then(() => {
             console.log("Connected to MongoDB")
         })
+        .then(() => {
+            console.log("remember to run populate.js command")
+        })
 }
 
 module.exports = connectDB;

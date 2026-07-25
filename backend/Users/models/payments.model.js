@@ -6,7 +6,6 @@ const paymentsSchema = mongoose.Schema({
         // and Mongoose can validate it points at a real order.
         type: mongoose.Schema.Types.ObjectId,
         ref: "orders",
-        required: true
     },
     seller_id: {
         type: mongoose.Schema.Types.ObjectId,
@@ -53,7 +52,7 @@ const paymentsSchema = mongoose.Schema({
         enum: ["completed", "pending", "failed", "refunded"]
     },
     created_at: {
-        type: String
+        type: Date
     },
 }, {
     toJSON: { virtuals: true },   // important, so virtuals show up when converting to JSON
