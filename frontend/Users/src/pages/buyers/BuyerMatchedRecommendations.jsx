@@ -38,7 +38,7 @@ const BuyerMatchedRecommendations = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
                     {data.map((item, index) => (
                         <div key={index} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-                            <img src={`http://localhost:3000/uploads/${item.wasteListings_id.image}`} className="w-full h-40 object-cover" alt="Shredded HDPE Pellets" />
+                            <img src={import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_WASTELISTING_IMAGES_ACCESSING_URL + item.wasteListings_id.image} className="w-full h-40 object-cover" alt="Shredded HDPE Pellets" />
                             <div className="p-4">
                                 <h3 className="font-semibold text-slate-900 text-sm mb-1">{item.wasteListings_id.title}</h3>
                                 {/* <p className="text-xs text-slate-400 mb-3">Sold by {item.wasteListings_id.company_name}</p> */}

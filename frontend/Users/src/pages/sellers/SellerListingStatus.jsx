@@ -52,7 +52,7 @@ const SellerListingStatus = () => {
                     {/* <!-- Cards --> */}
                     {data.map((item, index) => (
                         <div key={index} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-                            <img src={`http://localhost:3000/uploads/${item.image}`}
+                            <img src={import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_WASTELISTING_IMAGES_ACCESSING_URL + item.image}
                                 className="w-full h-40 object-cover"
                                 alt={item.title} />
                             <div className="w-full p-4 flex flex-col">

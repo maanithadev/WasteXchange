@@ -76,7 +76,7 @@ const BuyerListingDetail = () => {
                     {/* <!-- Left: image + description --> */}
                     <div className="lg:col-span-2 space-y-6">
                         <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-                            <img src={`http://localhost:3000/uploads/${data.image}`}
+                            <img src={import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_WASTELISTING_IMAGES_ACCESSING_URL + data.image}
                                 className="w-full object-cover" alt="Shredded HDPE Pellets" />
                         </div>
 

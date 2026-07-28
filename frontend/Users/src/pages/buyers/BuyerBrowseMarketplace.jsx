@@ -139,7 +139,7 @@ const BuyerBrowseMarketplace = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
                         {data.map((item, index) => (
                             <div key={index} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-                                <img src={`http://localhost:3000/uploads/${item.image}`}
+                                <img src={import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_WASTELISTING_IMAGES_ACCESSING_URL + item.image}
                                     className="w-full h-40 object-cover"
                                     alt="Shredded HDPE Pellets" />
                                 <div className="p-4">
