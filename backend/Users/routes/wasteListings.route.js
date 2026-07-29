@@ -190,7 +190,7 @@ router.post("/seller-upload-waste-save", localUpload.single("image"), verifyUser
 
         const buyers = await BuyerDetails.find({ interested_category: req.body.category })
         buyers.forEach(buyer => {
-            matchedRecommendations(saved_formData.location, buyer.address, saved_formData.quantity, buyer.minqty, buyer.maxqty, saved_formData._id, buyer.user_id)
+            matchedRecommendations(saved_formData.location, buyer.address, saved_formData.quantity, buyer.minqty, buyer.maxqty, saved_formData._id, buyer.user_id, saved_formData.title, saved_formData.status)
         })
 
         res.json({ message: "data was saved", formData })
@@ -221,7 +221,7 @@ router.put("/update-listing-status", verifyUser, async (req, res) => {
             await Matches.deleteMany({ wasteListings_id: listing_id });
             const buyers = await BuyerDetails.find({ interested_category: updatedListing.category })
             buyers.forEach(buyer => {
-                matchedRecommendations(updatedListing.location, buyer.address, updatedListing.quantity, buyer.minqty, buyer.maxqty, updatedListing._id, buyer.user_id)
+                matchedRecommendations(updatedListing.location, buyer.address, updatedListing.quantity, buyer.minqty, buyer.maxqty, updatedListing._id, buyer.user_id, updatedListing.title, updatedListing.status)
             })
 
             createNotifications({
@@ -290,9 +290,21 @@ router.put("/update-listing/:id", localUpload.single("image"), verifyUser, async
             await Matches.deleteMany({ wasteListings_id: updatedListing._id });
             const buyers = await BuyerDetails.find({ interested_category: req.body.category })
             buyers.forEach(buyer => {
-                matchedRecommendations(updatedListing.location, buyer.address, updatedListing.quantity, buyer.minqty, buyer.maxqty, updatedListing._id, buyer.user_id)
+                matchedRecommendations(updatedListing.location, buyer.address, updatedListing.quantity, buyer.minqty, buyer.maxqty, updatedListing._id, buyer.user_id, updatedListing.title, updatedListing.status)
             })
         } else {
+            if (req.body.status === "sold") {
+                const existingMatches = await Matches.find({ wasteListings_id: updatedListing._id });
+                existingMatches.forEach(match => {
+                    createNotifications({
+                        user_id: match.buyer_id,
+                        type: "match",
+                        title: "Listing No Longer Available",
+                        message: `The waste listing (${updatedListing.title}) you were matched with has been sold.`,
+                        created_at: new Date().toISOString()
+                    })
+                })
+            }
             await Matches.deleteMany({ wasteListings_id: updatedListing._id })
         }
 

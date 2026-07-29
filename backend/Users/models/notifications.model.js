@@ -19,10 +19,10 @@ const notificationsSchema = mongoose.Schema({
     // stays a plain ObjectId with the correct ref resolved in application code.
     // type: mongoose.Schema.Types.ObjectId
     // },
-    type: {     // "order" | "payment" | "wasteListing" | "admin_announcement"
+    type: {     // "order" | "payment" | "wasteListing" | "admin_announcement" | "match"
         type: String,
         required: true,
-        enum: ["order", "payment", "wasteListing", "admin_announcement"]
+        enum: ["order", "payment", "wasteListing", "admin_announcement", "match"]
     },
     title: {
         type: String,

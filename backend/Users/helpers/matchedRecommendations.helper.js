@@ -1,4 +1,5 @@
 const Matches = require("../models/matches.model.js")
+const createNotifications = require("./createNotifications.helper.js")
 
 function calculateLocationScore(listingLocation, buyerAddress) {
     if (listingLocation.postal_code === buyerAddress.postal_code) {
@@ -35,7 +36,9 @@ const matchedRecommendations = async (
     buyerMinQty,
     buyerMaxQty,
     wasteListings_id,
-    buyer_id
+    buyer_id,
+    listingTitle,
+    listingStatus
 ) => {
     const locationScore = calculateLocationScore(listingLocation, buyerAddress);
     const quantityFitScore = calculateQuantityFitScore(listingQuantity, buyerMinQty, buyerMaxQty);
@@ -47,6 +50,16 @@ const matchedRecommendations = async (
         created_at: new Date().toISOString()
     })
     await match.save();
+
+    if (listingStatus === "active") {
+        createNotifications({
+            user_id: buyer_id,
+            type: "match",
+            title: "New Match Found",
+            message: `A new waste listing "${listingTitle}" matches your preferences!`,
+            created_at: new Date().toISOString()
+        })
+    }
 }
 
 module.exports = matchedRecommendations

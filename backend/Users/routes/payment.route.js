@@ -345,6 +345,20 @@ router.post('/payment/response', async (req, res) => {
 
                 await calculateAndSaveCarbonRecord(saved_Order._id)
 
+                const existingMatches = await Matches.find({ wasteListings_id: transaction_Data._id });
+                existingMatches.forEach(match => {
+                    // Do not notify the buyer who just bought it!
+                    if (match.buyer_id.toString() !== transaction_Data.buyer_id.toString()) {
+                        createNotifications({
+                            user_id: match.buyer_id,
+                            type: "match",
+                            title: "Listing No Longer Available",
+                            message: `The waste listing (${transaction_Data.title}) you were matched with has been sold.`,
+                            created_at: new Date().toISOString()
+                        })
+                    }
+                })
+
                 await Matches.deleteMany({ wasteListings_id: transaction_Data._id })
 
                 // buyer notification
