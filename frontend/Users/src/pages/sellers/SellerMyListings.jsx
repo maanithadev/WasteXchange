@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 const SellerMyListings = () => {
-    const wasteCategories = ["Construction", "Metals", "Wood"]
+    const wasteCategories = ["Construction"]
     const units = ["kg", "tons"]
     const currencyList = ["LKR"]
     const statusList = ["active", "pending", "draft"]

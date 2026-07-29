@@ -110,16 +110,18 @@ router.post("/seller-upload-waste", geminiUpload.single("image"), verifyUser, as
 
         const PROMPT = `
         You are a waste classification assistant. Your task is to analyze an image of waste material and provide a detailed classification and description based on the visual information.
-Respond with ONLY a raw JSON object (no markdown, no code fences, no extra text) in exactly this shape:
+        If the provided image does not contain waste material, respond with only this: {"error": "Invalid image"}.
+        If the provided image waste category is not "Construction", respond with only this: {"error": "Invalid waste category"}.
+        Don't generate any other text other than the JSON object. Respond with ONLY a raw JSON object (no markdown, no code fences, no extra text) in exactly this shape:
 {
   "title": "string - A concise and descriptive title for the waste shown in the image.",
-  "category": "string - Choose ONLY one option from the following list: Construction, Metals, Wood.",
+  "category": "string - Construction",
   "quantity": "number - Provide an estimated numerical value for the quantity of the waste.",
-  "unit": "string - Choose ONLY one unit from the following list that corresponds to the 'quantity': kg, tons, lbs, units, m3.",
+  "unit": "string - Choose ONLY one unit from the following list that corresponds to the 'quantity': kg, tons.",
   "colour": "string - The predominant color of the waste material visible in the image.",
   "description": "array of strings - Provide a description of the waste in 4 to 7 bullet points. Each string in the array should be a complete sentence. The description must be written from the perspective of a seller trying to convince a buyer, highlighting the value and potential uses of the waste material. Do not use single-word bullet points.",
   "price": "number - Provide an estimated market price for the entire quantity of the waste. think about the price in-term of LKR. don't place LKR symbol at the starting or ending. just number",
-  "currency": "string - Choose ONLY one currency symbol from the following list for the estimated 'price': LKR, $.",
+  "currency": "string - LKR",
   "confidence_score": "string - Provide an estimated confidence score about the identified waste category for the given image between 80-90%."
 }
 If you are unsure about a field, make your best visual estimate rather than leaving it blank. Analyze the provided image and generate the JSON output.

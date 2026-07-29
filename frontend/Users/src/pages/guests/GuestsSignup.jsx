@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
 
 const GuestsSignup = () => {
-    const wasteCategories = ["Construction", "Metals", "Wood"]
+    const wasteCategories = ["Construction"]
     const { register, handleSubmit, formState } = useForm()
     const { errors } = formState
 

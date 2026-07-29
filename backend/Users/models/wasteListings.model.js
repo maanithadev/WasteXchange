@@ -8,6 +8,7 @@ const wasteListingsSchema = mongoose.Schema({
     },
     image: {
         type: String,
+        required: true
     },
     title: {
         type: String,
@@ -15,36 +16,47 @@ const wasteListingsSchema = mongoose.Schema({
     },
     category: {
         type: String,
-        required: true
+        required: true,
+        enum: ["Construction"]
     },
     quantity: {
         type: Number,
         required: true
     },
-    unit: {     // "kg" | "tons" | "liters" etc.
-        type: String
+    unit: {     // "kg" | "tons"
+        type: String,
+        required: true,
+        enum: ["kg", "tons"]
     },
     colour: {
-        type: String
+        type: String,
+        required: true
     },
     description: {
-        type: String
+        type: String,
+        required: true
     },
     price: {
-        type: Number
+        type: Number,
+        required: true
     },
     currency: {
-        type: String
+        type: String,
+        required: true,
+        enum: ["LKR", "$"]
     },
     location: {
         street: {
-            type: String
+            type: String,
+            required: true
         },
         city: {
-            type: String
+            type: String,
+            required: true
         },
         state: {
-            type: String
+            type: String,
+            required: true
         },
         postal_code: {
             type: String

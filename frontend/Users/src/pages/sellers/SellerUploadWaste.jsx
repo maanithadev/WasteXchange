@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading";
 
 const SellerUploadWaste = () => {
-    const wasteCategories = ["Construction", "Metals", "Wood"]
+    const wasteCategories = ["Construction"]
     const units = ["kg", "tons"]
     const currencyList = ["LKR"]
     const statusList = ["active", "pending", "draft"]
@@ -62,6 +62,18 @@ const SellerUploadWaste = () => {
             });
 
             const result = await response.json();
+            if (result.error === "Invalid image") {
+                toast.error("Send an image containing waste.")
+                setLoading(false)
+                return
+            }
+
+            if (result.error === "Invalid waste category") {
+                toast.error("Invalid waste category. Upload an image containing only Construction waste.")
+                setLoading(false)
+                return
+            }
+
             const updatedDescription = result?.description.map(item => {
                 return `- ${item}\n`
             }).join("")
