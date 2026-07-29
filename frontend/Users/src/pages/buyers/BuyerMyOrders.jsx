@@ -127,9 +127,16 @@ const BuyerMyOrders = () => {
                                                 >
                                                     {item.status?.toLowerCase() === 'collected' ? 'Order Collected' : 'Collected'}
                                                 </button>}
+                                            {item.invoice_url && (
+                                                <a href={import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_WASTELISTING_IMAGES_ACCESSING_URL + item.invoice_url} target="_blank" rel="noreferrer">
+                                                    <button
+                                                        className="text-xs font-medium border border-blue-200 bg-blue-50 text-blue-700 rounded-lg px-3 py-1.5 hover:bg-blue-100 transition-colors">Download PDF
+                                                    </button>
+                                                </a>
+                                            )}
                                             <Link to={`/buyer/track-order/${item.order_reference_number}`}>
                                                 <button
-                                                    className="text-xs font-medium border border-slate-300 text-slate-700 rounded-lg px-3 py-1.5 hover:bg-slate-50">Track Order
+                                                    className="text-xs font-medium border border-slate-300 text-slate-700 rounded-lg px-3 py-1.5 hover:bg-slate-50 transition-colors">Track Order
                                                 </button>
                                             </Link>
                                         </td>

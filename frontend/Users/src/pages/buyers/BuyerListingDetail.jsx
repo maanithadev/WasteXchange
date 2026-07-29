@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 const BuyerListingDetail = () => {
     const { id } = useParams()
     const [data, setData] = useState({})
+    const [matchScore, setMatchScore] = useState(null)
 
     const { setCheckoutParams } = useCheckoutContext()
     const { user } = useVerifyUser();
@@ -29,7 +30,21 @@ const BuyerListingDetail = () => {
             }
         }
 
+        async function fetchMatchScore() {
+            try {
+                const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_WASTE_MATCH_SCORE_URL + id, {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`
+                    }
+                })
+                setMatchScore(res.data.matchScore)
+            } catch (err) {
+                console.log(err)
+            }
+        }
+
         fetchWasteListingData()
+        fetchMatchScore()
     }, []);
 
     async function handlePlaceOrder() {
@@ -116,13 +131,16 @@ const BuyerListingDetail = () => {
                             <p className="text-sm font-medium text-slate-500 mb-1">Price</p>
                             <p className="text-3xl font-bold text-slate-900 mb-4">{data.currency} {data.price}</p>
 
-                            {/*<div className="rounded-lg bg-blue-50 border border-blue-100 p-4 mb-5">*/}
-                            {/*    <p className="text-xs text-slate-500 mb-1">Match Score</p>*/}
-                            {/*    <div className="w-full bg-white rounded-full h-2 mb-1 border border-blue-100">*/}
-                            {/*        <div className="bg-blue-500 h-2 rounded-full" style={{ width: "91%" }}></div>*/}
-                            {/*    </div>*/}
-                            {/*    <p className="text-xs font-semibold text-blue-700">91% match for your profile</p>*/}
-                            {/*</div>*/}
+                            {/* Match Score */}
+                            {matchScore !== null && (
+                                <div className="rounded-lg bg-blue-50 border border-blue-100 p-4 mb-5">
+                                    <p className="text-xs text-slate-500 mb-1">Match Score</p>
+                                    <div className="w-full bg-white rounded-full h-2 mb-1 border border-blue-100">
+                                        <div className="bg-blue-500 h-2 rounded-full" style={{ width: `${matchScore}%` }}></div>
+                                    </div>
+                                    <p className="text-xs font-semibold text-blue-700">{matchScore}% match for your profile</p>
+                                </div>
+                            )}
 
                             <button onClick={handlePlaceOrder}
                                 className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2.5 rounded-lg mb-2 cursor-pointer">Place

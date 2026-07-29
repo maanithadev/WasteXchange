@@ -116,6 +116,19 @@ router.get("/get-single-waste-listing/:id", async (req, res) => {
     }
 })
 
+router.get("/get-waste-match-score/:id", verifyUser, async (req, res) => {
+    try {
+        const match = await Matches.findOne({ wasteListings_id: req.params.id, buyer_id: req.token.user_id });
+        if (match) {
+            res.json({ matchScore: match.matchScore });
+        } else {
+            res.json({ matchScore: null });
+        }
+    } catch (err) {
+        res.json({ message: err.message });
+    }
+})
+
 
 // put
 router.put("/update-buyer-details", verifyUser, async (req, res) => {

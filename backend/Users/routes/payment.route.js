@@ -10,6 +10,9 @@ const Cybersource_Transactions = require("../models/cybersourceTransactions.mode
 const Orders = require("../models/orders.model.js")
 const WasteListings = require("../models/wasteListings.model.js")
 const Matches = require("../models/matches.model.js")
+const puppeteer = require("puppeteer")
+const fs = require("fs")
+const path = require("path")
 
 // get
 router.get("/get-all-payments", verifyUser, async (req, res) => {
@@ -158,6 +161,86 @@ router.post('/payment/response', async (req, res) => {
         });
         const saved_Cybersource_Transaction = await cybersource_Transaction_saveData.save();
 
+        const generateInvoicePDF = async (order, wasteListing) => {
+            const htmlContent = `
+                <html>
+                <head>
+                    <style>
+                        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; margin: 40px; }
+                        h1 { color: #2563eb; }
+                        .header { border-bottom: 2px solid #e5e7eb; padding-bottom: 20px; margin-bottom: 20px; }
+                        .details { display: flex; justify-content: space-between; margin-bottom: 40px; }
+                        .details-col { width: 48%; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+                        th, td { border: 1px solid #e5e7eb; padding: 12px; text-align: left; }
+                        th { background-color: #f8fafc; color: #475569; }
+                        .total { text-align: right; font-size: 1.25rem; font-weight: bold; color: #0f172a; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>INVOICE</h1>
+                        <p><strong>Order Ref:</strong> ${order.order_reference_number}</p>
+                        <p><strong>Date:</strong> ${new Date(order.ordered_date).toLocaleDateString()}</p>
+                    </div>
+                    <div class="details">
+                        <div class="details-col">
+                            <h3>Billed To:</h3>
+                            <p>
+                                ${order.company_name ? order.company_name + '<br>' : ''}
+                                ${order.forename} ${order.surname}<br>
+                                ${order.bill_to_email}<br>
+                                ${order.phone}
+                            </p>
+                        </div>
+                        <div class="details-col">
+                            <h3>Shipping Address:</h3>
+                            <p>
+                                ${order.address.address_line1}<br>
+                                ${order.address.address_line2 ? order.address.address_line2 + '<br>' : ''}
+                                ${order.address.city}, ${order.address.state} ${order.address.postal_code}<br>
+                                ${order.address.country}
+                            </p>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Waste Item</th>
+                                <th>Category</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>${wasteListing.title}</td>
+                                <td>${wasteListing.category}</td>
+                                <td>${order.quantity} ${order.unit}</td>
+                                <td>${order.currency} ${order.total_price}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="total">
+                        Total Amount Paid: ${order.currency} ${order.total_price}
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+            const page = await browser.newPage();
+            await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+            
+            const fileName = `invoice_${order.order_reference_number}.pdf`;
+            const filePath = path.join(__dirname, '..', 'uploads', fileName);
+            
+            await page.pdf({ path: filePath, format: 'A4', printBackground: true });
+            await browser.close();
+            
+            return fileName;
+        };
+
         const payment_Status_Save = async (decision, orderId) => {
             const Payment_saveData = new Payments({
                 order_id: orderId || null,
@@ -244,6 +327,15 @@ router.post('/payment/response', async (req, res) => {
                     updated_at: data.signed_date_time,
                 })
                 const saved_Order = await Order_saveData.save();
+
+                try {
+                    const invoiceName = await generateInvoicePDF(saved_Order, transaction_Data);
+                    saved_Order.invoice_url = invoiceName;
+                    await saved_Order.save();
+                } catch (err) {
+                    console.error("Failed to generate PDF invoice:", err);
+                }
+
                 payment_Status_Save(decision, saved_Order._id)
 
                 await WasteListings.updateOne(
