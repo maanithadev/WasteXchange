@@ -255,7 +255,7 @@ const BuyerTrackOrder = () => {
                             </div>
                             <div className="flex justify-between border-b border-slate-100 pb-3">
                                 <span className="text-sm text-slate-500">Collected Date</span>
-                                <span className="text-sm font-medium text-slate-900">{new Date(data.order.collected_date || "-").toLocaleString()}</span>
+                                <span className="text-sm font-medium text-slate-900">{data.order.collected_date === null ? "-" : new Date(data.order.collected_date).toLocaleString()}</span>
                             </div>
                             <div className="flex justify-between border-b border-slate-100 pb-3">
                                 <span className="text-sm text-slate-500">Quantity</span>

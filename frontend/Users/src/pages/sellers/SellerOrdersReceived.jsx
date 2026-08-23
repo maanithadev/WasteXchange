@@ -246,7 +246,7 @@ const SellerOrdersReceived = () => {
 
                                                 {renderField("Status", selectedItem.status)}
                                                 {renderField("Ordered Date", new Date(selectedItem.ordered_date).toLocaleString())}
-                                                {renderField("Collected Date", selectedItem.collected_date)}
+                                                {renderField("Collected Date", new Date(selectedItem.collected_date).toLocaleString())}
                                             </div>
                                         </div>
                                     </>

@@ -68,8 +68,6 @@ const Transactions = () => {
         loadPayments()
         loadCards()
     }, []);
-    console.log(data)
-    console.log(cardData)
 
     const handleView = (item) => {
         setSelectedItem(item);

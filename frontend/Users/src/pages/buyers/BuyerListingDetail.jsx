@@ -39,7 +39,7 @@ const BuyerListingDetail = () => {
                 })
                 setMatchScore(res.data.matchScore)
             } catch (err) {
-                console.log(err)
+                toast.error('Something went wrong! Please try again later.')
             }
         }
 

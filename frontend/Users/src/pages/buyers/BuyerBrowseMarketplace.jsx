@@ -80,7 +80,7 @@ const BuyerBrowseMarketplace = () => {
                     </div> */}
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">Quantity Range (kg)</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Quantity Range (Ton)</label>
                         <div className="flex items-center gap-2">
                             <input type="number" placeholder="Min"
                                 value={minQty} onChange={(e) => setMinQty(e.target.value)}
@@ -93,7 +93,7 @@ const BuyerBrowseMarketplace = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">Price Range ($)</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Price Range (Rs)</label>
                         <div className="flex items-center gap-2">
                             <input type="number" placeholder="Min"
                                 value={minPrice} onChange={(e) => setMinPrice(e.target.value)}

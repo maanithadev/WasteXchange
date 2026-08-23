@@ -46,7 +46,6 @@ const SellerDashboard = () => {
         load4Cards()
         loadNotifications()
     }, []);
-    console.log(cards)
 
     return (
         <>

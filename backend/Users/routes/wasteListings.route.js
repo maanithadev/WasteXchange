@@ -67,6 +67,15 @@ router.get("/get-buyer-waste-matches", verifyUser, async (req, res) => {
     }
 })
 
+router.get("/get-seller-active-waste-listings", verifyUser, async (req, res) => {
+    try {
+        const wasteListings = await WasteListings.find({ seller_id: req.token.user_id, status: "active" })
+        res.json(wasteListings)
+    } catch (err) {
+        res.json({ message: err.message })
+    }
+})
+
 router.get("/get-seller-waste-matches/:id", verifyUser, async (req, res) => {
     try {
         const matches = await Matches.find({ wasteListings_id: req.params.id })

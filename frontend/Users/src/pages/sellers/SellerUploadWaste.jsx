@@ -29,10 +29,10 @@ const SellerUploadWaste = () => {
             price: data.price,
             currency: data.currency,
             location: {
-                street: "street",
-                city: "city",
-                state: "state",
-                postal_code: "postal_code"
+                street: "",
+                city: "",
+                state: "",
+                postal_code: ""
             },
             status: "active"
         }

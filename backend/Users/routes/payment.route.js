@@ -46,7 +46,7 @@ router.get("/admin-dashboard-cards", verifyUser, async (req, res) => {
         const totalRevenue = completedPayments.length > 0 ? completedPayments[0].totalSum : 0;
 
         const pendingPayments = await Payments.aggregate([
-            { $match: { payment_status: "pending", created_at: { $gte: startOfMonth, $lt: startOfNextMonth } } },
+            { $match: { payment_status: "completed", created_at: { $gte: startOfMonth, $lt: startOfNextMonth } } },
             { $group: { _id: null, totalSum: { $sum: "$total_price" } } }
         ]);
         const pendingPayouts = pendingPayments.length > 0 ? pendingPayments[0].totalSum : 0;
@@ -227,17 +227,17 @@ router.post('/payment/response', async (req, res) => {
                 </body>
                 </html>
             `;
-            
+
             const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--disable-setuid-sandbox'] });
             const page = await browser.newPage();
             await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
-            
+
             const fileName = `invoice_${order.order_reference_number}.pdf`;
             const filePath = path.join(__dirname, '..', 'uploads', fileName);
-            
+
             await page.pdf({ path: filePath, format: 'A4', printBackground: true });
             await browser.close();
-            
+
             return fileName;
         };
 

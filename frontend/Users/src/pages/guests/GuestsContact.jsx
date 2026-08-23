@@ -98,7 +98,7 @@ const GuestsContact = () => {
                                 </div>
                                 <div>
                                     <p className="text-sm font-semibold text-slate-900">Phone</p>
-                                    <p className="text-sm text-slate-500">+1(800) 555 -0199</p>
+                                    <p className="text-sm text-slate-500">0712345678</p>
                                 </div>
                             </div>
 
@@ -108,7 +108,7 @@ const GuestsContact = () => {
                                 </div>
                                 <div>
                                     <p className="text-sm font-semibold text-slate-900">Address</p>
-                                    <p className="text-sm text-slate-500">400 Circular Way, Suite 200<br />Newark, NJ 07105</p>
+                                    <p className="text-sm text-slate-500">78 Independence Avenue<br />Colombo, Sri Lanka</p>
                                 </div>
                             </div>
                         </div>

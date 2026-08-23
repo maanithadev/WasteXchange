@@ -54,7 +54,6 @@ const SellerListingStatusDetails = () => {
     }
 
     if (loading) return <Loading />
-    console.log(data)
 
     return data?.length === 0
         ? (<main className="flex-1 p-8 bg-slate-50 w-full min-h-[90%]">

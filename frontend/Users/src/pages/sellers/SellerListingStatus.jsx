@@ -10,7 +10,7 @@ const SellerListingStatus = () => {
     useEffect(() => {
         async function fetchData() {
             try {
-                const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_ALL_ACTIVE_WASTELISTINGS_URL, {
+                const res = await axios.get(import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_GET_SELLER_ACTIVE_WASTELISTINGS_URL, {
                     headers: {
                         "Authorization": `Bearer ${localStorage.getItem("token")}`,
                     }
@@ -50,25 +50,27 @@ const SellerListingStatus = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                     {/* <!-- Cards --> */}
-                    {data.map((item, index) => (
-                        <div key={index} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-                            <img src={import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_WASTELISTING_IMAGES_ACCESSING_URL + item.image}
-                                className="w-full h-40 object-cover"
-                                alt={item.title} />
-                            <div className="w-full p-4 flex flex-col">
-                                <div className="flex items-center justify-between mb-2">
-                                    <h3 className="font-semibold text-slate-900 text-sm">{item.title}</h3>
-                                    {/* <span className="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">{item.status}</span> */}
-                                </div>
-                                <p className="text-xs text-slate-500 mb-4">{item.quantity} {item.unit} &middot; {item.category}</p>
-                                <div className="w-full">
-                                    <Link to={`/seller/listing-matches-details/${item._id}`}>
-                                        <button className="w-full px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700">View Buyers</button>
-                                    </Link>
+                    {data.length === 0
+                        ? <p>No Active Waste Listings found from You</p>
+                        : data.map((item, index) => (
+                            <div key={index} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                                <img src={import.meta.env.VITE_USERS_BACKEND_URL + import.meta.env.VITE_WASTELISTING_IMAGES_ACCESSING_URL + item.image}
+                                    className="w-full h-40 object-cover"
+                                    alt={item.title} />
+                                <div className="w-full p-4 flex flex-col">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <h3 className="font-semibold text-slate-900 text-sm">{item.title}</h3>
+                                        {/* <span className="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">{item.status}</span> */}
+                                    </div>
+                                    <p className="text-xs text-slate-500 mb-4">{item.quantity} {item.unit} &middot; {item.category}</p>
+                                    <div className="w-full">
+                                        <Link to={`/seller/listing-matches-details/${item._id}`}>
+                                            <button className="w-full px-5 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700">View Buyers</button>
+                                        </Link>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
                 </div>
             </main>
         </>
