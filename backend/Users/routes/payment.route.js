@@ -412,7 +412,6 @@ router.post('/payment/response', async (req, res) => {
 // ─── CyberSource helper functions ───────────────────────────────────────────
 
 const crypto = require('crypto');
-const { log } = require("console")
 
 /**
  * Signs a list of fields using HMAC-SHA256.

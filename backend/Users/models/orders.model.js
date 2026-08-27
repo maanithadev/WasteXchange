@@ -83,14 +83,14 @@ const ordersSchema = mongoose.Schema({
     collected_date: {
         type: Date
     },
+    invoice_url: {
+        type: String
+    },
     created_at: {
         type: Date
     },
     updated_at: {
         type: Date
-    },
-    invoice_url: {
-        type: String
     }
 }, {
     toJSON: { virtuals: true },   // important, so virtuals show up when converting to JSON
