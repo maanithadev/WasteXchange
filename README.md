@@ -1,6 +1,6 @@
-# Top Up Waste Management System 🌱
+# WasteXchange - Intelligent Waste Classification and Recommendation System for Industrial Waste Exchange 🌱
 
-Top Up Waste Management System is a comprehensive, full-stack MERN application designed to facilitate the trading of recyclable and reusable waste materials. It connects waste sellers with buyers, promoting a circular economy while tracking carbon footprints to ensure environmentally sustainable practices. 
+WasteXchange - Intelligent Waste Classification and Recommendation System is a comprehensive, full-stack MERN application designed to facilitate the trading of recyclable and reusable waste materials. It connects waste sellers with buyers, promoting a circular economy while tracking carbon footprints to ensure environmentally sustainable practices. 
 
 The application features a dual-portal architecture with dedicated frontend and backend services for both **Users** (Buyers/Sellers) and **Administrators**.
 
