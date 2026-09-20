@@ -1,0 +1,337 @@
+const { GoogleGenAI } = require("@google/genai")
+const path = require("path")
+const fs = require("fs")
+const WasteListings = require("../models/wasteListings.model.js")
+const BuyerDetails = require("../models/buyerDetails.model.js")
+const Matches = require("../models/matches.model.js")
+const matchedRecommendations = require("../helpers/matchedRecommendations.helper")
+const createNotifications = require("../helpers/createNotifications.helper.js")
+
+const getAllWasteListings = async (req, res) => {
+    try {
+        const wastelistings = await WasteListings.find().populate("sellerDetails", "company_name").sort({ updated_at: -1 })
+        res.json(wastelistings)
+    } catch (err) {
+        res.json({ message: err.message })
+    }
+}
+
+const getAllActiveWasteListings = async (req, res) => {
+    try {
+        const { search, category, minQty, maxQty, minPrice, maxPrice, sort } = req.query;
+        let query = { status: "active" };
+
+        if (search) {
+            query.title = { $regex: search, $options: 'i' };
+        }
+        if (category && category !== "All Categories") {
+            query.category = category;
+        }
+        if (minQty || maxQty) {
+            query.quantity = {};
+            if (minQty) query.quantity.$gte = Number(minQty);
+            if (maxQty) query.quantity.$lte = Number(maxQty);
+        }
+        if (minPrice || maxPrice) {
+            query.price = {};
+            if (minPrice) query.price.$gte = Number(minPrice);
+            if (maxPrice) query.price.$lte = Number(maxPrice);
+        }
+
+        let sortOption = { created_at: -1 }; // Newest First default
+        if (sort === "Sort: Price Low to High") {
+            sortOption = { price: 1 };
+        } else if (sort === "Sort: Price High to Low") {
+            sortOption = { price: -1 };
+        }
+
+        const wastelistings = await WasteListings.find(query).sort(sortOption);
+        res.json(wastelistings);
+    } catch (err) {
+        res.json({ message: err.message })
+    }
+}
+
+const getBuyerWasteMatches = async (req, res) => {
+    try {
+        const matches = await Matches.find({ buyer_id: req.token.user_id })
+            .populate("wasteListings_id")
+        res.json(matches)
+    } catch (err) {
+        res.json({ message: err.message })
+    }
+}
+
+const getSellerActiveWasteListings = async (req, res) => {
+    try {
+        const wasteListings = await WasteListings.find({ seller_id: req.token.user_id, status: "active" })
+        res.json(wasteListings)
+    } catch (err) {
+        res.json({ message: err.message })
+    }
+}
+
+const getSellerWasteMatches = async (req, res) => {
+    try {
+        const matches = await Matches.find({ wasteListings_id: req.params.id })
+            .populate("buyerDetails", "company_name user_id -_id")
+            .populate("wasteListings_id", "seller_id title quantity unit category -_id")
+        res.json(matches)
+    } catch (err) {
+        res.json({ message: err.message })
+    }
+}
+
+const sellerUploadWaste = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.json({ message: "No image uploaded" });
+        }
+
+        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
+        const PROMPT = `
+        You are a waste classification assistant. Your task is to analyze an image of waste material and provide a detailed classification and description based on the visual information.
+        If the provided image does not contain waste material, respond with only this: {"error": "Invalid image"}.
+        If the provided image waste category is not "Construction", respond with only this: {"error": "Invalid waste category"}.
+        Don't generate any other text other than the JSON object. Respond with ONLY a raw JSON object (no markdown, no code fences, no extra text) in exactly this shape:
+{
+  "title": "string - A concise and descriptive title for the waste shown in the image.",
+  "category": "string - Construction",
+  "quantity": "number - Provide an estimated numerical value for the quantity of the waste.",
+  "unit": "string - Choose ONLY one unit from the following list that corresponds to the 'quantity': kg, tons.",
+  "colour": "string - The predominant color of the waste material visible in the image.",
+  "description": "array of strings - Provide a description of the waste in 4 to 7 bullet points. Each string in the array should be a complete sentence. The description must be written from the perspective of a seller trying to convince a buyer, highlighting the value and potential uses of the waste material. Do not use single-word bullet points.",
+  "price": "number - Provide an estimated market price for the entire quantity of the waste. think about the price in-term of LKR. don't place LKR symbol at the starting or ending. just number",
+  "currency": "string - LKR",
+  "confidence_score": "string - Provide an estimated confidence score about the identified waste category for the given image between 80-90%."
+}
+If you are unsure about a field, make your best visual estimate rather than leaving it blank. Analyze the provided image and generate the JSON output.
+        `.trim();
+
+        const imageBase64 = req.file.buffer.toString("base64");
+        const mimeType = req.file.mimetype;
+
+        const response = await ai.models.generateContent({
+            model: process.env.GEMINI_MODEL,
+            contents: [
+                {
+                    role: "user",
+                    parts: [
+                        { text: PROMPT },
+                        { inlineData: { mimeType, data: imageBase64 } },
+                    ],
+                },
+            ],
+        });
+
+        const rawText = response.text.trim();
+        const cleaned = rawText.replace(/^```json\s*|```$/g, "").trim();
+        let parsed;
+
+        try {
+            parsed = JSON.parse(cleaned);
+        } catch (parseErr) {
+            return res.json({
+                error: "Gemini did not return valid JSON",
+                raw_response: rawText,
+            });
+        }
+
+        res.json(parsed);
+
+    } catch (err) {
+        console.error(err);
+        res.json({ message: "server error", error: err.message });
+    }
+}
+
+const sellerUploadWasteSave = async (req, res) => {
+    try {
+        const formData = new WasteListings({
+            seller_id: req.token.user_id,
+            title: req.body.title,
+            category: req.body.category,
+            quantity: req.body.quantity,
+            unit: req.body.unit,
+            colour: req.body.colour,
+            description: req.body.description,
+            price: req.body.price,
+            currency: req.body.currency,
+            location: {
+                street: req.body.street,
+                city: req.body.city,
+                state: req.body.state,
+                postal_code: req.body.postal_code
+            },
+            status: req.body.status,
+            suspend_message: null,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+        })
+        formData.image = req.file.filename
+        const saved_formData = await formData.save();
+
+        const buyers = await BuyerDetails.find({ interested_category: req.body.category })
+        buyers.forEach(buyer => {
+            matchedRecommendations(saved_formData.location, buyer.address, saved_formData.quantity, buyer.minqty, buyer.maxqty, saved_formData._id, buyer.user_id, saved_formData.title, saved_formData.status)
+        })
+
+        res.json({ message: "data was saved", formData })
+
+    } catch (err) {
+        res.json({ message: "server error", error: err.message });
+    }
+}
+
+const updateListingStatus = async (req, res) => {
+    try {
+        const { listing_id, status, suspend_message } = req.body;
+        await WasteListings.updateOne(
+            { _id: listing_id },
+            {
+                status: status,
+                suspend_message: status === "rejected" ? suspend_message : null,
+                updated_at: new Date().toISOString()
+            }
+        );
+
+        const listingSeller = await WasteListings.findOne({ _id: listing_id });
+        const updatedListing = listingSeller
+
+        if (status === "active") {
+            await Matches.deleteMany({ wasteListings_id: listing_id });
+            const buyers = await BuyerDetails.find({ interested_category: updatedListing.category })
+            buyers.forEach(buyer => {
+                matchedRecommendations(updatedListing.location, buyer.address, updatedListing.quantity, buyer.minqty, buyer.maxqty, updatedListing._id, buyer.user_id, updatedListing.title, updatedListing.status)
+            })
+
+            createNotifications({
+                user_id: listingSeller.seller_id,
+                type: "wasteListing",
+                title: "Waste Active",
+                message: `Your waste listing (${listingSeller.title}) has been Activated`,
+                created_at: new Date().toISOString()
+            })
+        } else if (status === "rejected") {
+            await Matches.deleteMany({ wasteListings_id: listing_id });
+
+            createNotifications({
+                user_id: listingSeller.seller_id,
+                type: "wasteListing",
+                title: "Waste Rejected",
+                message: `Your waste listing (${listingSeller.title}) has been Rejected, reason: ${suspend_message}`,
+                created_at: new Date().toISOString()
+            })
+        }
+        res.json(updatedListing)
+    } catch (err) {
+        res.json({ message: err.message })
+    }
+}
+
+const updateListing = async (req, res) => {
+    try {
+        const updateData = {
+            title: req.body.title,
+            category: req.body.category,
+            quantity: req.body.quantity,
+            unit: req.body.unit,
+            colour: req.body.colour,
+            description: req.body.description,
+            price: req.body.price,
+            currency: req.body.currency,
+            location: {
+                street: req.body.street,
+                city: req.body.city,
+                state: req.body.state,
+                postal_code: req.body.postal_code
+            },
+            status: req.body.status,
+            updated_at: new Date().toISOString()
+        };
+
+        if (req.file) {
+            const existingListing = await WasteListings.findOne({ _id: req.params.id });
+            if (existingListing && existingListing.image) {
+                const oldImagePath = path.join(__dirname, "../uploads", existingListing.image);
+                if (fs.existsSync(oldImagePath)) {
+                    fs.unlinkSync(oldImagePath);
+                }
+            }
+            updateData.image = req.file.filename;
+        }
+
+        await WasteListings.updateOne(
+            { _id: req.params.id },
+            { $set: updateData }
+        );
+        const updatedListing = await WasteListings.findOne({ _id: req.params.id });
+
+        if (req.body.status === "active") {
+            await Matches.deleteMany({ wasteListings_id: updatedListing._id });
+            const buyers = await BuyerDetails.find({ interested_category: req.body.category })
+            buyers.forEach(buyer => {
+                matchedRecommendations(updatedListing.location, buyer.address, updatedListing.quantity, buyer.minqty, buyer.maxqty, updatedListing._id, buyer.user_id, updatedListing.title, updatedListing.status)
+            })
+        } else {
+            if (req.body.status === "sold") {
+                const existingMatches = await Matches.find({ wasteListings_id: updatedListing._id });
+                existingMatches.forEach(match => {
+                    createNotifications({
+                        user_id: match.buyer_id,
+                        type: "match",
+                        title: "Listing No Longer Available",
+                        message: `The waste listing (${updatedListing.title}) you were matched with has been sold.`,
+                        created_at: new Date().toISOString()
+                    })
+                })
+            }
+            await Matches.deleteMany({ wasteListings_id: updatedListing._id })
+        }
+
+        res.json({ message: "Listing updated successfully", formData: updatedListing });
+
+    } catch (err) {
+        res.json({ message: "server error", error: err.message });
+    }
+}
+
+const deleteListing = async (req, res) => {
+    try {
+        const listingId = req.params.id;
+
+        const existingListing = await WasteListings.findOne({ _id: listingId, seller_id: req.token.user_id });
+        if (!existingListing) {
+            return res.json({ message: "Listing not found or not authorized" });
+        }
+
+        if (existingListing.image) {
+            const oldImagePath = path.join(__dirname, "../uploads", existingListing.image);
+            if (fs.existsSync(oldImagePath)) {
+                fs.unlinkSync(oldImagePath);
+            }
+        }
+
+        await WasteListings.deleteOne({ _id: listingId, seller_id: req.token.user_id });
+        await Matches.deleteMany({ wasteListings_id: listingId });
+
+        res.json({ message: "Listing deleted successfully", id: listingId });
+
+    } catch (err) {
+        res.json({ message: "server error", error: err.message });
+    }
+}
+
+module.exports = {
+    getAllWasteListings,
+    getAllActiveWasteListings,
+    getBuyerWasteMatches,
+    getSellerActiveWasteListings,
+    getSellerWasteMatches,
+    sellerUploadWaste,
+    sellerUploadWasteSave,
+    updateListingStatus,
+    updateListing,
+    deleteListing
+}
